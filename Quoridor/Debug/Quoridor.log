@@ -1,3 +1,5 @@
 ﻿  main.cpp
+c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(29): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+cl : Command line warning D9028: minimal rebuild failure, reverting to normal build
   Quoridor.vcxproj -> C:\Users\AXU\Documents\Visual Studio 2015\Projects\Quoridor\Debug\Quoridor.exe
   Quoridor.vcxproj -> C:\Users\AXU\Documents\Visual Studio 2015\Projects\Quoridor\Debug\Quoridor.pdb (Full PDB)
