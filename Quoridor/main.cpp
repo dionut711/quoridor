@@ -50,6 +50,9 @@ int main()
 						nextPawn.y = 0;
 					else if (nextPawn.y > 8)
 						nextPawn.y = 8;
+					if (abs(pawn.x - nextPawn.x) > 1 || abs(pawn.y - nextPawn.y) > 1)
+						nextPawn = pawn;
+					    else
 					if (abs(abs(pawn.x - nextPawn.x) - abs(pawn.y - nextPawn.y)) != 1)
 						nextPawn = pawn;
 
