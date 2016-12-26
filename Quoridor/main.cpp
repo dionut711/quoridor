@@ -30,6 +30,8 @@ int main()
 	bool isWallButton = false;
 	bool isWallPlaceable = false;
 	bool wallOrientation = false;
+	bool JustOneWall = false;
+
 
 	sButtonWall1.setPosition(19, 25);
 
@@ -71,17 +73,18 @@ int main()
 						isMove = true;
 					}
 
-
+			
 			//Wall button
 			if (e.type == sf::Event::MouseButtonPressed)
 				if (e.key.code == sf::Mouse::Left)
-					if (sButtonWall1.getGlobalBounds().contains(posMouse.x, posMouse.y))
+					if (sButtonWall1.getGlobalBounds().contains(posMouse.x, posMouse.y) && JustOneWall == false)
 					{
 						sButtonWall1.setTexture(tButtonWall2);
 						sWalls[nrOfPlacedWalls].setTexture(tWall);
 						sWalls[nrOfPlacedWalls].setOrigin(7.5, 68.5);
 						nrOfPlacedWalls += 1;
 						isWallButton = true;
+						JustOneWall = true;
 					}
 			if(e.type == sf::Event::MouseButtonReleased)
 				if(e.key.code == sf::Mouse::Left)
@@ -95,10 +98,11 @@ int main()
 					isWallButton = false;
 				}
 			if (e.type == sf::Event::MouseButtonReleased)
-				if (e.key.code == sf::Mouse::Right && isMove == false && !isWallPlaceable)
+				if (e.key.code == sf::Mouse::Right && isMove == false && !isWallPlaceable && JustOneWall == true)
 				{
 					nrOfPlacedWalls -= 1;
 					isWallButton = false;
+					JustOneWall = false;
 				}
 			if (e.type == sf::Event::MouseWheelMoved)
 				if (isWallButton)
@@ -106,7 +110,6 @@ int main()
 					sWalls[nrOfPlacedWalls - 1].rotate(90 * e.mouseWheel.delta);
 				}
 
-			//if(e.type == sf::Event::mousewhee)
 			if (e.type == sf::Event::MouseButtonReleased)
 				if (e.key.code == sf::Mouse::Left && isMove == true)
 				{
