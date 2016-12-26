@@ -89,14 +89,25 @@ int main()
 			if(e.type == sf::Event::MouseButtonReleased)
 				if(e.key.code == sf::Mouse::Left)
 					sButtonWall1.setTexture(tButtonWall1);
-			if (e.type == sf::Event::MouseButtonReleased)
-				if (e.key.code == sf::Mouse::Left && isMove == false && isWallPlaceable)
-				{
-					sWalls[nrOfPlacedWalls + 1].setTexture(tWall);
-					sWalls[nrOfPlacedWalls].setPosition(posMouse.x, posMouse.y);
-					nrOfPlacedWalls += 1;
-					isWallButton = false;
-				}
+			if(e.type == sf::Event::MouseButtonPressed)
+				if(e.key.code == sf::Mouse::Left)
+					if (!sButtonWall1.getGlobalBounds().contains(posMouse.x, posMouse.y) && JustOneWall == true)
+					{
+						sWalls[nrOfPlacedWalls + 1].setTexture(tWall);
+						sWalls[nrOfPlacedWalls].setPosition(posMouse.x, posMouse.y);
+						nrOfPlacedWalls += 1;
+						isWallButton = false;
+						JustOneWall = false;
+						turn = (turn + 1) % nrOfPlayers;
+					}
+			//if (e.type == sf::Event::MouseButtonReleased)
+				//if (e.key.code == sf::Mouse::Left && isMove == false && isWallPlaceable)
+			//	{
+				//	sWalls[nrOfPlacedWalls + 1].setTexture(tWall);
+			//		sWalls[nrOfPlacedWalls].setPosition(posMouse.x, posMouse.y);
+			//		nrOfPlacedWalls += 1;
+			//		isWallButton = false;
+			//	}
 			if (e.type == sf::Event::MouseButtonReleased)
 				if (e.key.code == sf::Mouse::Right && isMove == false && !isWallPlaceable && JustOneWall == true)
 				{
