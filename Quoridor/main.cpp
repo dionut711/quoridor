@@ -11,11 +11,12 @@ int main()
 	int sizeTotal = sizeSquare + widthWall;
 	sf::RenderWindow window(sf::VideoMode(969, 696), "Game");
 
-	sf::Texture tBoard;
+	sf::Texture tBoard,tWall;
 	tBoard.loadFromFile("images/QuoridorBoard1.png");
-	sf::Sprite sBoard(tBoard);
-
+	tWall.loadFromFile("images/QuoridorWall.jpg");
+	sf::Sprite sBoard(tBoard),sWall(tWall);
 	sf::Texture tPawn[4];
+	sWall.setPosition(-100, -100);
 	tPawn[0].loadFromFile("images/QuoridorPawn0.png");
 	tPawn[1].loadFromFile("images/QuoridorPawn1.png");
 	tPawn[2].loadFromFile("images/QuoridorPawn2.png");
@@ -36,8 +37,9 @@ int main()
 	sf::Vector2i posPawn[4];
 
 	for (int i = 0; i <= nrOfPlayers - 1; i++)
+	{
 		sPawn[i].setPosition(marginWidth + sizeTotal*pawn[i].x, widthWall + sizeTotal*pawn[i].y);
-
+	}
 	while (window.isOpen())
 	{
 		sf::Vector2i posMouse = sf::Mouse::getPosition(window);
@@ -54,8 +56,15 @@ int main()
 						isMove = true;
 					}
 			if (e.type == sf::Event::MouseButtonReleased)
+				if (e.key.code == sf::Mouse::Left)
+				{
+					sWall.setPosition(posMouse.x, posMouse.y);
+				}
+
+			if (e.type == sf::Event::MouseButtonReleased)
 				if (e.key.code == sf::Mouse::Left && isMove == true)
 				{
+					
 					isMove = false;
 					nextPawn[turn].x = (posMouse.x - marginWidth) / sizeTotal;
 					nextPawn[turn].y = posMouse.y / sizeTotal;
@@ -101,9 +110,9 @@ int main()
 
 		window.clear(sf::Color::White);
 		window.draw(sBoard);
+	 	window.draw(sWall);
 		for (int i = 0;i <= nrOfPlayers - 1;i++)
 			window.draw(sPawn[i]);
-		//window.draw(sPawn[1])
 		window.display();
 	}
 	return 0;
