@@ -1,5 +1,7 @@
 #include <SFML\Graphics.hpp>
 #include <time.h>
+#include <iostream>
+#include <cmath>
 int main()
 {
 	int sizeSquare = 61, widthWall = 15, marginWidth = 155;
@@ -13,8 +15,11 @@ int main()
 
 	bool isMove = false;
 
-	sf::Vector2i pawn;
+	sf::Vector2i pawn = sf::Vector2i(4,0);
 	sf::Vector2i posPawn;
+	sf::Vector2i nextPawn;
+
+	sPawn.setPosition(marginWidth + sizeTotal * pawn.x, widthWall + sizeTotal * pawn.y);
 
 	while (window.isOpen())
 	{
@@ -35,19 +40,22 @@ int main()
 				if (e.key.code == sf::Mouse::Left)
 				{
 					isMove = false;
-					pawn.x = (posMouse.x - marginWidth) / sizeTotal;
-					pawn.y = posMouse.y / sizeTotal;
-					if (pawn.x < 0)
-						pawn.x = 0;
-					else if (pawn.x > 8)
-						pawn.x = 8;
-					if (pawn.y < 0)
-						pawn.y = 0;
-					else if (pawn.y > 8)
-						pawn.y = 8;
+					nextPawn.x = (posMouse.x - marginWidth) / sizeTotal;
+					nextPawn.y = posMouse.y / sizeTotal;
+					if (nextPawn.x < 0)
+						nextPawn.x = 0;
+					else if (nextPawn.x > 8)
+						nextPawn.x = 8;
+					if (nextPawn.y < 0)
+						nextPawn.y = 0;
+					else if (nextPawn.y > 8)
+						nextPawn.y = 8;
+					if (abs(abs(pawn.x - nextPawn.x) - abs(pawn.y - nextPawn.y)) != 1)
+						nextPawn = pawn;
 
-
+					pawn = nextPawn;
 					posPawn = sf::Vector2i(marginWidth + sizeTotal*pawn.x, widthWall + sizeTotal*pawn.y);
+					std::cout << pawn.x << " & " << pawn.y << "  ";
 					sPawn.setPosition(posPawn.x, posPawn.y);
 				}
 
