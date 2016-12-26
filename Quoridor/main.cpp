@@ -1,51 +1,64 @@
 #include <SFML\Graphics.hpp>
-#include <iostream>
-
-	int main()
+#include <time.h>
+int main()
 {
-	sf::RenderWindow window(sf::VideoMode(969, 696), "Quoridor");
-	sf::Texture img_board;
-	sf::Texture img_pawns;
-	img_board.loadFromFile("images/QuoridorBoard.png");
-	img_pawns.loadFromFile("images/QuoridorPawns.png");
-	sf::Sprite spr_board(img_board);
-	sf::Sprite spr_pawns(img_pawns);
-	spr_pawns.setTextureRect(sf::IntRect(0, 0, 58, 58));
+	int sizeSquare = 61, widthWall = 15, marginWidth = 155;
+	int sizeTotal = sizeSquare + widthWall;
+	sf::RenderWindow window(sf::VideoMode(969, 696), "Game");
 
-	float dx, dy;
+	sf::Texture tPawn, tBoard;
+	tPawn.loadFromFile("images/QuoridorPawn.png");
+	tBoard.loadFromFile("images/QuoridorBoard.png");
+	sf::Sprite sPawn(tPawn), sBoard(tBoard);
+
 	bool isMove = false;
-		while (window.isOpen())
-		{
-			sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-			sf::Event evnt;
-				while (window.pollEvent(evnt))
-				{
-					if (evnt.type == sf::Event::Closed)
-						window.close();
 
-					if(evnt.type == sf::Event::MouseButtonPressed)
-						if(evnt.key.code == sf::Mouse::Left)
-							if (spr_pawns.getGlobalBounds().contains(mousePos.x, mousePos.y)) {
-								isMove = true;
-								dx = mousePos.x - spr_pawns.getPosition().x;
-								dy = mousePos.y - spr_pawns.getPosition().y;
-							}
-					if (evnt.type == sf::Event::MouseButtonReleased)
-						if (evnt.key.code == sf::Mouse::Left) {
-							isMove = false;
-							sf::Vector2f p = spr_pawns.getPosition() + sf::Vector2f(32, 32);
-							sf::Vector2f newPos = sf::Vector2f(76 * int(p.x / 76), 76 * int(p.y / 76) + 13);
-							spr_pawns.setPosition(newPos);
-						
-						}
-					if (isMove)
-						spr_pawns.setPosition(mousePos.x - dx, mousePos.y - dy);
+	sf::Vector2i pawn;
+	sf::Vector2i posPawn;
+
+	while (window.isOpen())
+	{
+		sf::Vector2i posMouse = sf::Mouse::getPosition(window);
+		sf::Event e;
+		while (window.pollEvent(e))
+		{
+			if (e.type == sf::Event::Closed)
+				window.close();
+
+			if (e.type == sf::Event::MouseButtonPressed)
+				if (e.key.code == sf::Mouse::Left)
+					if (sPawn.getGlobalBounds().contains(posMouse.x, posMouse.y))
+					{
+						isMove = true;
+					}
+			if (e.type == sf::Event::MouseButtonReleased)
+				if (e.key.code == sf::Mouse::Left)
+				{
+					isMove = false;
+					pawn.x = (posMouse.x - marginWidth) / sizeTotal;
+					pawn.y = posMouse.y / sizeTotal;
+					if (pawn.x < 0)
+						pawn.x = 0;
+					else if (pawn.x > 8)
+						pawn.x = 8;
+					if (pawn.y < 0)
+						pawn.y = 0;
+					else if (pawn.y > 8)
+						pawn.y = 8;
+
+
+					posPawn = sf::Vector2i(marginWidth + sizeTotal*pawn.x, widthWall + sizeTotal*pawn.y);
+					sPawn.setPosition(posPawn.x, posPawn.y);
 				}
 
-			window.clear();
-			window.draw(spr_board);
-			window.draw(spr_pawns);
-			window.display();
 		}
+
+		if (isMove)
+			sPawn.setPosition(posMouse.x - sPawn.getTextureRect().width / 2, posMouse.y - sPawn.getTextureRect().height / 2);
+		window.clear(sf::Color::White);
+		window.draw(sBoard);
+		window.draw(sPawn);
+		window.display();
+	}
 	return 0;
 }
