@@ -10,8 +10,7 @@
 	img_pawns.loadFromFile("images/QuoridorPawns.png");
 	sf::Sprite spr_board(img_board);
 	sf::Sprite spr_pawns(img_pawns);
-	spr_pawns.setTextureRect(sf::IntRect(0, 0, 64, 64));
-	spr_pawns.setOrigin(32,32);
+	spr_pawns.setTextureRect(sf::IntRect(0, 0, 58, 58));
 
 	float dx, dy;
 	bool isMove = false;
@@ -35,7 +34,7 @@
 						if (evnt.key.code == sf::Mouse::Left) {
 							isMove = false;
 							sf::Vector2f p = spr_pawns.getPosition() + sf::Vector2f(32, 32);
-							sf::Vector2f newPos = sf::Vector2f(64 * (p.x / 64), 64 * (p.y / 64));
+							sf::Vector2f newPos = sf::Vector2f(76 * int(p.x / 76), 76 * int(p.y / 76) + 13);
 							spr_pawns.setPosition(newPos);
 						
 						}
