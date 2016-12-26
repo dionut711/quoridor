@@ -11,12 +11,29 @@ int main()
 	int sizeTotal = sizeSquare + widthWall;
 	sf::RenderWindow window(sf::VideoMode(969, 696), "Game");
 
-	sf::Texture tBoard,tWall;
+	sf::Texture tBoard;
 	tBoard.loadFromFile("images/QuoridorBoard1.png");
+	sf::Sprite sBoard;
+	sBoard.setTexture(tBoard);
+
+	sf::Texture tWall;
 	tWall.loadFromFile("images/QuoridorWall.png");
-	sf::Sprite sBoard(tBoard),sWall(tWall);
+	sf::Sprite sWalls[40];
+	int nrOfPlacedWalls = 0;
+
+	//wall activate button
+	sf::Texture tButtonWall1,tButtonWall2;
+	tButtonWall1.loadFromFile("images/ButtonWall1.png");
+	tButtonWall2.loadFromFile("images/ButtonWall2.png");
+	sf::Sprite sButtonWall1;
+	sButtonWall1.setTexture(tButtonWall1);
+	bool isWallButton = false;
+	bool isWallPlaceable = false;
+	bool wallOrientation = false;
+
+	sButtonWall1.setPosition(19, 25);
+
 	sf::Texture tPawn[4];
-	sWall.setPosition(-100, -100);
 	tPawn[0].loadFromFile("images/QuoridorPawn0.png");
 	tPawn[1].loadFromFile("images/QuoridorPawn1.png");
 	tPawn[2].loadFromFile("images/QuoridorPawn2.png");
@@ -29,17 +46,15 @@ int main()
 
 
 	sf::Vector2i pawn[4];
-	pawn[0] = sf::Vector2i(4, 0);
-	pawn[1] = sf::Vector2i(4, 8);
-	pawn[2] = sf::Vector2i(0, 4);
-	pawn[3] = sf::Vector2i(8, 4);
+	pawn[0] = sf::Vector2i(0, 4);//blue
+	pawn[1] = sf::Vector2i(8, 4);//green
+	pawn[2] = sf::Vector2i(4, 0);//yellow
+	pawn[3] = sf::Vector2i(4, 8);//red
 	sf::Vector2i nextPawn[4];
 	sf::Vector2i posPawn[4];
-
 	for (int i = 0; i <= nrOfPlayers - 1; i++)
-	{
-		sPawn[i].setPosition(marginWidth + sizeTotal*pawn[i].x, widthWall + sizeTotal*pawn[i].y);
-	}
+		sPawn[i].setPosition(marginWidth + sizeTotal*pawn[i].y, widthWall + sizeTotal*pawn[i].x);
+
 	while (window.isOpen())
 	{
 		sf::Vector2i posMouse = sf::Mouse::getPosition(window);
@@ -55,19 +70,50 @@ int main()
 					{
 						isMove = true;
 					}
-			if (e.type == sf::Event::MouseButtonReleased)
+
+
+			//Wall button
+			if (e.type == sf::Event::MouseButtonPressed)
 				if (e.key.code == sf::Mouse::Left)
+					if (sButtonWall1.getGlobalBounds().contains(posMouse.x, posMouse.y))
+					{
+						sButtonWall1.setTexture(tButtonWall2);
+						sWalls[nrOfPlacedWalls].setTexture(tWall);
+						sWalls[nrOfPlacedWalls].setOrigin(7.5, 68.5);
+						nrOfPlacedWalls += 1;
+						isWallButton = true;
+					}
+			if(e.type == sf::Event::MouseButtonReleased)
+				if(e.key.code == sf::Mouse::Left)
+					sButtonWall1.setTexture(tButtonWall1);
+			if (e.type == sf::Event::MouseButtonReleased)
+				if (e.key.code == sf::Mouse::Left && isMove == false && isWallPlaceable)
 				{
-					sWall.setPosition(posMouse.x, posMouse.y);
+					sWalls[nrOfPlacedWalls + 1].setTexture(tWall);
+					sWalls[nrOfPlacedWalls].setPosition(posMouse.x, posMouse.y);
+					nrOfPlacedWalls += 1;
+					isWallButton = false;
+				}
+			if (e.type == sf::Event::MouseButtonReleased)
+				if (e.key.code == sf::Mouse::Right && isMove == false && !isWallPlaceable)
+				{
+					nrOfPlacedWalls -= 1;
+					isWallButton = false;
+				}
+			if (e.type == sf::Event::MouseWheelMoved)
+				if (isWallButton)
+				{
+					sWalls[nrOfPlacedWalls - 1].rotate(90 * e.mouseWheel.delta);
 				}
 
+			//if(e.type == sf::Event::mousewhee)
 			if (e.type == sf::Event::MouseButtonReleased)
 				if (e.key.code == sf::Mouse::Left && isMove == true)
 				{
-					
+
 					isMove = false;
-					nextPawn[turn].x = (posMouse.x - marginWidth) / sizeTotal;
-					nextPawn[turn].y = posMouse.y / sizeTotal;
+					nextPawn[turn].x = posMouse.y / sizeTotal;
+					nextPawn[turn].y = (posMouse.x - marginWidth) / sizeTotal;
 
 					//Clamp
 					if (nextPawn[turn].x < 0)
@@ -86,23 +132,28 @@ int main()
 					else if (abs(abs(pawn[turn].x - nextPawn[turn].x) - abs(pawn[turn].y - nextPawn[turn].y)) != 1)
 						nextPawn[turn] = pawn[turn];
 
+
+
 					if (pawn[turn] != nextPawn[turn])
 					{
 						pawn[turn] = nextPawn[turn];
-						posPawn[turn] = sf::Vector2i(marginWidth + sizeTotal*pawn[turn].x, widthWall + sizeTotal*pawn[turn].y);
+						posPawn[turn] = sf::Vector2i(marginWidth + sizeTotal*pawn[turn].y, widthWall + sizeTotal*pawn[turn].x);
 						sPawn[turn].setPosition(posPawn[turn].x, posPawn[turn].y);
 						turn = (turn + 1) % nrOfPlayers;
 					}
 					else
 					{
-						posPawn[turn] = sf::Vector2i(marginWidth + sizeTotal*pawn[turn].x, widthWall + sizeTotal*pawn[turn].y);
+						posPawn[turn] = sf::Vector2i(marginWidth + sizeTotal*pawn[turn].y, widthWall + sizeTotal*pawn[turn].x);
 						sPawn[turn].setPosition(posPawn[turn].x, posPawn[turn].y);
 					}
 
-
-					std::cout << turn << " ";
 				}
 
+		}
+
+		if (isWallButton)
+		{
+			sWalls[nrOfPlacedWalls - 1].setPosition(posMouse.x, posMouse.y);
 		}
 
 		if (isMove)
@@ -110,9 +161,14 @@ int main()
 
 		window.clear(sf::Color::White);
 		window.draw(sBoard);
-	 	window.draw(sWall);
 		for (int i = 0;i <= nrOfPlayers - 1;i++)
 			window.draw(sPawn[i]);
+
+		for (int i = 0; i <= nrOfPlacedWalls - 1; i++)
+			window.draw(sWalls[i]);
+
+		window.draw(sButtonWall1);
+
 		window.display();
 	}
 	return 0;
