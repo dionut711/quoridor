@@ -13,7 +13,7 @@ int main()
 
 	sf::Texture tBoard,tWall;
 	tBoard.loadFromFile("images/QuoridorBoard1.png");
-	tWall.loadFromFile("images/QuoridorWall.jpg");
+	tWall.loadFromFile("images/QuoridorWall.png");
 	sf::Sprite sBoard(tBoard),sWall(tWall);
 	sf::Texture tPawn[4];
 	sWall.setPosition(-100, -100);
