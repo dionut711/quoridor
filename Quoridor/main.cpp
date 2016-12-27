@@ -18,8 +18,9 @@ int main()
 
 	sf::Texture tWall;
 	tWall.loadFromFile("images/QuoridorWall.png");
-	sf::Sprite sWalls[40];
+	sf::Sprite sWalls[42];
 	int nrOfPlacedWalls = 0;
+	int WallsPlaceableLimit = 40;
 
 	//wall activate button
 	sf::Texture tButtonWall1,tButtonWall2;
@@ -57,6 +58,7 @@ int main()
 	for (int i = 0; i <= nrOfPlayers - 1; i++)
 		sPawn[i].setPosition(marginWidth + sizeTotal*pawn[i].y, widthWall + sizeTotal*pawn[i].x);
 
+//////////////////// ACTION WHEN WINDOW IS OPEN //////////////////////////
 	while (window.isOpen())
 	{
 		sf::Vector2i posMouse = sf::Mouse::getPosition(window);
@@ -77,12 +79,13 @@ int main()
 			//Wall button
 			if (e.type == sf::Event::MouseButtonPressed)
 				if (e.key.code == sf::Mouse::Left)
-					if (sButtonWall1.getGlobalBounds().contains(posMouse.x, posMouse.y) && JustOneWall == false)
+					if (sButtonWall1.getGlobalBounds().contains(posMouse.x, posMouse.y) && JustOneWall == false && nrOfPlacedWalls < WallsPlaceableLimit)
 					{
 						sButtonWall1.setTexture(tButtonWall2);
 						sWalls[nrOfPlacedWalls].setTexture(tWall);
 						sWalls[nrOfPlacedWalls].setOrigin(7.5, 68.5);
 						nrOfPlacedWalls += 1;
+						std::cout << nrOfPlacedWalls << " ";
 						isWallButton = true;
 						JustOneWall = true;
 					}
@@ -95,7 +98,7 @@ int main()
 					{
 						sWalls[nrOfPlacedWalls + 1].setTexture(tWall);
 						sWalls[nrOfPlacedWalls].setPosition(posMouse.x, posMouse.y);
-						nrOfPlacedWalls += 1;
+						//nrOfPlacedWalls += 1;
 						isWallButton = false;
 						JustOneWall = false;
 						turn = (turn + 1) % nrOfPlayers;
@@ -114,6 +117,7 @@ int main()
 					nrOfPlacedWalls -= 1;
 					isWallButton = false;
 					JustOneWall = false;
+					std::cout << nrOfPlacedWalls << " ";
 				}
 			if (e.type == sf::Event::MouseWheelMoved)
 				if (isWallButton)
@@ -177,7 +181,8 @@ int main()
 		window.draw(sBoard);
 		for (int i = 0;i <= nrOfPlayers - 1;i++)
 			window.draw(sPawn[i]);
-
+		if (nrOfPlacedWalls > WallsPlaceableLimit)
+			nrOfPlacedWalls = WallsPlaceableLimit;
 		for (int i = 0; i <= nrOfPlacedWalls - 1; i++)
 			window.draw(sWalls[i]);
 
