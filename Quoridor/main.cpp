@@ -24,11 +24,11 @@ int main()
 	int nrOfPlacedWalls = 0;
 	int WallsPlaceableLimit = 40;
 
-	/////////////////
+	//////// PLACE THE WALL AT A PERFECT POSITION /////////
 	int leftMarginForPlacingWalls = 181;
 	int topMarginForPlacingWalls = 43;
 	int wallActiveZone = 76;
-	
+	sf::Vector2i posWall;
 
 	//wall activate button
 	sf::Texture tButtonWall1,tButtonWall2;
@@ -81,7 +81,6 @@ int main()
 	while (window.isOpen())
 	{
 		sf::Vector2i posMouse = sf::Mouse::getPosition(window);
-		sf::Vector2i posWall;
 		sf::Event e;
 		while (window.pollEvent(e))
 		{
@@ -124,30 +123,24 @@ int main()
 			if(e.type == sf::Event::MouseButtonReleased)
 				if(e.key.code == sf::Mouse::Left)
 					sButtonWall1.setTexture(tButtonWall1);
-			////////// PLACE THE WALL ////////
+			////////// PLACE THE WALL ////////  BUG - THE WALL IS STILL PLACING WHERE I PRESS LEFT MOUSE BUTTON
+			posWall.x = (posMouse.x - leftMarginForPlacingWalls) / wallActiveZone;
+			posWall.y = (posMouse.y - topMarginForPlacingWalls) / wallActiveZone;
 			if(e.type == sf::Event::MouseButtonPressed)
 				if(e.key.code == sf::Mouse::Left)
 					if (!sButtonWall1.getGlobalBounds().contains(posMouse.x, posMouse.y) && JustOneWall == true)
 					{
-						posWall.x = (posMouse.x - leftMarginForPlacingWalls) / wallActiveZone;
-						posWall.y = (posMouse.y - topMarginForPlacingWalls) / wallActiveZone;
+						// 219, 81
 						std::cout << "Wall.x = " << posWall.x << " Wall.y = " << posWall.y << " Mouse.x = "<<posMouse.x<<" Mouse.y = "<<posMouse.y<<" ";
 						sWalls[nrOfPlacedWalls + 1].setTexture(tWall);
-						sWalls[nrOfPlacedWalls].setPosition(posMouse.x, posMouse.y);
+						sWalls[nrOfPlacedWalls].setPosition(219 + wallActiveZone*(posWall.x + 1), 81 + wallActiveZone*(posWall.y + 1));
 						//nrOfPlacedWalls += 1;
 						isWallButton = false;
 						JustOneWall = false;
 						maxWallsPerPlayer[turn] -= 1;
 						turn = (turn + 1) % nrOfPlayers;
 					}
-			//if (e.type == sf::Event::MouseButtonReleased)
-				//if (e.key.code == sf::Mouse::Left && isMove == false && isWallPlaceable)
-			//	{
-				//	sWalls[nrOfPlacedWalls + 1].setTexture(tWall);
-			//		sWalls[nrOfPlacedWalls].setPosition(posMouse.x, posMouse.y);
-			//		nrOfPlacedWalls += 1;
-			//		isWallButton = false;
-			//	}
+
 			if (e.type == sf::Event::MouseButtonReleased)
 				if (e.key.code == sf::Mouse::Right && isMove == false && !isWallPlaceable && JustOneWall == true)
 				{
