@@ -6,6 +6,8 @@ int main()
 {
 	int nrOfPlayers = 4;
 	int turn = 0;
+	int maxWallsPerPlayer[4];
+
 
 	int sizeSquare = 61, widthWall = 15, marginWidth = 155;
 	int sizeTotal = sizeSquare + widthWall;
@@ -58,6 +60,10 @@ int main()
 	for (int i = 0; i <= nrOfPlayers - 1; i++)
 		sPawn[i].setPosition(marginWidth + sizeTotal*pawn[i].y, widthWall + sizeTotal*pawn[i].x);
 
+	//// SET WALLS FOR PLAYERS ////
+	for (int i = 0;i < nrOfPlayers;i++)
+		maxWallsPerPlayer[i] = 10;
+
 //////////////////// ACTION WHEN WINDOW IS OPEN //////////////////////////
 	while (window.isOpen())
 	{
@@ -79,7 +85,7 @@ int main()
 			//Wall button
 			if (e.type == sf::Event::MouseButtonPressed)
 				if (e.key.code == sf::Mouse::Left)
-					if (sButtonWall1.getGlobalBounds().contains(posMouse.x, posMouse.y) && JustOneWall == false && nrOfPlacedWalls < WallsPlaceableLimit)
+					if (sButtonWall1.getGlobalBounds().contains(posMouse.x, posMouse.y) && JustOneWall == false && nrOfPlacedWalls < WallsPlaceableLimit && maxWallsPerPlayer[turn]>0)
 					{
 						sButtonWall1.setTexture(tButtonWall2);
 						sWalls[nrOfPlacedWalls].setTexture(tWall);
@@ -101,6 +107,7 @@ int main()
 						//nrOfPlacedWalls += 1;
 						isWallButton = false;
 						JustOneWall = false;
+						maxWallsPerPlayer[turn] -= 1;
 						turn = (turn + 1) % nrOfPlayers;
 					}
 			//if (e.type == sf::Event::MouseButtonReleased)
@@ -191,7 +198,4 @@ int main()
 		window.display();
 	}
 	return 0;
-	//testing a commit
-	//Ionut este extraterestru
-	//nu neg nimic
 }
