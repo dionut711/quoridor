@@ -34,9 +34,16 @@ int main()
 	bool isWallPlaceable = false;
 	bool wallOrientation = false;
 	bool JustOneWall = false;
-
-
 	sButtonWall1.setPosition(19, 25);
+
+	//exit button
+	sf::Texture tExit1, tExit2;
+	tExit1.loadFromFile("images/Exit1.png");
+	tExit2.loadFromFile("images/Exit2.png");
+	sf::Sprite sExit1;
+	sExit1.setTexture(tExit1);
+	sExit1.setPosition(850, 25);
+	bool isExit = false;
 
 	sf::Texture tPawn[4];
 	tPawn[0].loadFromFile("images/QuoridorPawn0.png");
@@ -71,8 +78,20 @@ int main()
 		sf::Event e;
 		while (window.pollEvent(e))
 		{
+
+			/////////// CLOSE THE WINDOW /////////////
 			if (e.type == sf::Event::Closed)
 				window.close();
+			
+			if (e.type == sf::Event::MouseButtonPressed)
+				if (e.key.code == sf::Mouse::Left)
+					if (sExit1.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+						sExit1.setTexture(tExit2);
+						isExit = true;
+					}
+			if (e.type == sf::Event::MouseButtonReleased)
+				if (e.key.code == sf::Mouse::Left && isExit)
+					window.close();
 
 			if (e.type == sf::Event::MouseButtonPressed)
 				if (e.key.code == sf::Mouse::Left)
@@ -192,9 +211,9 @@ int main()
 			nrOfPlacedWalls = WallsPlaceableLimit;
 		for (int i = 0; i <= nrOfPlacedWalls - 1; i++)
 			window.draw(sWalls[i]);
-
+		// Draw Buttons
 		window.draw(sButtonWall1);
-
+		window.draw(sExit1);
 		window.display();
 	}
 	return 0;
