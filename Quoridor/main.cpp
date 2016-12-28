@@ -24,6 +24,12 @@ int main()
 	int nrOfPlacedWalls = 0;
 	int WallsPlaceableLimit = 40;
 
+	/////////////////
+	int leftMarginForPlacingWalls = 181;
+	int topMarginForPlacingWalls = 43;
+	int wallActiveZone = 76;
+	
+
 	//wall activate button
 	sf::Texture tButtonWall1,tButtonWall2;
 	tButtonWall1.loadFromFile("images/ButtonWall1.png");
@@ -75,6 +81,7 @@ int main()
 	while (window.isOpen())
 	{
 		sf::Vector2i posMouse = sf::Mouse::getPosition(window);
+		sf::Vector2i posWall;
 		sf::Event e;
 		while (window.pollEvent(e))
 		{
@@ -117,10 +124,14 @@ int main()
 			if(e.type == sf::Event::MouseButtonReleased)
 				if(e.key.code == sf::Mouse::Left)
 					sButtonWall1.setTexture(tButtonWall1);
+			////////// PLACE THE WALL ////////
 			if(e.type == sf::Event::MouseButtonPressed)
 				if(e.key.code == sf::Mouse::Left)
 					if (!sButtonWall1.getGlobalBounds().contains(posMouse.x, posMouse.y) && JustOneWall == true)
 					{
+						posWall.x = (posMouse.x - leftMarginForPlacingWalls) / wallActiveZone;
+						posWall.y = (posMouse.y - topMarginForPlacingWalls) / wallActiveZone;
+						std::cout << "Wall.x = " << posWall.x << " Wall.y = " << posWall.y << " Mouse.x = "<<posMouse.x<<" Mouse.y = "<<posMouse.y<<" ";
 						sWalls[nrOfPlacedWalls + 1].setTexture(tWall);
 						sWalls[nrOfPlacedWalls].setPosition(posMouse.x, posMouse.y);
 						//nrOfPlacedWalls += 1;
@@ -204,6 +215,7 @@ int main()
 			sPawn[turn].setPosition(posMouse.x - sPawn[turn].getTextureRect().width / 2, posMouse.y - sPawn[turn].getTextureRect().height / 2);
 
 		window.clear(sf::Color::White);
+	
 		window.draw(sBoard);
 		for (int i = 0;i <= nrOfPlayers - 1;i++)
 			window.draw(sPawn[i]);
