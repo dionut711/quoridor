@@ -29,6 +29,7 @@ int main()
 	int topMarginForPlacingWalls = 43;
 	int wallActiveZone = 76;
 	sf::Vector2i posWall;
+	sf::Vector2i fixedPosWall;
 
 	//wall activate button
 	sf::Texture tButtonWall1,tButtonWall2;
@@ -131,9 +132,12 @@ int main()
 					if (!sButtonWall1.getGlobalBounds().contains(posMouse.x, posMouse.y) && JustOneWall == true)
 					{
 						// 219, 81
+						fixedPosWall.x = 219 + wallActiveZone*posWall.x;
+						fixedPosWall.y = 81 + wallActiveZone*posWall.y;
 						std::cout << "Wall.x = " << posWall.x << " Wall.y = " << posWall.y << " Mouse.x = "<<posMouse.x<<" Mouse.y = "<<posMouse.y<<" ";
+						std::cout << std::endl << "new.x = " << fixedPosWall.x << " new.y = " << fixedPosWall.y << std::endl;
 						sWalls[nrOfPlacedWalls + 1].setTexture(tWall);
-						sWalls[nrOfPlacedWalls].setPosition(219 + wallActiveZone*(posWall.x + 1), 81 + wallActiveZone*(posWall.y + 1));
+						sWalls[nrOfPlacedWalls].setPosition(posMouse.x,posMouse.y);
 						//nrOfPlacedWalls += 1;
 						isWallButton = false;
 						JustOneWall = false;
