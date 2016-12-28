@@ -30,6 +30,7 @@ int main()
 	int wallActiveZone = 76;
 	sf::Vector2i posWall;
 	sf::Vector2i fixedPosWall;
+	bool canWallBePlaced = false;
 
 	//wall activate button
 	sf::Texture tButtonWall1,tButtonWall2;
@@ -124,25 +125,28 @@ int main()
 			if(e.type == sf::Event::MouseButtonReleased)
 				if(e.key.code == sf::Mouse::Left)
 					sButtonWall1.setTexture(tButtonWall1);
-			////////// PLACE THE WALL ////////  BUG - THE WALL IS STILL PLACING WHERE I PRESS LEFT MOUSE BUTTON
+			////////// PLACE THE WALL ////////  
 			posWall.x = (posMouse.x - leftMarginForPlacingWalls) / wallActiveZone;
 			posWall.y = (posMouse.y - topMarginForPlacingWalls) / wallActiveZone;
+			fixedPosWall.x = 219 + wallActiveZone*posWall.x;
+			fixedPosWall.y = 81 + wallActiveZone*posWall.y;
 			if(e.type == sf::Event::MouseButtonPressed)
 				if(e.key.code == sf::Mouse::Left)
 					if (!sButtonWall1.getGlobalBounds().contains(posMouse.x, posMouse.y) && JustOneWall == true)
 					{
 						// 219, 81
-						fixedPosWall.x = 219 + wallActiveZone*posWall.x;
-						fixedPosWall.y = 81 + wallActiveZone*posWall.y;
-						std::cout << "Wall.x = " << posWall.x << " Wall.y = " << posWall.y << " Mouse.x = "<<posMouse.x<<" Mouse.y = "<<posMouse.y<<" ";
-						std::cout << std::endl << "new.x = " << fixedPosWall.x << " new.y = " << fixedPosWall.y << std::endl;
+						//fixedPosWall.x = 219 + wallActiveZone*posWall.x;
+						//fixedPosWall.y = 81 + wallActiveZone*posWall.y;
+						//std::cout << "Wall.x = " << posWall.x << " Wall.y = " << posWall.y << " Mouse.x = "<<posMouse.x<<" Mouse.y = "<<posMouse.y<<" ";
+						//std::cout << std::endl << "new.x = " << fixedPosWall.x << " new.y = " << fixedPosWall.y << std::endl;
 						sWalls[nrOfPlacedWalls + 1].setTexture(tWall);
-						sWalls[nrOfPlacedWalls].setPosition(posMouse.x,posMouse.y);
+						//sWalls[nrOfPlacedWalls].setPosition(posMouse.x,posMouse.y);
 						//nrOfPlacedWalls += 1;
 						isWallButton = false;
 						JustOneWall = false;
 						maxWallsPerPlayer[turn] -= 1;
 						turn = (turn + 1) % nrOfPlayers;
+						canWallBePlaced = true;
 					}
 
 			if (e.type == sf::Event::MouseButtonReleased)
@@ -205,7 +209,13 @@ int main()
 
 		if (isWallButton)
 		{
-			sWalls[nrOfPlacedWalls - 1].setPosition(posMouse.x, posMouse.y);
+			//sWalls[nrOfPlacedWalls-1].setPosition(posMouse.x, posMouse.y);
+			sWalls[nrOfPlacedWalls - 1].setPosition(fixedPosWall.x,fixedPosWall.y);
+			//if (canWallBePlaced)
+			//{
+			//	sWalls[nrOfPlacedWalls - 1].setPosition(fixedPosWall.x, fixedPosWall.y);
+			//	canWallBePlaced = false;
+			//}
 		}
 
 		if (isMove)
