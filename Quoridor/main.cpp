@@ -50,7 +50,7 @@ void nextTurn(int &currentTurn)
 	sTurn.setTexture(tTurn[currentTurn]);
 	//Check if next turn is AI
 }
-bool funWallCanBePlaced(sf::Vector2i posWall,int rotate)
+bool funWallCanBePlaced(int rotate,sf::Vector2i posWall)
 {
 
 	if (rotate == 0)
@@ -189,7 +189,7 @@ int main()
 			fixedPosWall.y = 81 + wallActiveZone*posWall.y;
 			if(e.type == sf::Event::MouseButtonPressed)
 				if(e.key.code == sf::Mouse::Left)
-					if (JustOneWall == true)
+					if (JustOneWall == true && funWallCanBePlaced(rotate,posWall))
 					{
 						sWalls[nrOfPlacedWalls + 1].setTexture(tWall);
 						JustOneWall = false;
