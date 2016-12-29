@@ -61,6 +61,16 @@ int main()
 	int nrOfPlacedWalls = 0;
 	int WallsPlaceableLimit = 40;
 
+	/////// DISPLAY PLAYER'S TURN IMAGES ////////
+	sf::Texture tTurn1, tTurn2, tTurn3, tTurn4;
+	tTurn1.loadFromFile("images/Player1Turn.png");
+	tTurn2.loadFromFile("images/Player2Turn.png");
+	tTurn3.loadFromFile("images/Player3Turn.png");
+	tTurn4.loadFromFile("images/Player4Turn.png");
+	sf::Sprite sTurn;
+	sTurn.setTexture(tTurn1);
+	sTurn.setPosition(19, 90);
+
 	//////// PLACE THE WALL AT A PERFECT POSITION /////////
 	int leftMarginForPlacingWalls = 181;
 	int topMarginForPlacingWalls = 43;
@@ -282,6 +292,28 @@ int main()
 		for (int i = 0; i <= nrOfPlacedWalls - 1; i++)
 			window.draw(sWalls[i]);
 		// Draw Buttons
+		if (turn == 0)
+		{
+			sTurn.setTexture(tTurn1);
+			window.draw(sTurn);
+		}
+		else
+			if(turn == 1)
+			{
+				sTurn.setTexture(tTurn2);
+				window.draw(sTurn);
+			}
+			else
+				if(turn == 2)
+				{
+					sTurn.setTexture(tTurn3);
+					window.draw(sTurn);
+				}
+				else 
+					{
+						sTurn.setTexture(tTurn4);
+						window.draw(sTurn);
+					}
 		window.draw(sButtonWall1);
 		window.draw(sExit1);
 		window.display();
