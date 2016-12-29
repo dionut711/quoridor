@@ -44,6 +44,14 @@ int main()
 	bool JustOneWall = false;
 	sButtonWall1.setPosition(19, 25);
 
+	//wall variables
+	int wallMatrix[17][9];
+	for(int i=0;i<=16;i++)
+		for (int j = 0; j <= 8; j++)
+			wallMatrix[i][j] = 0;
+
+
+
 	//exit button
 	sf::Texture tExit1, tExit2;
 	tExit1.loadFromFile("images/Exit1.png");
