@@ -262,7 +262,7 @@ int main()
 
 		}
 
-		if (JustOneWall)
+		if (JustOneWall && posWall.x >=0 && posWall.y >=0 && posWall.x <= 7 && posWall.y <= 7)
 			sWalls[nrOfPlacedWalls - 1].setPosition(fixedPosWall.x,fixedPosWall.y);
 
 		if (isMove)
