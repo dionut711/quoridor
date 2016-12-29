@@ -44,7 +44,7 @@ int main()
 	int nrOfPlayers = 4;
 	int turn = 0;
 	int maxWallsPerPlayer[4];
-
+	int rotate = 0;
 
 	int sizeSquare = 61, widthWall = 15, marginWidth = 155;
 	int sizeTotal = sizeSquare + widthWall;
@@ -166,6 +166,7 @@ int main()
 						nrOfPlacedWalls += 1;
 						std::cout << nrOfPlacedWalls << " ";
 						JustOneWall = true;
+						rotate = 0;
 					}
 			if(e.type == sf::Event::MouseButtonReleased)
 				if(e.key.code == sf::Mouse::Left)
@@ -185,6 +186,16 @@ int main()
 						maxWallsPerPlayer[turn] -= 1;
 						turn = (turn + 1) % nrOfPlayers;
 						canWallBePlaced = true;
+
+						//Mark walls in matrix
+						if (rotate == 0) {
+							wallMatrix[posWall.y * 2][posWall.x] = 1;
+							wallMatrix[posWall.y * 2 + 2][posWall.x] = 1;
+						}
+						else {
+							wallMatrix[posWall.y * 2 + 1][posWall.x] = 1;
+							wallMatrix[posWall.y * 2 + 1][posWall.x + 1] = 1;
+						}
 					}
 
 			if (e.type == sf::Event::MouseButtonReleased)
@@ -198,6 +209,7 @@ int main()
 				if (JustOneWall)
 				{
 					sWalls[nrOfPlacedWalls - 1].rotate(90 * e.mouseWheel.delta);
+					rotate = (rotate + 1) % 2;
 				}
 
 			if (e.type == sf::Event::MouseButtonReleased)
