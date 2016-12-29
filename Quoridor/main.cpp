@@ -2,6 +2,43 @@
 #include <time.h>
 #include <cmath>
 #include <iostream>
+
+int wallMatrix[17][9];
+
+bool funCheckforWall(sf::Vector2i posStart, sf::Vector2i posEnd)
+{
+	if (posStart.x == posEnd.x)
+	{
+		if (posStart.y > posEnd.y)
+		{
+			int aux = posStart.y;
+			posStart.y = posEnd.y;
+			posEnd.y = aux;
+		}
+	}
+	else if (posStart.y == posEnd.y)
+	{
+		if (posStart.x > posEnd.x)
+		{
+			int aux = posStart.x;
+			posStart.x = posEnd.x;
+			posEnd.x = aux;
+		}
+	}
+
+	if (posStart.y == posEnd.y)
+	{
+		if (wallMatrix[posStart.x * 2 + 1][posStart.y] > 0)
+			return 1;
+	}
+	else if (posStart.x == posEnd.x)
+	{
+		if (wallMatrix[posStart.x * 2][posStart.y] > 0)
+			return 1;
+	}
+	return 0;
+}
+
 int main()
 {
 	int nrOfPlayers = 4;
@@ -45,11 +82,13 @@ int main()
 	sButtonWall1.setPosition(19, 25);
 
 	//wall variables
-	int wallMatrix[17][9];
+	
 	for(int i=0;i<=16;i++)
 		for (int j = 0; j <= 8; j++)
 			wallMatrix[i][j] = 0;
-
+		//temporary walls
+	wallMatrix[1][4] = 1;
+	wallMatrix[0][4] = 1;
 
 
 	//exit button
@@ -195,7 +234,11 @@ int main()
 					//diagonal move
 					else if (abs(abs(pawn[turn].x - nextPawn[turn].x) - abs(pawn[turn].y - nextPawn[turn].y)) != 1)
 						nextPawn[turn] = pawn[turn];
-
+					//check for wall
+					if(nextPawn[turn] != pawn[turn])
+						if (funCheckforWall(pawn[turn], nextPawn[turn]))
+							nextPawn[turn] = pawn[turn];
+					
 
 
 					if (pawn[turn] != nextPawn[turn])
