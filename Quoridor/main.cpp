@@ -85,20 +85,14 @@ int main()
 	tButtonWall2.loadFromFile("images/ButtonWall2.png");
 	sf::Sprite sButtonWall1;
 	sButtonWall1.setTexture(tButtonWall1);
-	bool isWallButton = false;
 	bool isWallPlaceable = false;
 	bool wallOrientation = false;
 	bool JustOneWall = false;
 	sButtonWall1.setPosition(19, 25);
 
-	//wall variables
-	
-	for(int i=0;i<=16;i++)
-		for (int j = 0; j <= 8; j++)
-			wallMatrix[i][j] = 0;
 		//temporary walls
-	wallMatrix[1][4] = 1;
-	wallMatrix[0][4] = 1;
+	wallMatrix[1][4] = 0;
+	wallMatrix[0][4] = 0;
 
 
 	//exit button
@@ -176,7 +170,6 @@ int main()
 						sWalls[nrOfPlacedWalls].setOrigin(7.5, 68.5);
 						nrOfPlacedWalls += 1;
 						std::cout << nrOfPlacedWalls << " ";
-						isWallButton = true;
 						JustOneWall = true;
 					}
 			if(e.type == sf::Event::MouseButtonReleased)
@@ -199,7 +192,6 @@ int main()
 						sWalls[nrOfPlacedWalls + 1].setTexture(tWall);
 						//sWalls[nrOfPlacedWalls].setPosition(posMouse.x,posMouse.y);
 						//nrOfPlacedWalls += 1;
-						isWallButton = false;
 						JustOneWall = false;
 						maxWallsPerPlayer[turn] -= 1;
 						turn = (turn + 1) % nrOfPlayers;
@@ -210,12 +202,11 @@ int main()
 				if (e.key.code == sf::Mouse::Right && isMove == false && !isWallPlaceable && JustOneWall == true)
 				{
 					nrOfPlacedWalls -= 1;
-					isWallButton = false;
 					JustOneWall = false;
 					std::cout << nrOfPlacedWalls << " ";
 				}
 			if (e.type == sf::Event::MouseWheelMoved)
-				if (isWallButton)
+				if (JustOneWall)
 				{
 					sWalls[nrOfPlacedWalls - 1].rotate(90 * e.mouseWheel.delta);
 				}
@@ -268,7 +259,7 @@ int main()
 
 		}
 
-		if (isWallButton)
+		if (JustOneWall)
 		{
 			//sWalls[nrOfPlacedWalls-1].setPosition(posMouse.x, posMouse.y);
 			sWalls[nrOfPlacedWalls - 1].setPosition(fixedPosWall.x,fixedPosWall.y);
