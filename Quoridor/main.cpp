@@ -145,10 +145,10 @@ int main()
 
 
 
-	pawn[0] = sf::Vector2i(0, 4);//blue
-	pawn[1] = sf::Vector2i(8, 4);//green
-	pawn[2] = sf::Vector2i(4, 0);//yellow
-	pawn[3] = sf::Vector2i(4, 8);//red
+	pawn[0] = sf::Vector2i(3, 4);//blue
+	pawn[1] = sf::Vector2i(5, 4);//green
+	pawn[2] = sf::Vector2i(4, 3);//yellow
+	pawn[3] = sf::Vector2i(4, 5);//red
 	sf::Vector2i nextPawn[4];
 	sf::Vector2i posPawn[4];
 	for (int i = 0; i <= nrOfPlayers - 1; i++)
@@ -271,20 +271,25 @@ int main()
 							//placed above another player
 							if(isOccupiedByPawn(nextPawn[turn]))
 								nextPawn[turn] = pawn[turn];
-							//diagonal move
-							else if (abs(deltaPawn.x - deltaPawn.y) != 1)
-								nextPawn[turn] = pawn[turn];
+
 							//more than one position
 							else if (deltaPawn.x > 1 || deltaPawn.y > 1)
 							{
-								nextPawn[turn] = pawn[turn];
+								//hop above a pawn
+								//vertically
 								if (deltaPawn.y == 0 && deltaPawn.x == 2)
 								{
-									deltaPawn.x = ((pawn[turn].x - nextPawn[turn].x) > 0 - (pawn[turn].x - nextPawn[turn].x) < 0);
-
+									deltaPawn.x = (((pawn[turn].x - nextPawn[turn].x) > 0) - ((pawn[turn].x - nextPawn[turn].x) < 0));
+									std::cout << deltaPawn.x;
+									if(!isOccupiedByPawn(sf::Vector2i(pawn[turn].x - deltaPawn.x,pawn[turn].y)))
+										nextPawn[turn] = pawn[turn];
 								}
+								else
+									nextPawn[turn] = pawn[turn];
 							}
-								
+							//diagonal move
+							else if (abs(deltaPawn.x - deltaPawn.y) != 1)
+								nextPawn[turn] = pawn[turn];
 
 							//check for wall
 							if (nextPawn[turn] != pawn[turn])
@@ -298,7 +303,6 @@ int main()
 								pawn[turn] = nextPawn[turn];
 								posPawn[turn] = sf::Vector2i(marginWidth + sizeTotal*pawn[turn].y, widthWall + sizeTotal*pawn[turn].x);
 								sPawn[turn].setPosition(posPawn[turn].x, posPawn[turn].y);
-								std::cout << "pawn.y = " << pawn[turn].y << " pawn.x = " << pawn[turn].x << " ";
 								nextTurn(turn);
 							}
 							else
