@@ -5,7 +5,8 @@
 
 int wallMatrix[17][9];
 int nrOfPlayers = 4;
-
+//// DON'T LET WALLS TO COLIDE EACHOTHER ////
+int crossWalls[8][8];
 /////// DISPLAY PLAYER'S TURN IMAGES ////////
 sf::Texture tTurn[4];
 sf::Sprite sTurn;
@@ -52,7 +53,8 @@ void nextTurn(int &currentTurn)
 }
 bool funWallCanBePlaced(int rotate,sf::Vector2i posWall)
 {
-
+	if (crossWalls[posWall.x][posWall.y] == 1)
+		return 0;
 	if (rotate == 0)
 	{
 		if (wallMatrix[posWall.y * 2][posWall.x] != 0 || wallMatrix[posWall.y * 2 + 2][posWall.x] != 0)
@@ -191,6 +193,7 @@ int main()
 				if(e.key.code == sf::Mouse::Left)
 					if (JustOneWall == true && funWallCanBePlaced(rotate,posWall))
 					{
+						crossWalls[posWall.x][posWall.y] = 1;
 						sWalls[nrOfPlacedWalls + 1].setTexture(tWall);
 						JustOneWall = false;
 						maxWallsPerPlayer[turn] -= 1;
