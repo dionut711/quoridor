@@ -146,16 +146,16 @@ int main()
 
 	////////// WINNER ///////////
 	sf::Texture twin1, twin2, twin3, twin4;
-	twin1.loadFromFile("images/BluePawnWin.png");
-	twin2.loadFromFile("images/GreenPawnWin.png");
-	twin3.loadFromFile("images/YellowPawnWin.png");
-	twin4.loadFromFile("images/RedPawnWin.png");
+	twin1.loadFromFile("images/BluePawnWin1.png");
+	twin2.loadFromFile("images/GreenPawnWin1.png");
+	twin3.loadFromFile("images/YellowPawnWin1.png");
+	twin4.loadFromFile("images/RedPawnWin1.png");
 	sf::Sprite sWin;
 
-	pawn[0] = sf::Vector2i(3, 4);//blue
-	pawn[1] = sf::Vector2i(5, 4);//green
-	pawn[2] = sf::Vector2i(4, 3);//yellow
-	pawn[3] = sf::Vector2i(4, 5);//red
+	pawn[0] = sf::Vector2i(0, 4);//blue
+	pawn[1] = sf::Vector2i(8, 4);//green
+	pawn[2] = sf::Vector2i(4, 0);//yellow
+	pawn[3] = sf::Vector2i(4, 8);//red
 	sf::Vector2i nextPawn[4];
 	sf::Vector2i posPawn[4];
 	for (int i = 0; i <= nrOfPlayers - 1; i++)
@@ -352,7 +352,7 @@ int main()
 				else if (pawn[2].y == 8)
 					sWin.setTexture(twin3);
 				else if (pawn[3].y == 0)
-					sWin.setTexture(twin1);
+					sWin.setTexture(twin4);
 				winner = 2;
 			}
 			if (winner == 2)
