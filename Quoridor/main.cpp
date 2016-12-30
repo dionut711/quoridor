@@ -11,7 +11,8 @@ int crossWalls[8][8];
 /////// DISPLAY PLAYER'S TURN IMAGES ////////
 sf::Texture tTurn[4];
 sf::Sprite sTurn;
-
+///// no winner
+int winner;
 
 bool isOccupiedByPawn(sf::Vector2i pos)
 {
@@ -143,7 +144,13 @@ int main()
 
 	bool isMove = false;
 
-
+	////////// WINNER ///////////
+	sf::Texture twin1, twin2, twin3, twin4;
+	twin1.loadFromFile("images/BluePawnWin.png");
+	twin2.loadFromFile("images/GreenPawnWin.png");
+	twin3.loadFromFile("images/YellowPawnWin.png");
+	twin4.loadFromFile("images/RedPawnWin.png");
+	sf::Sprite sWin;
 
 	pawn[0] = sf::Vector2i(3, 4);//blue
 	pawn[1] = sf::Vector2i(5, 4);//green
@@ -313,6 +320,8 @@ int main()
 
 						}
 				}
+				else
+				winner = 1;
 			}
 
 			if (JustOneWall && posWall.x >= 0 && posWall.y >= 0 && posWall.x <= 7 && posWall.y <= 7)
@@ -335,9 +344,19 @@ int main()
 			window.draw(sExit1);
 			for (int i = 0; i <= nrOfPlayers - 1; i++)
 				window.draw(sPawn[i]);
-			if (pawn[0].x == 8 || pawn[1].x == 0 || pawn[2].y == 8 || pawn[3].y == 0) {
-				window.clear(sf::Color::Black);
+			if (winner == 1) {
+				if (pawn[0].x == 8)
+					sWin.setTexture(twin1);
+				else if (pawn[1].x == 0)
+					sWin.setTexture(twin2);
+				else if (pawn[2].y == 8)
+					sWin.setTexture(twin3);
+				else if (pawn[3].y == 0)
+					sWin.setTexture(twin1);
+				winner = 2;
 			}
+			if (winner == 2)
+				window.draw(sWin);
 
 			window.display();
 	}
