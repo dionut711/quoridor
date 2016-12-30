@@ -3,6 +3,7 @@
 #include <cmath>
 #include <iostream>
 
+sf::Vector2i pawn[4];
 int wallMatrix[17][9];
 int nrOfPlayers = 4;
 //// DON'T LET WALLS TO COLIDE EACHOTHER ////
@@ -12,7 +13,13 @@ sf::Texture tTurn[4];
 sf::Sprite sTurn;
 
 
-
+bool isOccupiedByPawn(sf::Vector2i pos)
+{
+	for (int i = 0; i <= nrOfPlayers - 1; i++)
+		if (pos.x == pawn[i].x && pos.y == pawn[i].y)
+			return 1;
+	return 0;
+}
 bool funCheckforWall(sf::Vector2i posStart, sf::Vector2i posEnd)
 {
 	if (posStart.x == posEnd.x)
@@ -137,7 +144,7 @@ int main()
 	bool isMove = false;
 
 
-	sf::Vector2i pawn[4];
+
 	pawn[0] = sf::Vector2i(0, 4);//blue
 	pawn[1] = sf::Vector2i(8, 4);//green
 	pawn[2] = sf::Vector2i(4, 0);//yellow
@@ -260,14 +267,24 @@ int main()
 								nextPawn[turn].y = 8;
 
 							sf::Vector2i deltaPawn = sf::Vector2i(abs(pawn[turn].x - nextPawn[turn].x), abs(pawn[turn].y - nextPawn[turn].y));
+
+							//placed above another player
+							if(isOccupiedByPawn(nextPawn[turn]))
+								nextPawn[turn] = pawn[turn];
 							//diagonal move
-							if (abs(deltaPawn.x - deltaPawn.y) != 1)
+							else if (abs(deltaPawn.x - deltaPawn.y) != 1)
 								nextPawn[turn] = pawn[turn];
 							//more than one position
 							else if (deltaPawn.x > 1 || deltaPawn.y > 1)
+							{
 								nextPawn[turn] = pawn[turn];
+								if (deltaPawn.y == 0 && deltaPawn.x == 2)
+								{
+									deltaPawn.x = ((pawn[turn].x - nextPawn[turn].x) > 0 - (pawn[turn].x - nextPawn[turn].x) < 0);
 
-							
+								}
+							}
+								
 
 							//check for wall
 							if (nextPawn[turn] != pawn[turn])
