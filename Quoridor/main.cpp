@@ -259,13 +259,15 @@ int main()
 							else if (nextPawn[turn].y > 8)
 								nextPawn[turn].y = 8;
 
+							sf::Vector2i deltaPawn = sf::Vector2i(abs(pawn[turn].x - nextPawn[turn].x), abs(pawn[turn].y - nextPawn[turn].y));
+							//diagonal move
+							if (abs(deltaPawn.x - deltaPawn.y) != 1)
+								nextPawn[turn] = pawn[turn];
 							//more than one position
-							if (abs(pawn[turn].x - nextPawn[turn].x) > 1 || abs(pawn[turn].y - nextPawn[turn].y) > 1)
+							else if (deltaPawn.x > 1 || deltaPawn.y > 1)
 								nextPawn[turn] = pawn[turn];
 
-							//diagonal move
-							else if (abs(abs(pawn[turn].x - nextPawn[turn].x) - abs(pawn[turn].y - nextPawn[turn].y)) != 1)
-								nextPawn[turn] = pawn[turn];
+							
 
 							//check for wall
 							if (nextPawn[turn] != pawn[turn])
