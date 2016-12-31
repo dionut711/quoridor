@@ -5,7 +5,7 @@
 
 sf::Vector2i pawn[4];
 int wallMatrix[17][9];
-int nrOfPlayers = 4;
+int nrOfPlayers = 2;
 //// DON'T LET WALLS TO COLIDE EACHOTHER ////
 int crossWalls[8][8];
 /////// DISPLAY PLAYER'S TURN IMAGES ////////
@@ -95,6 +95,16 @@ int main()
 	sf::Sprite sWalls[42];
 	int nrOfPlacedWalls = 0;
 	int WallsPlaceableLimit = 40;
+
+	////// [images]Display number of walls for each player /////
+	sf::Texture tPlayerWalls;
+	tPlayerWalls.loadFromFile("images/Walls.png");
+	sf::Sprite sPlayerWalls[11];
+	for (int i = 0;i <= 10;i++) {
+		sPlayerWalls[i].setTexture(tPlayerWalls);
+		sPlayerWalls[i].setTextureRect(sf::IntRect(i * 99, 0 , 99 , 83));
+		sPlayerWalls[i].setPosition(20, 305);
+	}
 
 	//////// PLACE THE WALL AT A PERFECT POSITION /////////
 	int leftMarginForPlacingWalls = 181;
@@ -343,6 +353,7 @@ int main()
 
 			window.clear(sf::Color::White);
 			window.draw(sBoard);
+			window.draw(sPlayerWalls[maxWallsPerPlayer[turn]]);
 
 			if (nrOfPlacedWalls > WallsPlaceableLimit)
 				nrOfPlacedWalls = WallsPlaceableLimit;
