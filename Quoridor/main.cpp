@@ -292,6 +292,14 @@ int main()
 										nextPawn[turn] = pawn[turn];
 								}
 								else
+									//horizontally
+									if (deltaPawn.y == 2 && deltaPawn.x == 0)
+									{
+										deltaPawn.y = (((pawn[turn].y - nextPawn[turn].y) > 0) - ((pawn[turn].y - nextPawn[turn].y) < 0));
+										if (!isOccupiedByPawn(sf::Vector2i(pawn[turn].x, pawn[turn].y - deltaPawn.y)))
+											nextPawn[turn] = pawn[turn];
+									}else
+
 									nextPawn[turn] = pawn[turn];
 							}
 							//diagonal move
