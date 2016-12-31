@@ -162,9 +162,12 @@ int main()
 		sPawn[i].setPosition(marginWidth + sizeTotal*pawn[i].y, widthWall + sizeTotal*pawn[i].x);
 
 	//// SET WALLS FOR PLAYERS ////
-	for (int i = 0;i < nrOfPlayers;i++)
-		maxWallsPerPlayer[i] = 10;
-
+	for (int i = 0;i < nrOfPlayers;i++) {
+		int maxNumber = 10;
+		if (nrOfPlayers == 4)
+			maxNumber = 5;
+		maxWallsPerPlayer[i] = maxNumber;
+	}
 //////////////////// ACTION WHEN WINDOW IS OPEN //////////////////////////
 	while (window.isOpen())
 	{
