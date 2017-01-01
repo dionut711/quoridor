@@ -5,7 +5,7 @@
 
 sf::Vector2i pawn[4];
 int wallMatrix[17][9];
-int nrOfPlayers = 2;
+int nrOfPlayers = 4;
 //// DON'T LET WALLS TO COLIDE EACHOTHER ////
 int crossWalls[8][8];
 /////// DISPLAY PLAYER'S TURN IMAGES ////////
@@ -162,10 +162,10 @@ int main()
 	twin4.loadFromFile("images/RedPawnWin1.png");
 	sf::Sprite sWin;
 
-	pawn[0] = sf::Vector2i(0, 4);//blue
-	pawn[1] = sf::Vector2i(8, 4);//green
-	pawn[2] = sf::Vector2i(4, 0);//yellow
-	pawn[3] = sf::Vector2i(4, 8);//red
+	pawn[0] = sf::Vector2i(3, 4);//blue
+	pawn[1] = sf::Vector2i(4, 4);//green
+	pawn[2] = sf::Vector2i(4, 3);//yellow
+	pawn[3] = sf::Vector2i(4, 5);//red
 	sf::Vector2i nextPawn[4];
 	sf::Vector2i posPawn[4];
 	for (int i = 0; i <= nrOfPlayers - 1; i++)
@@ -250,7 +250,7 @@ int main()
 								sWalls[nrOfPlacedWalls].setTexture(tWall);
 								sWalls[nrOfPlacedWalls].setOrigin(7.5, 68.5);
 								nrOfPlacedWalls += 1;
-								std::cout << nrOfPlacedWalls << " ";
+								//std::cout << nrOfPlacedWalls << " ";
 								JustOneWall = true;
 								rotate = 0;
 							}
@@ -286,41 +286,50 @@ int main()
 							else if (nextPawn[turn].y > 8)
 								nextPawn[turn].y = 8;
 
-							sf::Vector2i deltaPawn = sf::Vector2i(abs(pawn[turn].x - nextPawn[turn].x), abs(pawn[turn].y - nextPawn[turn].y));
-
+							sf::Vector2i deltaPawn = sf::Vector2i(pawn[turn].x - nextPawn[turn].x, pawn[turn].y - nextPawn[turn].y);
+							sf::Vector2i adjacentPawn = sf::Vector2i(pawn[turn].x - ((deltaPawn.x > 0) - (deltaPawn.x < 0)), pawn[turn].y - ((deltaPawn.y > 0) - (deltaPawn.y < 0)));
+							int tempshit = 2 * adjacentPawn.x + 1;
+							std::cout << tempshit;
 							//placed above another player
 							if(isOccupiedByPawn(nextPawn[turn]))
 								nextPawn[turn] = pawn[turn];
 
-							//more than one position
-							else if (deltaPawn.x > 1 || deltaPawn.y > 1)
-							{
-								//hop above a pawn
+							//hop above a pawn
 								//vertically
-								if (deltaPawn.y == 0 && deltaPawn.x == 2)
-								{
-									deltaPawn.x = (((pawn[turn].x - nextPawn[turn].x) > 0) - ((pawn[turn].x - nextPawn[turn].x) < 0));
-									std::cout << deltaPawn.x;
-									if(!isOccupiedByPawn(sf::Vector2i(pawn[turn].x - deltaPawn.x,pawn[turn].y)))
-										nextPawn[turn] = pawn[turn];
-								}
-								else
-									//horizontally
-									if (deltaPawn.y == 2 && deltaPawn.x == 0)
-									{
-										deltaPawn.y = (((pawn[turn].y - nextPawn[turn].y) > 0) - ((pawn[turn].y - nextPawn[turn].y) < 0));
-										if (!isOccupiedByPawn(sf::Vector2i(pawn[turn].x, pawn[turn].y - deltaPawn.y)))
-											nextPawn[turn] = pawn[turn];
-									}else
-
+							else if (deltaPawn.y == 0 && abs(deltaPawn.x) == 2 && wallMatrix[2 * adjacentPawn.x - ((deltaPawn.x > 0) - (deltaPawn.x < 0))][pawn[turn].y] == 0)
+							{
+								if (!isOccupiedByPawn(sf::Vector2i(adjacentPawn.x, pawn[turn].y)))
 									nextPawn[turn] = pawn[turn];
 							}
+							
+							else if (abs(deltaPawn.y) == 1 && abs(deltaPawn.x) == 1 && wallMatrix[2 * adjacentPawn.x - ((deltaPawn.x > 0) - (deltaPawn.x < 0))][pawn[turn].y] != 0)
+							//else if (abs(deltaPawn.y) == 1 && abs(deltaPawn.x) == 1)
+							{
+								std::cout << "im here";
+								if (!isOccupiedByPawn(sf::Vector2i(adjacentPawn.x, pawn[turn].y)))
+									nextPawn[turn] = pawn[turn];
+							}
+
+							//more than one position
+							else if (abs(deltaPawn.x) > 1 || abs(deltaPawn.y) > 1)
+							{
+								/*
+									//horizontally
+								else if (deltaPawn.y == 2 && deltaPawn.x == 0)
+								{
+									deltaPawn.y = (((pawn[turn].y - nextPawn[turn].y) > 0) - ((pawn[turn].y - nextPawn[turn].y) < 0));
+									if (!isOccupiedByPawn(sf::Vector2i(pawn[turn].x, pawn[turn].y - deltaPawn.y)))
+										nextPawn[turn] = pawn[turn];
+								}
+								*/
+								nextPawn[turn] = pawn[turn];
+							}
 							//diagonal move
-							else if (abs(deltaPawn.x - deltaPawn.y) != 1)
+							else if (abs(abs(deltaPawn.x) - abs(deltaPawn.y)) != 1)
 								nextPawn[turn] = pawn[turn];
 
 							//check for wall
-							if (nextPawn[turn] != pawn[turn])
+							else if (nextPawn[turn] != pawn[turn])
 								if (funCheckforWall(pawn[turn], nextPawn[turn]))
 									nextPawn[turn] = pawn[turn];
 
@@ -342,7 +351,7 @@ int main()
 						}
 				}
 				else
-				winner = 1;
+					winner = 1;
 			}
 
 			if (JustOneWall && posWall.x >= 0 && posWall.y >= 0 && posWall.x <= 7 && posWall.y <= 7)
