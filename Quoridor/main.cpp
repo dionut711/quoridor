@@ -304,10 +304,12 @@ int main()
 								else if (funCheckforWall(pawn[turn], sf::Vector2i(adjacentPawn.x, pawn[turn].y)))
 									nextPawn[turn] = pawn[turn];
 							}
-							else if (abs(deltaPawn.y) == 1 && abs(deltaPawn.x) == 1 && wallMatrix[2 * adjacentPawn.x - dirPawn.x][pawn[turn].y] != 0)
-							//else if (abs(deltaPawn.y) == 1 && abs(deltaPawn.x) == 1)
+							//else if (abs(deltaPawn.y) == 1 && abs(deltaPawn.x) == 1 && wallMatrix[2 * adjacentPawn.x - dirPawn.x][pawn[turn].y] != 0)
+							else if (abs(deltaPawn.y) == 1 && abs(deltaPawn.x) == 1)
 							{
-								if (!isOccupiedByPawn(sf::Vector2i(adjacentPawn.x, pawn[turn].y)))
+								if(wallMatrix[2 * adjacentPawn.x - dirPawn.x][pawn[turn].y] == 0)
+									nextPawn[turn] = pawn[turn];
+								else if (!isOccupiedByPawn(sf::Vector2i(adjacentPawn.x, pawn[turn].y)))
 									nextPawn[turn] = pawn[turn];
 								//check for wall
 								else if (funCheckforWall(pawn[turn], sf::Vector2i(adjacentPawn.x, pawn[turn].y)))
