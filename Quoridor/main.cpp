@@ -217,6 +217,16 @@ int main()
 					////////// PLACE THE WALL ////////  
 					posWall.x = (posMouse.x - leftMarginForPlacingWalls) / wallActiveZone;
 					posWall.y = (posMouse.y - topMarginForPlacingWalls) / wallActiveZone;
+					//Clamp
+					if (posWall.x < 0)
+						posWall.x = 0;
+					else if (posWall.x > 7)
+						posWall.x = 7;
+					if (posWall.y < 0)
+						posWall.y = 0;
+					else if (posWall.y > 7)
+						posWall.y = 7;
+
 					fixedPosWall.x = 219 + wallActiveZone*posWall.x;
 					fixedPosWall.y = 81 + wallActiveZone*posWall.y;
 					if (e.type == sf::Event::MouseButtonPressed)
@@ -365,7 +375,7 @@ int main()
 					winner = 1;
 			}
 
-			if (JustOneWall && posWall.x >= 0 && posWall.y >= 0 && posWall.x <= 7 && posWall.y <= 7)
+			if (JustOneWall)
 				sWalls[nrOfPlacedWalls - 1].setPosition(fixedPosWall.x, fixedPosWall.y);
 
 			if (isMove)
