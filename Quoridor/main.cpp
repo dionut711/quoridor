@@ -163,8 +163,8 @@ int main()
 	sf::Sprite sWin;
 
 	pawn[0] = sf::Vector2i(3, 4);//blue
-	pawn[1] = sf::Vector2i(4, 4);//green
-	pawn[2] = sf::Vector2i(4, 3);//yellow
+	pawn[1] = sf::Vector2i(5, 4);//green
+	pawn[2] = sf::Vector2i(4, 4);//yellow
 	pawn[3] = sf::Vector2i(4, 5);//red
 	sf::Vector2i nextPawn[4];
 	sf::Vector2i posPawn[4];
@@ -304,7 +304,6 @@ int main()
 								else if (funCheckforWall(pawn[turn], sf::Vector2i(adjacentPawn.x, pawn[turn].y)))
 									nextPawn[turn] = pawn[turn];
 							}
-							
 							else if (abs(deltaPawn.y) == 1 && abs(deltaPawn.x) == 1 && wallMatrix[2 * adjacentPawn.x - dirPawn.x][pawn[turn].y] != 0)
 							//else if (abs(deltaPawn.y) == 1 && abs(deltaPawn.x) == 1)
 							{
@@ -315,23 +314,12 @@ int main()
 									nextPawn[turn] = pawn[turn];
 							}
 								//horizontally
-							//else if (deltaPawn.x == 0 && abs(deltaPawn.y) == 2 && wallMatrix[2 * pawn[turn].x][pawn[turn].y] == 0)
-							else if (deltaPawn.x == 0 && abs(deltaPawn.y) == 2)
+							else if (deltaPawn.x == 0 && abs(deltaPawn.y) == 2 && wallMatrix[2 * pawn[turn].x][adjacentPawn.y - (dirPawn.y > 0)] == 0)
 							{
-								if (!isOccupiedByPawn(sf::Vector2i(adjacentPawn.x, pawn[turn].y)))
+								if (!isOccupiedByPawn(sf::Vector2i(pawn[turn].x, adjacentPawn.y)))
 									nextPawn[turn] = pawn[turn];
 								//check for wall
-								else if (funCheckforWall(pawn[turn], sf::Vector2i(adjacentPawn.x, pawn[turn].y)))
-									nextPawn[turn] = pawn[turn];
-							}
-
-							else if (abs(deltaPawn.y) == 1 && abs(deltaPawn.x) == 1 && wallMatrix[2 * adjacentPawn.x - dirPawn.x][pawn[turn].y] != 0)
-								//else if (abs(deltaPawn.y) == 1 && abs(deltaPawn.x) == 1)
-							{
-								if (!isOccupiedByPawn(sf::Vector2i(adjacentPawn.x, pawn[turn].y)))
-									nextPawn[turn] = pawn[turn];
-								//check for wall
-								else if (funCheckforWall(pawn[turn], sf::Vector2i(adjacentPawn.x, pawn[turn].y)))
+								else if (funCheckforWall(pawn[turn], sf::Vector2i(pawn[turn].x, adjacentPawn.y)))
 									nextPawn[turn] = pawn[turn];
 							}
 
