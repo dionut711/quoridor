@@ -287,26 +287,51 @@ int main()
 								nextPawn[turn].y = 8;
 
 							sf::Vector2i deltaPawn = sf::Vector2i(pawn[turn].x - nextPawn[turn].x, pawn[turn].y - nextPawn[turn].y);
-							sf::Vector2i adjacentPawn = sf::Vector2i(pawn[turn].x - ((deltaPawn.x > 0) - (deltaPawn.x < 0)), pawn[turn].y - ((deltaPawn.y > 0) - (deltaPawn.y < 0)));
-							int tempshit = 2 * adjacentPawn.x + 1;
-							std::cout << tempshit;
+							sf::Vector2i dirPawn = sf::Vector2i(((deltaPawn.x > 0) - (deltaPawn.x < 0)), ((deltaPawn.y > 0) - (deltaPawn.y < 0)));
+							sf::Vector2i adjacentPawn = sf::Vector2i(pawn[turn].x - dirPawn.x, pawn[turn].y - dirPawn.y);
+							
 							//placed above another player
 							if(isOccupiedByPawn(nextPawn[turn]))
 								nextPawn[turn] = pawn[turn];
 
 							//hop above a pawn
 								//vertically
-							else if (deltaPawn.y == 0 && abs(deltaPawn.x) == 2 && wallMatrix[2 * adjacentPawn.x - ((deltaPawn.x > 0) - (deltaPawn.x < 0))][pawn[turn].y] == 0)
+							else if (deltaPawn.y == 0 && abs(deltaPawn.x) == 2 && wallMatrix[2 * adjacentPawn.x - dirPawn.x][pawn[turn].y] == 0)
 							{
 								if (!isOccupiedByPawn(sf::Vector2i(adjacentPawn.x, pawn[turn].y)))
 									nextPawn[turn] = pawn[turn];
+								//check for wall
+								else if (funCheckforWall(pawn[turn], sf::Vector2i(adjacentPawn.x, pawn[turn].y)))
+									nextPawn[turn] = pawn[turn];
 							}
 							
-							else if (abs(deltaPawn.y) == 1 && abs(deltaPawn.x) == 1 && wallMatrix[2 * adjacentPawn.x - ((deltaPawn.x > 0) - (deltaPawn.x < 0))][pawn[turn].y] != 0)
+							else if (abs(deltaPawn.y) == 1 && abs(deltaPawn.x) == 1 && wallMatrix[2 * adjacentPawn.x - dirPawn.x][pawn[turn].y] != 0)
 							//else if (abs(deltaPawn.y) == 1 && abs(deltaPawn.x) == 1)
 							{
-								std::cout << "im here";
 								if (!isOccupiedByPawn(sf::Vector2i(adjacentPawn.x, pawn[turn].y)))
+									nextPawn[turn] = pawn[turn];
+								//check for wall
+								else if (funCheckforWall(pawn[turn], sf::Vector2i(adjacentPawn.x, pawn[turn].y)))
+									nextPawn[turn] = pawn[turn];
+							}
+								//horizontally
+							//else if (deltaPawn.x == 0 && abs(deltaPawn.y) == 2 && wallMatrix[2 * pawn[turn].x][pawn[turn].y] == 0)
+							else if (deltaPawn.x == 0 && abs(deltaPawn.y) == 2)
+							{
+								if (!isOccupiedByPawn(sf::Vector2i(adjacentPawn.x, pawn[turn].y)))
+									nextPawn[turn] = pawn[turn];
+								//check for wall
+								else if (funCheckforWall(pawn[turn], sf::Vector2i(adjacentPawn.x, pawn[turn].y)))
+									nextPawn[turn] = pawn[turn];
+							}
+
+							else if (abs(deltaPawn.y) == 1 && abs(deltaPawn.x) == 1 && wallMatrix[2 * adjacentPawn.x - dirPawn.x][pawn[turn].y] != 0)
+								//else if (abs(deltaPawn.y) == 1 && abs(deltaPawn.x) == 1)
+							{
+								if (!isOccupiedByPawn(sf::Vector2i(adjacentPawn.x, pawn[turn].y)))
+									nextPawn[turn] = pawn[turn];
+								//check for wall
+								else if (funCheckforWall(pawn[turn], sf::Vector2i(adjacentPawn.x, pawn[turn].y)))
 									nextPawn[turn] = pawn[turn];
 							}
 
