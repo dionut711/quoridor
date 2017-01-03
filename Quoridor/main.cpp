@@ -74,6 +74,65 @@ bool funWallCanBePlaced(int wallRotation,sf::Vector2i posWall)
 			return 0;
 	return 1;
 }
+bool funWallBlocksPlayer()
+{
+	int dl[4] = { -1, 0, 1, 0 };
+	int dc[4] = { 0, 1, 0, -1 };
+	int prim, ultim, p[2], v[2], c[81][2];
+	bool foundPath;
+
+	int board[9][9];
+	for (int g = 0; g <= nrOfPlayers - 1; g++)
+	{
+		foundPath = false;
+		c[0][0] = pawn[g].x;
+		c[0][1] = pawn[g].y;
+		prim = ultim = 0;
+
+		for (int i = 0; i <= 8; i++)
+			for (int j = 0; j <= 8; j++)
+				board[i][j] = 0;
+		for (int i = 0; i <= nrOfPlayers - 1; i++)
+			board[pawn[i].x][pawn[i].y] = 1;
+
+
+		while (prim <= ultim && !foundPath)
+		{
+			p[0] = c[prim][0];
+			p[1] = c[prim][1];
+			prim++;
+
+			for (int k = 0; k <= 3; k++)
+			{
+				v[0] = p[0] + dl[k];
+				v[1] = p[1] + dc[k];
+
+				if (board[v[0]][v[1]] == 0 && v[0] >= 0 && v[0] <= 8 && v[1] >= 0 && v[1] <= 8)
+				{
+					board[v[0]][v[1]] = board[p[0]][p[1]] + 1;
+
+					ultim++;
+					c[ultim][0] = v[0];
+					c[ultim][1] = v[1];
+					//check if arrived at the end
+					if (k == 0 || k == 1)
+						if (v[0] == (1 - k) * 8)
+							foundPath = true;
+					else if (k == 2 || k == 3)
+						if (v[1] == (3 - k) * 8)
+							foundPath = true;
+				}
+			}
+		}
+
+		if (foundPath == false)
+			return false;
+	}
+
+
+	return true;
+}
+
 
 int main()
 {
