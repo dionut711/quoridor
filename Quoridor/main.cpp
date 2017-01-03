@@ -4,8 +4,10 @@
 #include <iostream>
 
 sf::Vector2i pawn[4];
+sf::Sprite sPawn[4];
+
 int wallMatrix[17][9];
-int nrOfPlayers = 4;
+int nrOfPlayers = 2;
 //// DON'T LET WALLS TO COLIDE EACHOTHER ////
 int crossWalls[8][8];
 /////// DISPLAY PLAYER'S TURN IMAGES ////////
@@ -54,12 +56,7 @@ bool funCheckforWall(sf::Vector2i posStart, sf::Vector2i posEnd)
 	}
 	return 0;
 }
-void nextTurn(int &currentTurn)
-{
-	currentTurn = (currentTurn + 1) % nrOfPlayers;
-	sTurn.setTexture(tTurn[currentTurn]);
-	//Check if next turn is AI
-}
+
 bool funWallCanBePlaced(int wallRotation,sf::Vector2i posWall)
 {
 	if (crossWalls[posWall.x][posWall.y] == 1)
@@ -130,7 +127,92 @@ bool funWallBlocksPlayer()
 	}
 	return false;
 }
+sf::Vector2i funReverseLee(int board[9][9], sf::Vector2i x)
+{
+	int dl[4] = { -1, 0, 1, 0 };
+	int dc[4] = { 0, 1, 0, -1 };
+	if (board[x.x][x.y] == 2)
+		return x;
+	sf::Vector2i mn(x.x, x.y);
+	for (int i = 0; i <= 3; i++)
+	{
+		if (board[mn.x][mn.y] > board[x.x + dl[i]][x.y + dc[i]] && board[x.x + dl[i]][x.y + dc[i]] > 1)
+		{
+			mn.x = x.x + dl[i];
+			mn.y = x.y + dc[i];
+		}
+	}
+	return funReverseLee(board, mn);
+}
+sf::Vector2i funAImove(int turn)
+{
+	sf::Vector2i nextPawn;
+	int dl[4] = { -1, 0, 1, 0 };
+	int dc[4] = { 0, 1, 0, -1 };
+	int prim, ultim, p[2], v[2], c[81][2];
 
+	int board[9][9];
+		c[0][0] = pawn[turn].x;
+		c[0][1] = pawn[turn].y;
+		prim = ultim = 0;
+
+		for (int i = 0; i <= 8; i++)
+			for (int j = 0; j <= 8; j++)
+				board[i][j] = 0;
+		for (int i = 0; i <= nrOfPlayers - 1; i++)
+			board[pawn[i].x][pawn[i].y] = 1;
+
+		while (prim <= ultim)
+		{
+			p[0] = c[prim][0];
+			p[1] = c[prim][1];
+			prim++;
+
+			for (int k = 0; k <= 3; k++)
+			{
+				v[0] = p[0] + dl[k];
+				v[1] = p[1] + dc[k];
+
+				if (board[v[0]][v[1]] == 0 && v[0] >= 0 && v[0] <= 8 && v[1] >= 0 && v[1] <= 8 && !funCheckforWall(sf::Vector2i(p[0], p[1]), sf::Vector2i(v[0], v[1])))
+				{
+					board[v[0]][v[1]] = board[p[0]][p[1]] + 1;
+
+					ultim++;
+					c[ultim][0] = v[0];
+					c[ultim][1] = v[1];
+					if (turn == 0 || turn == 1)
+						if (v[0] == (1 - turn) * 8)
+						{
+							return funReverseLee(board, sf::Vector2i(v[0], v[1]));
+						}
+
+					if (turn == 2 || turn == 3)
+						if (v[1] == (3 - turn) * 8)
+							return funReverseLee(board, sf::Vector2i(v[0], v[1]));
+				}
+			}
+
+	}
+	
+}
+void nextTurn(int &currentTurn)
+{
+	currentTurn = (currentTurn + 1) % nrOfPlayers;
+	sTurn.setTexture(tTurn[currentTurn]);
+	//Check if next turn is AI
+	if (currentTurn == 1)
+	{
+		sf::Vector2i nextPawn = funAImove(currentTurn);
+		std::cout << "ai finished";
+		pawn[currentTurn].x = nextPawn.x;
+		pawn[currentTurn].y = nextPawn.y;
+
+
+		sf::Vector2i posPawn = sf::Vector2i(155 + 76*pawn[currentTurn].y, 15 + 76*pawn[currentTurn].x);
+		sPawn[currentTurn].setPosition(posPawn.x, posPawn.y);
+		nextTurn(currentTurn);
+	}
+}
 
 int main()
 {
@@ -205,7 +287,7 @@ int main()
 	tPawn[1].loadFromFile("images/QuoridorPawn1.png");
 	tPawn[2].loadFromFile("images/QuoridorPawn2.png");
 	tPawn[3].loadFromFile("images/QuoridorPawn3.png");
-	sf::Sprite sPawn[4];
+	
 	for (int i = 0;i <= nrOfPlayers - 1;i++)
 		sPawn[i].setTexture(tPawn[i]);
 
