@@ -115,12 +115,21 @@ bool funWallBlocksPlayer()
 					c[ultim][0] = v[0];
 					c[ultim][1] = v[1];
 					//check if arrived at the end
-					if (k == 0 || k == 1)
-						if (v[0] == (1 - k) * 8)
+					//std::cout << g << ": "<< v[0] << " " << v[1] << std::endl;
+					//std::cout << ((1 - g) * 8) << std::endl << std::endl;
+					if (g == 0 || g == 1)
+						if (v[0] == (1 - g) * 8)
+						{
 							foundPath = true;
-					else if (k == 2 || k == 3)
-						if (v[1] == (3 - k) * 8)
+							std::cout << "found path for " << g << std::endl;
+						}
+							
+					if (g == 2 || g == 3)
+						if (v[1] == (3 - g) * 8)
+						{
 							foundPath = true;
+							std::cout << "found path for " << g << std::endl;
+						}
 				}
 			}
 		}
@@ -128,7 +137,6 @@ bool funWallBlocksPlayer()
 		if (foundPath == false)
 			return false;
 	}
-
 
 	return true;
 }
@@ -291,7 +299,7 @@ int main()
 					fixedPosWall.y = 81 + wallActiveZone*posWall.y;
 					if (e.type == sf::Event::MouseButtonPressed)
 						if (e.key.code == sf::Mouse::Left)
-							if (JustOneWall == true && funWallCanBePlaced(wallRotation, posWall))
+							if (JustOneWall == true && funWallCanBePlaced(wallRotation, posWall) && funWallBlocksPlayer())
 							{
 								crossWalls[posWall.x][posWall.y] = 1;
 								sWalls[nrOfPlacedWalls + 1].setTexture(tWall);
