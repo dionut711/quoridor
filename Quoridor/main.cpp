@@ -60,11 +60,11 @@ void nextTurn(int &currentTurn)
 	sTurn.setTexture(tTurn[currentTurn]);
 	//Check if next turn is AI
 }
-bool funWallCanBePlaced(int rotate,sf::Vector2i posWall)
+bool funWallCanBePlaced(int wallRotation,sf::Vector2i posWall)
 {
 	if (crossWalls[posWall.x][posWall.y] == 1)
 		return 0;
-	if (rotate == 0)
+	if (wallRotation == 0)
 	{
 		if (wallMatrix[posWall.y * 2][posWall.x] != 0 || wallMatrix[posWall.y * 2 + 2][posWall.x] != 0)
 			return 0;
@@ -79,7 +79,7 @@ int main()
 {
 	int turn = 0;
 	int maxWallsPerPlayer[4];
-	int rotate = 0;
+	int wallRotation = 0;
 
 	int sizeSquare = 61, widthWall = 15, marginWidth = 155;
 	int sizeTotal = sizeSquare + widthWall;
@@ -162,10 +162,10 @@ int main()
 	twin4.loadFromFile("images/RedPawnWin1.png");
 	sf::Sprite sWin;
 
-	pawn[0] = sf::Vector2i(3, 4);//blue
-	pawn[1] = sf::Vector2i(5, 4);//green
-	pawn[2] = sf::Vector2i(4, 4);//yellow
-	pawn[3] = sf::Vector2i(4, 5);//red
+	pawn[0] = sf::Vector2i(0, 4);//blue
+	pawn[1] = sf::Vector2i(8, 4);//green
+	pawn[2] = sf::Vector2i(4, 0);//yellow
+	pawn[3] = sf::Vector2i(4, 8);//red
 	sf::Vector2i nextPawn[4];
 	sf::Vector2i posPawn[4];
 	for (int i = 0; i <= nrOfPlayers - 1; i++)
@@ -201,7 +201,8 @@ int main()
 						window.close();
 
 				/////////////// CHECK FOR THE WIN
-				if (pawn[0].x != 8 && pawn[1].x != 0 && pawn[2].y != 8 && pawn[3].y != 0) {
+				if (pawn[0].x != 8 && pawn[1].x != 0 && pawn[2].y != 8 && pawn[3].y != 0) 
+				{
 
 					if (e.type == sf::Event::MouseButtonPressed)
 						if (e.key.code == sf::Mouse::Left)
@@ -231,7 +232,7 @@ int main()
 					fixedPosWall.y = 81 + wallActiveZone*posWall.y;
 					if (e.type == sf::Event::MouseButtonPressed)
 						if (e.key.code == sf::Mouse::Left)
-							if (JustOneWall == true && funWallCanBePlaced(rotate, posWall))
+							if (JustOneWall == true && funWallCanBePlaced(wallRotation, posWall))
 							{
 								crossWalls[posWall.x][posWall.y] = 1;
 								sWalls[nrOfPlacedWalls + 1].setTexture(tWall);
@@ -241,7 +242,7 @@ int main()
 								canWallBePlaced = true;
 
 								//Mark walls in matrix
-								if (rotate == 0) {
+								if (wallRotation == 0) {
 									wallMatrix[posWall.y * 2][posWall.x] = 1;
 									wallMatrix[posWall.y * 2 + 2][posWall.x] = 1;
 								}
@@ -262,7 +263,7 @@ int main()
 								nrOfPlacedWalls += 1;
 								//std::cout << nrOfPlacedWalls << " ";
 								JustOneWall = true;
-								rotate = 0;
+								wallRotation = 0;
 							}
 
 					if (e.type == sf::Event::MouseButtonReleased)
@@ -275,7 +276,7 @@ int main()
 						if (JustOneWall)
 						{
 							sWalls[nrOfPlacedWalls - 1].rotate(90 * e.mouseWheel.delta);
-							rotate = (rotate + 1) % 2;
+							wallRotation = (wallRotation + 1) % 2;
 						}
 
 					if (e.type == sf::Event::MouseButtonReleased)
@@ -333,18 +334,7 @@ int main()
 
 							//more than one position
 							else if (abs(deltaPawn.x) > 1 || abs(deltaPawn.y) > 1)
-							{
-								/*
-									//horizontally
-								else if (deltaPawn.y == 2 && deltaPawn.x == 0)
-								{
-									deltaPawn.y = (((pawn[turn].y - nextPawn[turn].y) > 0) - ((pawn[turn].y - nextPawn[turn].y) < 0));
-									if (!isOccupiedByPawn(sf::Vector2i(pawn[turn].x, pawn[turn].y - deltaPawn.y)))
-										nextPawn[turn] = pawn[turn];
-								}
-								*/
 								nextPawn[turn] = pawn[turn];
-							}
 							//diagonal move
 							else if (abs(abs(deltaPawn.x) - abs(deltaPawn.y)) != 1)
 								nextPawn[turn] = pawn[turn];
@@ -353,8 +343,6 @@ int main()
 							else if (nextPawn[turn] != pawn[turn])
 								if (funCheckforWall(pawn[turn], nextPawn[turn]))
 									nextPawn[turn] = pawn[turn];
-
-
 
 							if (pawn[turn] != nextPawn[turn])
 							{
@@ -383,7 +371,7 @@ int main()
 
 			window.clear(sf::Color::White);
 			window.draw(sBoard);
-			window.draw(sPlayerWalls[maxWallsPerPlayer[turn]]);
+			//window.draw(sPlayerWalls[maxWallsPerPlayer[turn]]);
 
 			if (nrOfPlacedWalls > WallsPlaceableLimit)
 				nrOfPlacedWalls = WallsPlaceableLimit;
