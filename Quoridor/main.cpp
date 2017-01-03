@@ -107,38 +107,28 @@ bool funWallBlocksPlayer()
 				v[0] = p[0] + dl[k];
 				v[1] = p[1] + dc[k];
 
-				if (board[v[0]][v[1]] == 0 && v[0] >= 0 && v[0] <= 8 && v[1] >= 0 && v[1] <= 8)
+				if (board[v[0]][v[1]] == 0 && v[0] >= 0 && v[0] <= 8 && v[1] >= 0 && v[1] <= 8 && !funCheckforWall(sf::Vector2i(p[0],p[1]),sf::Vector2i(v[0],v[1])))
 				{
 					board[v[0]][v[1]] = board[p[0]][p[1]] + 1;
 
 					ultim++;
 					c[ultim][0] = v[0];
 					c[ultim][1] = v[1];
-					//check if arrived at the end
-					//std::cout << g << ": "<< v[0] << " " << v[1] << std::endl;
-					//std::cout << ((1 - g) * 8) << std::endl << std::endl;
 					if (g == 0 || g == 1)
 						if (v[0] == (1 - g) * 8)
-						{
 							foundPath = true;
-							std::cout << "found path for " << g << std::endl;
-						}
 							
 					if (g == 2 || g == 3)
 						if (v[1] == (3 - g) * 8)
-						{
 							foundPath = true;
-							std::cout << "found path for " << g << std::endl;
-						}
 				}
 			}
 		}
 
 		if (foundPath == false)
-			return false;
+			return true;
 	}
-
-	return true;
+	return false;
 }
 
 
@@ -299,15 +289,8 @@ int main()
 					fixedPosWall.y = 81 + wallActiveZone*posWall.y;
 					if (e.type == sf::Event::MouseButtonPressed)
 						if (e.key.code == sf::Mouse::Left)
-							if (JustOneWall == true && funWallCanBePlaced(wallRotation, posWall) && funWallBlocksPlayer())
+							if (JustOneWall == true && funWallCanBePlaced(wallRotation, posWall))
 							{
-								crossWalls[posWall.x][posWall.y] = 1;
-								sWalls[nrOfPlacedWalls + 1].setTexture(tWall);
-								JustOneWall = false;
-								maxWallsPerPlayer[turn] -= 1;
-								nextTurn(turn);
-								canWallBePlaced = true;
-
 								//Mark walls in matrix
 								if (wallRotation == 0) {
 									wallMatrix[posWall.y * 2][posWall.x] = 1;
@@ -317,6 +300,32 @@ int main()
 									wallMatrix[posWall.y * 2 + 1][posWall.x] = 1;
 									wallMatrix[posWall.y * 2 + 1][posWall.x + 1] = 1;
 								}
+								
+
+								if (!funWallBlocksPlayer())
+								{
+									
+									crossWalls[posWall.x][posWall.y] = 1;
+									sWalls[nrOfPlacedWalls + 1].setTexture(tWall);
+									JustOneWall = false;
+									maxWallsPerPlayer[turn] -= 1;
+									nextTurn(turn);
+									canWallBePlaced = true;
+								}
+								else
+								{
+									if (wallRotation == 0) 
+									{
+										wallMatrix[posWall.y * 2][posWall.x] = 0;
+										wallMatrix[posWall.y * 2 + 2][posWall.x] = 0;
+									}
+									else 
+									{
+										wallMatrix[posWall.y * 2 + 1][posWall.x] = 0;
+										wallMatrix[posWall.y * 2 + 1][posWall.x + 1] = 0;
+									}
+								}
+
 							}
 
 					//Wall button
