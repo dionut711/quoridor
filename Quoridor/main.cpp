@@ -348,7 +348,7 @@ int main()
 							nrOfPlacedWalls -= 1;
 							JustOneWall = false;
 						}
-					if (e.type == sf::Event::MouseWheelMoved)
+					if (e.type == sf::Event::MouseWheelMoved || (e.type == sf::Event::KeyPressed && e.key.code == sf::Keyboard::R))
 						if (JustOneWall)
 						{
 							sWalls[nrOfPlacedWalls - 1].rotate(90 * e.mouseWheel.delta);
@@ -447,7 +447,7 @@ int main()
 
 			window.clear(sf::Color::White);
 			window.draw(sBoard);
-			//window.draw(sPlayerWalls[maxWallsPerPlayer[turn]]);
+			window.draw(sPlayerWalls[maxWallsPerPlayer[turn]]);
 
 			if (nrOfPlacedWalls > WallsPlaceableLimit)
 				nrOfPlacedWalls = WallsPlaceableLimit;
