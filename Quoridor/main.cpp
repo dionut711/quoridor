@@ -304,8 +304,8 @@ int main()
 	twin4.loadFromFile("images/RedPawnWin1.png");
 	sf::Sprite sWin;
 
-	pawn[0] = sf::Vector2i(0, 4);//blue
-	pawn[1] = sf::Vector2i(8, 4);//green
+	pawn[0] = sf::Vector2i(0, 8);//blue
+	pawn[1] = sf::Vector2i(8, 8);//green
 	pawn[2] = sf::Vector2i(4, 0);//yellow
 	pawn[3] = sf::Vector2i(4, 8);//red
 	sf::Vector2i nextPawn[4];
@@ -510,10 +510,22 @@ int main()
 
 							if (pawn[turn] != nextPawn[turn])
 							{
+								sf::Vector2i tempPawn = pawn[turn];
 								pawn[turn] = nextPawn[turn];
-								posPawn[turn] = sf::Vector2i(marginWidth + sizeTotal*pawn[turn].y, widthWall + sizeTotal*pawn[turn].x);
-								sPawn[turn].setPosition(posPawn[turn].x, posPawn[turn].y);
-								nextTurn(turn);
+
+								//blocks off other players
+								if (funWallBlocksPlayer())
+								{
+									pawn[turn] = tempPawn;
+									posPawn[turn] = sf::Vector2i(marginWidth + sizeTotal*pawn[turn].y, widthWall + sizeTotal*pawn[turn].x);
+									sPawn[turn].setPosition(posPawn[turn].x, posPawn[turn].y);
+								}
+								else
+								{
+									posPawn[turn] = sf::Vector2i(marginWidth + sizeTotal*pawn[turn].y, widthWall + sizeTotal*pawn[turn].x);
+									sPawn[turn].setPosition(posPawn[turn].x, posPawn[turn].y);
+									nextTurn(turn);
+								}
 							}
 							else
 							{
