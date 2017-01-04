@@ -14,7 +14,7 @@ sf::Sprite sPawn[4];
 
 int playerType[4];
 int wallMatrix[17][9];
-int nrOfPlayers = 4;
+int nrOfPlayers = 2;
 //// DON'T LET WALLS TO COLIDE EACHOTHER ////
 int crossWalls[8][8];
 /////// DISPLAY PLAYER'S TURN IMAGES ////////
@@ -25,6 +25,8 @@ int winner;
 
 ///// Change Button state
 int buttonState;
+bool addWindow = false;
+bool removeWindow = false;
 
 //////// Set The Mode : Classic is 0 , Wild is 1
 bool setMode = false;
@@ -260,13 +262,15 @@ int main()
 
 	///// SECOND MENU
 	sf::Sprite sSetPlayerBackground[4],sAdd,sRemove;
-	sf::Texture tSPB1,tSPB2,tSPB3,tSPB4,tAdd,tRemove;
+	sf::Texture tSPB1,tSPB2,tSPB3,tSPB4,tAdd,tRemove,tAdd1,tRemove1;
 	tSPB1.loadFromFile("images/SetPlayer1.png");
 	tSPB2.loadFromFile("images/SetPlayer2.png");
 	tSPB3.loadFromFile("images/SetPlayer3.png");
 	tSPB4.loadFromFile("images/SetPlayer4.png");
 	tAdd.loadFromFile("images/add.png");
+	tAdd1.loadFromFile("images/add1.png");
 	tRemove.loadFromFile("images/remove.png");
+	tRemove1.loadFromFile("images/remove1.png");
 
 	sSetPlayerBackground[0].setTexture(tSPB1);
 	sSetPlayerBackground[0].setPosition(135, 50);
@@ -440,9 +444,39 @@ int main()
 									gameStatus = 1;
 						}
 						////////// SET GAME PLAYERS AND OTHERS
-						//if (gameStatus == 1) {
+						if (gameStatus == 1) 
+						{
+							if (e.type == sf::Event::MouseButtonPressed)
+								if (e.key.code == sf::Mouse::Left)
+									if (sAdd.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+										sAdd.setTexture(tAdd1);
+										addWindow = true;
+									}else
+										if (sRemove.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+											sRemove.setTexture(tRemove1);
+											removeWindow = true;
+										}
+							if (e.type == sf::Event::MouseButtonReleased)
+								if (e.key.code == sf::Mouse::Left)
+									if (addWindow)
+									{
+										nrOfPlayers += 1;
+										if (nrOfPlayers > 4)
+											nrOfPlayers = 4;
+										sAdd.setTexture(tAdd);
+										addWindow = false;
+									}else
+										if (removeWindow)
+										{
+											nrOfPlayers -= 1;
+											if (nrOfPlayers < 2)
+												nrOfPlayers = 2;
+											sRemove.setTexture(tRemove);
+											removeWindow = false;
+										}
+							
+						}
 
-						//}
 					///// Game is Started !
 					if (gameStatus == 3)
 					{
