@@ -6,6 +6,7 @@
 sf::Vector2i pawn[4];
 sf::Sprite sPawn[4];
 
+int playerType[4];
 int wallMatrix[17][9];
 int nrOfPlayers = 2;
 //// DON'T LET WALLS TO COLIDE EACHOTHER ////
@@ -127,20 +128,22 @@ bool funWallBlocksPlayer()
 	}
 	return false;
 }
-sf::Vector2i funReverseLee(int board[9][9], sf::Vector2i x)
+sf::Vector2i funReverseLee(int board[9][9], sf::Vector2i pos)
 {
 	int dl[4] = { -1, 0, 1, 0 };
 	int dc[4] = { 0, 1, 0, -1 };
-	if (board[x.x][x.y] == 2)
-		return x;
-	sf::Vector2i mn(x.x, x.y);
+	if (board[pos.x][pos.y] == 2)
+		return pos;
+	sf::Vector2i mn(pos.x, pos.y);
 	for (int i = 0; i <= 3; i++)
 	{
-		if (board[mn.x][mn.y] > board[x.x + dl[i]][x.y + dc[i]] && board[x.x + dl[i]][x.y + dc[i]] > 1)
-		{
-			mn.x = x.x + dl[i];
-			mn.y = x.y + dc[i];
-		}
+		if(pos.x + dl[i] >= 0 && pos.x + dl[i] <= 8 && pos.y + dc[i] >= 0 && pos.y + dc[i] <= 8)
+			if(!funCheckforWall(sf::Vector2i(pos.x, pos.y),sf::Vector2i(pos.x + dl[i], pos.y + dc[i])))
+				if (board[mn.x][mn.y] > board[pos.x + dl[i]][pos.y + dc[i]] && board[pos.x + dl[i]][pos.y + dc[i]] > 1)
+				{
+					mn.x = pos.x + dl[i];
+					mn.y = pos.y + dc[i];
+				}
 	}
 	return funReverseLee(board, mn);
 }
@@ -200,7 +203,7 @@ void nextTurn(int &currentTurn)
 	currentTurn = (currentTurn + 1) % nrOfPlayers;
 	sTurn.setTexture(tTurn[currentTurn]);
 	//Check if next turn is AI
-	if (currentTurn == 1)
+	if (playerType[currentTurn] == 1)
 	{
 		sf::Vector2i nextPawn = funAImove(currentTurn);
 		std::cout << "ai finished";
@@ -216,7 +219,7 @@ void nextTurn(int &currentTurn)
 
 int main()
 {
-	int turn = 0;
+	int turn = -1;
 	int maxWallsPerPlayer[4];
 	int wallRotation = 0;
 
@@ -317,6 +320,9 @@ int main()
 			maxNumber = 5;
 		maxWallsPerPlayer[i] = maxNumber;
 	}
+
+	nextTurn(turn);
+
 //////////////////// ACTION WHEN WINDOW IS OPEN //////////////////////////
 	while (window.isOpen())
 	{
