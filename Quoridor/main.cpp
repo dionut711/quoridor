@@ -14,7 +14,7 @@ sf::Sprite sPawn[4];
 
 int playerType[4];
 int wallMatrix[17][9];
-int nrOfPlayers = 2;
+int nrOfPlayers = 4;
 //// DON'T LET WALLS TO COLIDE EACHOTHER ////
 int crossWalls[8][8];
 /////// DISPLAY PLAYER'S TURN IMAGES ////////
@@ -258,6 +258,29 @@ int main()
 	sButtonWild.setPosition(410, 360);
 	sButtonQuit.setPosition(410, 420);
 
+	///// SECOND MENU
+	sf::Sprite sSetPlayerBackground[4],sAdd,sRemove;
+	sf::Texture tSPB1,tSPB2,tSPB3,tSPB4,tAdd,tRemove;
+	tSPB1.loadFromFile("images/SetPlayer1.png");
+	tSPB2.loadFromFile("images/SetPlayer2.png");
+	tSPB3.loadFromFile("images/SetPlayer3.png");
+	tSPB4.loadFromFile("images/SetPlayer4.png");
+	tAdd.loadFromFile("images/add.png");
+	tRemove.loadFromFile("images/remove.png");
+
+	sSetPlayerBackground[0].setTexture(tSPB1);
+	sSetPlayerBackground[0].setPosition(135, 50);
+	sSetPlayerBackground[1].setTexture(tSPB2);
+	sSetPlayerBackground[1].setPosition(135, 180);
+	sSetPlayerBackground[2].setTexture(tSPB3);
+	sSetPlayerBackground[2].setPosition(135, 310);
+	sSetPlayerBackground[3].setTexture(tSPB4);
+	sSetPlayerBackground[3].setPosition(135, 440);
+	sAdd.setTexture(tAdd);
+	sAdd.setPosition(426, 570);
+	sRemove.setTexture(tRemove);
+	sRemove.setPosition(543, 570);
+
 	////// [images]Display number of walls for each player /////
 	sf::Texture tPlayerWalls;
 	tPlayerWalls.loadFromFile("images/Walls.png");
@@ -388,7 +411,7 @@ int main()
 				if (e.type == sf::Event::Closed)
 					window.close();
 					if (gameStatus == 0) {
-						///// CLOSE THE WINDOW
+						///// CLOSE MENU
 						if (e.type == sf::Event::MouseButtonPressed)
 							if (e.key.code == sf::Mouse::Left)
 								if (sButtonQuit.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
@@ -398,7 +421,7 @@ int main()
 						if (e.type == sf::Event::MouseButtonReleased)
 							if (e.key.code == sf::Mouse::Left && isExit)
 								window.close();
-						//// GO TO NEXT WINDOW
+						//// GO TO NEXT WINDOW FROM MENU
 						if (e.type == sf::Event::MouseButtonPressed)
 							if (e.key.code == sf::Mouse::Left)
 								if (sButtonClassic.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
@@ -414,8 +437,13 @@ int main()
 						if (e.type == sf::Event::MouseButtonReleased)
 							if (e.key.code == sf::Mouse::Left)
 								if (buttonState)
-									gameStatus = 3;
+									gameStatus = 1;
 						}
+						////////// SET GAME PLAYERS AND OTHERS
+						//if (gameStatus == 1) {
+
+						//}
+					///// Game is Started !
 					if (gameStatus == 3)
 					{
 						if (e.type == sf::Event::MouseButtonPressed)
@@ -666,7 +694,15 @@ int main()
 				window.draw(sButtonClassic);
 				window.draw(sButtonWild);
 				window.draw(sButtonQuit);
-			}
+			}else
+				if (gameStatus == 1) {
+					window.clear(sf::Color::White);
+					window.draw(sMenuBackground);
+					for (int i = 0;i < nrOfPlayers;i++)
+						window.draw(sSetPlayerBackground[i]);
+					window.draw(sAdd);
+					window.draw(sRemove);
+				}
 				window.display();
 	}
 	return 0;
