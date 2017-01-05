@@ -393,10 +393,6 @@ int main()
 		isMove = false;
 
 
-		pawn[0] = sf::Vector2i(0, 8);//blue
-		pawn[1] = sf::Vector2i(8, 8);//green
-		pawn[2] = sf::Vector2i(4, 0);//yellow
-		pawn[3] = sf::Vector2i(4, 8);//red
 
 //////////////////// ACTION WHEN WINDOW IS OPEN //////////////////////////
 	while (window.isOpen())
@@ -406,24 +402,33 @@ int main()
 			while (window.pollEvent(e))
 			{	
 				///// PREPARING THE GAME
-				if (gameStatus == 2) {
-				turn = -1;
-					for (int i = 0;i < 4;i++)
-						playerType[i] = 0;
+				if (gameStatus == 2) 
+				{
+					turn = -1;
+					for (int i = 0;i < nrOfPlayers ;i++)
+						playerType[i] = 1;
+					playerType[1] = 1;
+					playerType[2] = 1;
+					playerType[3] = 1;
 					for (int i = 0;i < 17;i++)
 						for (int j = 0;j < 9;j++)
 							wallMatrix[i][j] = 0;
 					for (int i = 0; i < 8;i++)
 						for (int j = 0;j < 8;j++)
 							crossWalls[i][j] = 0;
-				winner = 0;
-				isMove = false;
-				isWallPlaceable = false;
-				wallOrientation = false;
-				JustOneWall = false;
-				nrOfPlacedWalls = 0;
-				WallsPlaceableLimit = 40;
+					winner = 0;
+					isMove = false;
+					isWallPlaceable = false;
+					wallOrientation = false;
+					JustOneWall = false;
+					nrOfPlacedWalls = 0;
+					WallsPlaceableLimit = 40;
 
+
+					pawn[0] = sf::Vector2i(0, 4);//blue
+					pawn[1] = sf::Vector2i(8, 4);//green
+					pawn[2] = sf::Vector2i(4, 0);//yellow
+					pawn[3] = sf::Vector2i(4, 8);//red
 					for (int i = 0; i <= nrOfPlayers - 1; i++)
 						sPawn[i].setPosition(marginWidth + sizeTotal*pawn[i].y, widthWall + sizeTotal*pawn[i].x);
 					
@@ -431,7 +436,7 @@ int main()
 					for (int i = 0; i < nrOfPlayers; i++) {
 						int maxNumber = 10;
 						if (nrOfPlayers == 4)
-							maxNumber = 5;
+							maxNumber = 10;
 						maxWallsPerPlayer[i] = maxNumber;
 					}
 					nextTurn(turn);
