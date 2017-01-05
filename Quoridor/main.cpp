@@ -469,6 +469,8 @@ int main()
 				///// PREPARING THE GAME
 				if (gameStatus == 2) 
 				{
+					for (int i = 0;i < nrOfPlayers;i++)
+						sPawn[i].setTexture(tPawn[playerSkin[i]]);
 					turn = -1;
 					
 					//playerType[1] = 1;
