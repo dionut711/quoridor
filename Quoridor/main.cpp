@@ -851,4 +851,5 @@ int main()
 				window.display();
 	}
 	return 0;
+	/////// IAR FACE FIGURI GIT HUB-UL
 }
