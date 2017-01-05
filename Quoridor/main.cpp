@@ -30,7 +30,8 @@ bool addWindow = false;
 bool removeWindow = false;
 bool goBack = false;
 bool goStart = false;
-
+bool next[4];
+bool previous[4];
 //////// Set The Mode : Classic is 0 , Wild is 1
 bool setMode = false;
 
@@ -287,8 +288,8 @@ int main()
 	sButtonQuit.setPosition(410, 420);
 
 	///// SECOND MENU
-	sf::Sprite sSetPlayerBackground[4],sAdd,sRemove,sBack,sStart;
-	sf::Texture tSPB1,tSPB2,tSPB3,tSPB4,tAdd,tRemove,tAdd1,tRemove1,tBack,tBack1,tStart,tStart1;
+	sf::Sprite sSetPlayerBackground[4], sAdd, sRemove, sBack, sStart, sNext[4], sPrevious[4], sState[4][3];
+	sf::Texture tSPB1, tSPB2, tSPB3, tSPB4, tAdd, tRemove, tAdd1, tRemove1, tBack, tBack1, tStart, tStart1, tNext, tPrevious, tState[3], tNext1, tPrevious1;
 	tSPB1.loadFromFile("images/SetPlayer1.png");
 	tSPB2.loadFromFile("images/SetPlayer2.png");
 	tSPB3.loadFromFile("images/SetPlayer3.png");
@@ -301,6 +302,13 @@ int main()
 	tBack1.loadFromFile("images/back1.png");
 	tStart.loadFromFile("images/start.png");
 	tStart1.loadFromFile("images/start1.png");
+	tNext.loadFromFile("images/next.png");
+	tPrevious.loadFromFile("images/previous.png");
+	tNext1.loadFromFile("images/next1.png");
+	tPrevious1.loadFromFile("images/previous1.png");
+	tState[0].loadFromFile("images/PlayerState1.png");
+	tState[1].loadFromFile("images/PlayerState2.png");
+	tState[2].loadFromFile("images/PlayerState3.png");
 
 	sSetPlayerBackground[0].setTexture(tSPB1);
 	sSetPlayerBackground[0].setPosition(135, 50);
@@ -318,6 +326,19 @@ int main()
 	sRemove.setPosition(543, 570);
 	sStart.setTexture(tStart);
 	sStart.setPosition(425, 630);
+	for (int i = 0;i <= 3;i++)
+		for (int j = 0;j <= 2;j++)
+		{
+			sState[i][j].setTexture(tState[j]);
+			sState[i][j].setPosition(389, 50 + i * 130);
+		}
+	for (int i = 0;i <= 3;i++)
+	{
+		sNext[i].setTexture(tNext);
+		sPrevious[i].setTexture(tPrevious);
+		sNext[i].setPosition(583, 86 + i * 130);
+		sPrevious[i].setPosition(395, 86 + i * 130);
+	}
 
 	////// [images]Display number of walls for each player /////
 	sf::Texture tPlayerWalls;
@@ -429,11 +450,10 @@ int main()
 				if (gameStatus == 2) 
 				{
 					turn = -1;
-					for (int i = 0;i < nrOfPlayers ;i++)
-						playerType[i] = 0;
-					playerType[1] = 1;
-					playerType[2] = 1;
-					playerType[3] = 1;
+					
+					//playerType[1] = 1;
+					//playerType[2] = 1;
+					//playerType[3] = 1;
 					for (int i = 0;i < 17;i++)
 						for (int j = 0;j < 9;j++)
 							wallMatrix[i][j] = 0;
@@ -508,58 +528,96 @@ int main()
 								}
 						}
 					////////// SET GAME PLAYERS AND OTHERS
-					if (gameStatus == 1) 
-						{
-							if (e.type == sf::Event::MouseButtonPressed)
-								if (e.key.code == sf::Mouse::Left)
-									if (sAdd.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
-										sAdd.setTexture(tAdd1);
-										addWindow = true;
-									}else
-										if (sRemove.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
-											sRemove.setTexture(tRemove1);
-											removeWindow = true;
-										}else
-											if (sBack.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
-												sBack.setTexture(tBack1);
-												goBack = true;
-											}else
-												if (sStart.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
-													sStart.setTexture(tStart1);
-													goStart = true;
-												}
-							if (e.type == sf::Event::MouseButtonReleased)
-								if (e.key.code == sf::Mouse::Left)
-									if (addWindow)
+				if (gameStatus == 1)
+				{
+					if (e.type == sf::Event::MouseButtonPressed)
+						if (e.key.code == sf::Mouse::Left)
+							if (sAdd.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+								sAdd.setTexture(tAdd1);
+								addWindow = true;
+							}
+							else
+								if (sRemove.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+									sRemove.setTexture(tRemove1);
+									removeWindow = true;
+								}
+								else
+									if (sBack.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+										sBack.setTexture(tBack1);
+										goBack = true;
+									}
+									else
+										if (sStart.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+											sStart.setTexture(tStart1);
+											goStart = true;
+										}
+					if (e.type == sf::Event::MouseButtonPressed)
+						if (e.key.code == sf::Mouse::Left)
+							for (int i = 0;i < nrOfPlayers;i++) {
+								if (sNext[i].getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+									next[i] = true;
+									sNext[i].setTexture(tNext1);
+								}
+								if (sPrevious[i].getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+									previous[i] = true;
+									sPrevious[i].setTexture(tPrevious1);
+								}
+							}
+					if (e.type == sf::Event::MouseButtonReleased)
+						if (e.key.code == sf::Mouse::Left)
+							for (int i = 0;i < nrOfPlayers;i++) {
+								if (next[i]) {
+									playerType[i] += 1;
+									if (playerType[i] > 2)
+										playerType[i] = 2;
+									std::cout << "playerType[" << i << "]= " << playerType[i] << std::endl;
+									next[i] = false;
+									sNext[i].setTexture(tNext);
+								}
+								if (previous[i]) {
+									playerType[i] -= 1;
+									if (playerType[i] < 0)
+										playerType[i] = 0;
+									std::cout << "playerType[" << i << "]= " << playerType[i] << std::endl;
+									previous[i] = false;
+									sPrevious[i].setTexture(tPrevious);
+								}
+							}
+					if (e.type == sf::Event::MouseButtonReleased)
+						if (e.key.code == sf::Mouse::Left)
+							if (addWindow)
+							{
+								nrOfPlayers += 1;
+								if (nrOfPlayers > 4)
+									nrOfPlayers = 4;
+								sAdd.setTexture(tAdd);
+								addWindow = false;
+							}
+							else
+								if (removeWindow)
+								{
+									nrOfPlayers -= 1;
+									if (nrOfPlayers < 2)
+										nrOfPlayers = 2;
+									sRemove.setTexture(tRemove);
+									removeWindow = false;
+								}
+								else
+									if (goBack)
 									{
-										nrOfPlayers += 1;
-										if (nrOfPlayers > 4)
-											nrOfPlayers = 4;
-										sAdd.setTexture(tAdd);
-										addWindow = false;
-									}else
-										if (removeWindow)
+										sBack.setTexture(tBack);
+										goBack = false;
+										gameStatus = 0;
+									}
+									else
+										if (goStart)
 										{
-											nrOfPlayers -= 1;
-											if (nrOfPlayers < 2)
-												nrOfPlayers = 2;
-											sRemove.setTexture(tRemove);
-											removeWindow = false;
-										}else
-											if (goBack)
-											{
-												sBack.setTexture(tBack);
-												goBack = false;
-												gameStatus = 0;
-											}else
-												if (goStart)
-												{
-													sStart.setTexture(tStart);
-													goStart = false;
-													gameStatus = 2;
-												}
-							
-						}
+											sStart.setTexture(tStart);
+											goStart = false;
+											gameStatus = 2;
+										}
+
+				}
 
 					///// Game is Started !
 					if (gameStatus == 3)
@@ -847,6 +905,13 @@ int main()
 					window.draw(sRemove);
 					window.draw(sBack);
 					window.draw(sStart);
+					for (int i = 0;i < nrOfPlayers;i++)
+						window.draw(sState[i][playerType[i]]);
+					for (int i = 0;i < nrOfPlayers;i++)
+					{
+						window.draw(sNext[i]);
+						window.draw(sPrevious[i]);
+					}
 				}
 				window.display();
 	}
