@@ -1,20 +1,21 @@
 ﻿  main.cpp
 c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(228): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(395): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(421): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(431): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(436): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(451): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(455): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(485): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(499): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(567): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(587): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(666): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(671): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(678): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(690): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(693): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(399): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(425): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(435): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(440): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(459): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(463): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(467): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(503): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(517): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(585): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(605): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(684): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(689): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(696): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(708): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(711): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
 c:\users\axu\documents\visual studio 2015\projects\quoridor\quoridor\main.cpp(214): warning C4715: 'funAImove': not all control paths return a value
   Quoridor.vcxproj -> C:\Users\AXU\Documents\Visual Studio 2015\Projects\Quoridor\Debug\Quoridor.exe
   Quoridor.vcxproj -> C:\Users\AXU\Documents\Visual Studio 2015\Projects\Quoridor\Debug\Quoridor.pdb (Full PDB)

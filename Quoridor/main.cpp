@@ -27,7 +27,7 @@ int winner;
 int buttonState;
 bool addWindow = false;
 bool removeWindow = false;
-
+bool goBack = false;
 //////// Set The Mode : Classic is 0 , Wild is 1
 bool setMode = false;
 
@@ -261,8 +261,8 @@ int main()
 	sButtonQuit.setPosition(410, 420);
 
 	///// SECOND MENU
-	sf::Sprite sSetPlayerBackground[4],sAdd,sRemove;
-	sf::Texture tSPB1,tSPB2,tSPB3,tSPB4,tAdd,tRemove,tAdd1,tRemove1;
+	sf::Sprite sSetPlayerBackground[4],sAdd,sRemove,sBack;
+	sf::Texture tSPB1,tSPB2,tSPB3,tSPB4,tAdd,tRemove,tAdd1,tRemove1,tBack,tBack1;
 	tSPB1.loadFromFile("images/SetPlayer1.png");
 	tSPB2.loadFromFile("images/SetPlayer2.png");
 	tSPB3.loadFromFile("images/SetPlayer3.png");
@@ -271,6 +271,8 @@ int main()
 	tAdd1.loadFromFile("images/add1.png");
 	tRemove.loadFromFile("images/remove.png");
 	tRemove1.loadFromFile("images/remove1.png");
+	tBack.loadFromFile("images/back.png");
+	tBack1.loadFromFile("images/back1.png");
 
 	sSetPlayerBackground[0].setTexture(tSPB1);
 	sSetPlayerBackground[0].setPosition(135, 50);
@@ -280,8 +282,10 @@ int main()
 	sSetPlayerBackground[2].setPosition(135, 310);
 	sSetPlayerBackground[3].setTexture(tSPB4);
 	sSetPlayerBackground[3].setPosition(135, 440);
+	sBack.setTexture(tBack);
+	sBack.setPosition(462, 570);
 	sAdd.setTexture(tAdd);
-	sAdd.setPosition(426, 570);
+	sAdd.setPosition(381, 570);
 	sRemove.setTexture(tRemove);
 	sRemove.setPosition(543, 570);
 
@@ -441,7 +445,11 @@ int main()
 						if (e.type == sf::Event::MouseButtonReleased)
 							if (e.key.code == sf::Mouse::Left)
 								if (buttonState)
+								{
 									gameStatus = 1;
+									sButtonClassic.setTexture(tButtonClassic);
+									sButtonWild.setTexture(tButtonWild);
+								}
 						}
 						////////// SET GAME PLAYERS AND OTHERS
 						if (gameStatus == 1) 
@@ -455,7 +463,11 @@ int main()
 										if (sRemove.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
 											sRemove.setTexture(tRemove1);
 											removeWindow = true;
-										}
+										}else
+											if (sBack.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+												sBack.setTexture(tBack1);
+												goBack = true;
+											}
 							if (e.type == sf::Event::MouseButtonReleased)
 								if (e.key.code == sf::Mouse::Left)
 									if (addWindow)
@@ -473,7 +485,13 @@ int main()
 												nrOfPlayers = 2;
 											sRemove.setTexture(tRemove);
 											removeWindow = false;
-										}
+										}else
+											if (goBack)
+											{
+												sBack.setTexture(tBack);
+												goBack = false;
+												gameStatus = 0;
+											}
 							
 						}
 
@@ -736,6 +754,7 @@ int main()
 						window.draw(sSetPlayerBackground[i]);
 					window.draw(sAdd);
 					window.draw(sRemove);
+					window.draw(sBack);
 				}
 				window.display();
 	}
