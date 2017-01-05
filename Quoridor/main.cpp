@@ -20,7 +20,7 @@ int nrOfPlayers = 2;
 //// DON'T LET WALLS TO COLIDE EACHOTHER ////
 int crossWalls[8][8];
 /////// DISPLAY PLAYER'S TURN IMAGES ////////
-sf::Texture tTurn[4];
+sf::Texture tTurn;
 sf::Sprite sTurn;
 ///// no winner
 int winner;
@@ -246,7 +246,6 @@ sf::Vector2i funAImove(int turn)
 void nextTurn(int &currentTurn)
 {
 	currentTurn = (currentTurn + 1) % nrOfPlayers;
-	sTurn.setTexture(tTurn[currentTurn]);
 	//Check if next turn is AI
 	if (playerType[currentTurn] == 1)
 	{
@@ -443,21 +442,10 @@ int main()
 		sExit1.setTexture(tExit1);
 		sExit1.setPosition(850, 25);
 
-		//turn indicator GUI
-		tTurn[0].loadFromFile("images/Player1Turn.png");
-		tTurn[1].loadFromFile("images/Player2Turn.png");
-		tTurn[2].loadFromFile("images/Player3Turn.png");
-		tTurn[3].loadFromFile("images/Player4Turn.png");
-		sTurn.setTexture(tTurn[0]);
-		sTurn.setPosition(19, 90);
-
-
-
-		
+		tTurn.loadFromFile("images/turnMark.png");
+		sTurn.setTexture(tTurn);
 
 		isMove = false;
-
-
 
 //////////////////// ACTION WHEN WINDOW IS OPEN //////////////////////////
 	while (window.isOpen())
@@ -497,7 +485,7 @@ int main()
 					pawn[3] = sf::Vector2i(4, 8);//red
 					for (int i = 0; i <= nrOfPlayers - 1; i++)
 						sPawn[i].setPosition(marginWidth + sizeTotal*pawn[i].y, widthWall + sizeTotal*pawn[i].x);
-					
+					sTurn.setPosition(marginWidth + sizeTotal * 4, widthWall);
 					//// SET WALLS FOR PLAYERS ////
 					for (int i = 0; i < nrOfPlayers; i++) 
 					{
@@ -674,6 +662,7 @@ int main()
 					///// Game is Started !
 					if (gameStatus == 3)
 					{
+						sTurn.setPosition(marginWidth + sizeTotal*pawn[turn].y, widthWall + sizeTotal*pawn[turn].x);
 						if (e.type == sf::Event::MouseButtonPressed)
 							if (e.key.code == sf::Mouse::Left)
 								if (sExit1.getGlobalBounds().contains(posMouse.x, posMouse.y)) 
@@ -920,12 +909,13 @@ int main()
 					window.draw(sWalls[i]);
 
 				//Draw Buttons
-				window.draw(sTurn);
 				window.draw(sButtonWall1);
 				window.draw(sExit1);
 				window.draw(sBack);
+				//draw players and win display
 				for (int i = 0; i <= nrOfPlayers - 1; i++)
 					window.draw(sPawn[i]);
+				window.draw(sTurn);
 				if (winner == 1) {
 					if (pawn[0].x == 8)
 						sWin.setTexture(twin1);
