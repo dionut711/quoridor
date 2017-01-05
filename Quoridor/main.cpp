@@ -507,6 +507,7 @@ int main()
 													sStart.setTexture(tStart);
 													goStart = false;
 													gameStatus = 3;
+													sBack.setPosition(872, 90);
 												}
 							
 						}
@@ -519,11 +520,24 @@ int main()
 								if (sExit1.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
 									sExit1.setTexture(tExit2);
 									isExit = true;
-								}
+								}else
+									if (sBack.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+										sBack.setTexture(tBack1);
+										goBack = true;
+									}
 						if (e.type == sf::Event::MouseButtonReleased)
 							if (e.key.code == sf::Mouse::Left && isExit)
 								window.close();
-
+						
+						if (e.type == sf::Event::MouseButtonReleased)
+							if (e.key.code == sf::Mouse::Left)
+								if (goBack)
+								{
+									sBack.setTexture(tBack);
+									goBack = false;
+									gameStatus = 0;
+									sBack.setPosition(462, 570);
+								}
 						/////////////// CHECK FOR THE WIN
 						if (pawn[0].x != 8 && pawn[1].x != 0 && pawn[2].y != 8 && pawn[3].y != 0)
 						{
@@ -739,6 +753,7 @@ int main()
 				window.draw(sTurn);
 				window.draw(sButtonWall1);
 				window.draw(sExit1);
+				window.draw(sBack);
 				for (int i = 0; i <= nrOfPlayers - 1; i++)
 					window.draw(sPawn[i]);
 				if (winner == 1) {
