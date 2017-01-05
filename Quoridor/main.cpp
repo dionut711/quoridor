@@ -237,7 +237,7 @@ int main()
 	sf::RenderWindow window(sf::VideoMode(969, 696), "Game");
 	sf::Texture tBoard;
 	sf::Sprite sBoard;
-	int turn;
+	int turn = -1;
 
 	sf::Texture tPawn[4];
 	sf::Texture tWall;
@@ -334,9 +334,6 @@ int main()
 	bool wallOrientation = false;
 	bool JustOneWall = false;
 
-
-		turn = -1;
-
 		tBoard.loadFromFile("images/QuoridorBoard1.png");
 		sBoard.setTexture(tBoard);
 
@@ -390,7 +387,7 @@ int main()
 		tPawn[2].loadFromFile("images/QuoridorPawn2.png");
 		tPawn[3].loadFromFile("images/QuoridorPawn3.png");
 
-		for (int i = 0; i <= nrOfPlayers - 1; i++)
+		for (int i = 0; i <= 3; i++)
 			sPawn[i].setTexture(tPawn[i]);
 
 		isMove = false;
@@ -401,26 +398,47 @@ int main()
 		pawn[2] = sf::Vector2i(4, 0);//yellow
 		pawn[3] = sf::Vector2i(4, 8);//red
 
-		for (int i = 0; i <= nrOfPlayers - 1; i++)
-			sPawn[i].setPosition(marginWidth + sizeTotal*pawn[i].y, widthWall + sizeTotal*pawn[i].x);
-
-		//// SET WALLS FOR PLAYERS ////
-		for (int i = 0; i < nrOfPlayers; i++) {
-			int maxNumber = 10;
-			if (nrOfPlayers == 4)
-				maxNumber = 5;
-			maxWallsPerPlayer[i] = maxNumber;
-		}
-
-		nextTurn(turn);
-	
 //////////////////// ACTION WHEN WINDOW IS OPEN //////////////////////////
 	while (window.isOpen())
 	{
 			sf::Vector2i posMouse = sf::Mouse::getPosition(window);
 			sf::Event e;
 			while (window.pollEvent(e))
-			{
+			{	
+				///// PREPARING THE GAME
+				if (gameStatus == 2) {
+				turn = -1;
+					for (int i = 0;i < 4;i++)
+						playerType[i] = 0;
+					for (int i = 0;i < 17;i++)
+						for (int j = 0;j < 9;j++)
+							wallMatrix[i][j] = 0;
+					for (int i = 0; i < 8;i++)
+						for (int j = 0;j < 8;j++)
+							crossWalls[i][j] = 0;
+				winner = 0;
+				isMove = false;
+				isWallPlaceable = false;
+				wallOrientation = false;
+				JustOneWall = false;
+				nrOfPlacedWalls = 0;
+				WallsPlaceableLimit = 40;
+
+					for (int i = 0; i <= nrOfPlayers - 1; i++)
+						sPawn[i].setPosition(marginWidth + sizeTotal*pawn[i].y, widthWall + sizeTotal*pawn[i].x);
+					
+					//// SET WALLS FOR PLAYERS ////
+					for (int i = 0; i < nrOfPlayers; i++) {
+						int maxNumber = 10;
+						if (nrOfPlayers == 4)
+							maxNumber = 5;
+						maxWallsPerPlayer[i] = maxNumber;
+					}
+					nextTurn(turn);
+					gameStatus = 3;
+					sBack.setPosition(872, 90);
+				}
+
 				/////////// CLOSE THE WINDOW /////////////
 				if (e.type == sf::Event::Closed)
 					window.close();
@@ -441,6 +459,7 @@ int main()
 								if (sButtonClassic.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
 									sButtonClassic.setTexture(tButtonClassic1);
 									buttonState = 1;
+									setMode = false;
 								}
 								else
 									if (sButtonWild.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
@@ -455,6 +474,7 @@ int main()
 									gameStatus = 1;
 									sButtonClassic.setTexture(tButtonClassic);
 									sButtonWild.setTexture(tButtonWild);
+									buttonState = 0;
 								}
 						}
 						////////// SET GAME PLAYERS AND OTHERS
@@ -506,8 +526,7 @@ int main()
 												{
 													sStart.setTexture(tStart);
 													goStart = false;
-													gameStatus = 3;
-													sBack.setPosition(872, 90);
+													gameStatus = 2;
 												}
 							
 						}
