@@ -75,7 +75,7 @@ bool funCheckforWall(sf::Vector2i posStart, sf::Vector2i posEnd)
 	return 0;
 }
 
-bool funWallCanBePlaced(int wallRotation, sf::Vector2i posWall)
+bool funWallCanBePlaced(int wallRotation,sf::Vector2i posWall)
 {
 	if (crossWalls[posWall.x][posWall.y] == 1)
 		return 0;
@@ -129,23 +129,23 @@ bool funBlocksPlayer(bool checkforplayer)
 					pawn[g] = sf::Vector2i(v[0], v[1]);
 					if (funBlocksPlayer(1))
 					{
-					pawn[g] = sf::Vector2i(tempPawn.x, tempPawn.y);
+						pawn[g] = sf::Vector2i(tempPawn.x, tempPawn.y);
 					}
 					else
 					{
 					*/
-					board[v[0]][v[1]] = board[p[0]][p[1]] + 1;
+						board[v[0]][v[1]] = board[p[0]][p[1]] + 1;
 
-					ultim++;
-					c[ultim][0] = v[0];
-					c[ultim][1] = v[1];
-					if (g == 0 || g == 1)
-						if (v[0] == (1 - g) * 8)
-							foundPath = true;
+						ultim++;
+						c[ultim][0] = v[0];
+						c[ultim][1] = v[1];
+						if (g == 0 || g == 1)
+							if (v[0] == (1 - g) * 8)
+								foundPath = true;
 
-					if (g == 2 || g == 3)
-						if (v[1] == (3 - g) * 8)
-							foundPath = true;
+						if (g == 2 || g == 3)
+							if (v[1] == (3 - g) * 8)
+								foundPath = true;
 					//}
 				}
 			}
@@ -153,7 +153,7 @@ bool funBlocksPlayer(bool checkforplayer)
 
 		if (foundPath == false)
 			return true;
-
+		
 	}
 	return false;
 }
@@ -166,8 +166,8 @@ sf::Vector2i funReverseLee(int board[9][9], sf::Vector2i pos)
 	sf::Vector2i mn(pos.x, pos.y);
 	for (int i = 0; i <= 3; i++)
 	{
-		if (pos.x + dl[i] >= 0 && pos.x + dl[i] <= 8 && pos.y + dc[i] >= 0 && pos.y + dc[i] <= 8)
-			if (!funCheckforWall(sf::Vector2i(pos.x, pos.y), sf::Vector2i(pos.x + dl[i], pos.y + dc[i])))
+		if(pos.x + dl[i] >= 0 && pos.x + dl[i] <= 8 && pos.y + dc[i] >= 0 && pos.y + dc[i] <= 8)
+			if(!funCheckforWall(sf::Vector2i(pos.x, pos.y),sf::Vector2i(pos.x + dl[i], pos.y + dc[i])))
 				if (board[mn.x][mn.y] > board[pos.x + dl[i]][pos.y + dc[i]] && board[pos.x + dl[i]][pos.y + dc[i]] > 1)
 				{
 					mn.x = pos.x + dl[i];
@@ -184,59 +184,59 @@ sf::Vector2i funAImove(int turn)
 	int prim, ultim, p[2], v[2], c[81][2];
 
 	int board[9][9];
-	c[0][0] = pawn[turn].x;
-	c[0][1] = pawn[turn].y;
-	prim = ultim = 0;
+		c[0][0] = pawn[turn].x;
+		c[0][1] = pawn[turn].y;
+		prim = ultim = 0;
 
-	for (int i = 0; i <= 8; i++)
-		for (int j = 0; j <= 8; j++)
-			board[i][j] = 0;
-	for (int i = 0; i <= nrOfPlayers - 1; i++)
-		board[pawn[i].x][pawn[i].y] = 1;
+		for (int i = 0; i <= 8; i++)
+			for (int j = 0; j <= 8; j++)
+				board[i][j] = 0;
+		for (int i = 0; i <= nrOfPlayers - 1; i++)
+			board[pawn[i].x][pawn[i].y] = 1;
 
-	while (prim <= ultim)
-	{
-		p[0] = c[prim][0];
-		p[1] = c[prim][1];
-		prim++;
-
-		for (int k = 0; k <= 3; k++)
+		while (prim <= ultim)
 		{
-			v[0] = p[0] + dl[k];
-			v[1] = p[1] + dc[k];
+			p[0] = c[prim][0];
+			p[1] = c[prim][1];
+			prim++;
 
-			if (board[v[0]][v[1]] == 0 && v[0] >= 0 && v[0] <= 8 && v[1] >= 0 && v[1] <= 8 && !funCheckforWall(sf::Vector2i(p[0], p[1]), sf::Vector2i(v[0], v[1])))
+			for (int k = 0; k <= 3; k++)
 			{
-				sf::Vector2i tempPawn = pawn[turn];
-				pawn[turn] = sf::Vector2i(v[0], v[1]);
-				if (funBlocksPlayer(1))
+				v[0] = p[0] + dl[k];
+				v[1] = p[1] + dc[k];
+
+				if (board[v[0]][v[1]] == 0 && v[0] >= 0 && v[0] <= 8 && v[1] >= 0 && v[1] <= 8 && !funCheckforWall(sf::Vector2i(p[0], p[1]), sf::Vector2i(v[0], v[1])))
 				{
-					pawn[turn] = sf::Vector2i(tempPawn.x, tempPawn.y);
+					sf::Vector2i tempPawn = pawn[turn];
+					pawn[turn] = sf::Vector2i(v[0],v[1]);
+					if (funBlocksPlayer(1))
+					{
+						pawn[turn] = sf::Vector2i(tempPawn.x, tempPawn.y);
+					}
+					else
+					{
+						board[v[0]][v[1]] = board[p[0]][p[1]] + 1;
+
+						ultim++;
+						c[ultim][0] = v[0];
+						c[ultim][1] = v[1];
+						if (turn == 0 || turn == 1)
+							if (v[0] == (1 - turn) * 8)
+							{
+								return funReverseLee(board, sf::Vector2i(v[0], v[1]));
+							}
+
+						if (turn == 2 || turn == 3)
+							if (v[1] == (3 - turn) * 8)
+								return funReverseLee(board, sf::Vector2i(v[0], v[1]));
+					}
+
+					
 				}
-				else
-				{
-					board[v[0]][v[1]] = board[p[0]][p[1]] + 1;
-
-					ultim++;
-					c[ultim][0] = v[0];
-					c[ultim][1] = v[1];
-					if (turn == 0 || turn == 1)
-						if (v[0] == (1 - turn) * 8)
-						{
-							return funReverseLee(board, sf::Vector2i(v[0], v[1]));
-						}
-
-					if (turn == 2 || turn == 3)
-						if (v[1] == (3 - turn) * 8)
-							return funReverseLee(board, sf::Vector2i(v[0], v[1]));
-				}
-
-
 			}
-		}
 
 	}
-
+	
 }
 void nextTurn(int &currentTurn)
 {
@@ -250,7 +250,7 @@ void nextTurn(int &currentTurn)
 		pawn[currentTurn].y = nextPawn.y;
 
 
-		sf::Vector2i posPawn = sf::Vector2i(155 + 76 * pawn[currentTurn].y, 15 + 76 * pawn[currentTurn].x);
+		sf::Vector2i posPawn = sf::Vector2i(155 + 76*pawn[currentTurn].y, 15 + 76*pawn[currentTurn].x);
 		sPawn[currentTurn].setPosition(posPawn.x, posPawn.y);
 		nextTurn(currentTurn);
 	}
@@ -268,7 +268,7 @@ int main()
 	sf::Sprite sWalls[42];
 
 	///// Menu
-	sf::Texture tMenuBackground, tButtonClassic, tButtonWild, tButtonQuit, tButtonClassic1, tButtonWild1, tButtonQuit1;
+	sf::Texture tMenuBackground,tButtonClassic,tButtonWild,tButtonQuit,tButtonClassic1,tButtonWild1,tButtonQuit1;
 	tMenuBackground.loadFromFile("images/MenuBackground.png");
 	tButtonClassic.loadFromFile("images/Classic1.png");
 	tButtonWild.loadFromFile("images/Wild1.png");
@@ -287,8 +287,8 @@ int main()
 	sButtonQuit.setPosition(410, 420);
 
 	///// SECOND MENU
-	sf::Sprite sSetPlayerBackground[4], sAdd, sRemove, sBack, sStart;
-	sf::Texture tSPB1, tSPB2, tSPB3, tSPB4, tAdd, tRemove, tAdd1, tRemove1, tBack, tBack1, tStart, tStart1;
+	sf::Sprite sSetPlayerBackground[4],sAdd,sRemove,sBack,sStart;
+	sf::Texture tSPB1,tSPB2,tSPB3,tSPB4,tAdd,tRemove,tAdd1,tRemove1,tBack,tBack1,tStart,tStart1;
 	tSPB1.loadFromFile("images/SetPlayer1.png");
 	tSPB2.loadFromFile("images/SetPlayer2.png");
 	tSPB3.loadFromFile("images/SetPlayer3.png");
@@ -358,493 +358,486 @@ int main()
 	bool wallOrientation = false;
 	bool JustOneWall = false;
 
-	tBoard.loadFromFile("images/QuoridorBoard1.png");
-	sBoard.setTexture(tBoard);
+		tBoard.loadFromFile("images/QuoridorBoard1.png");
+		sBoard.setTexture(tBoard);
 
-	tWall.loadFromFile("images/QuoridorWall.png");
+		tWall.loadFromFile("images/QuoridorWall.png");
 
-	nrOfPlacedWalls = 0;
-	WallsPlaceableLimit = 40;
+		nrOfPlacedWalls = 0;
+		WallsPlaceableLimit = 40;
 
-	for (int i = 0; i <= 10; i++) {
-		sPlayerWalls[i].setTexture(tPlayerWalls);
-		sPlayerWalls[i].setTextureRect(sf::IntRect(i * 99, 0, 99, 83));
-		sPlayerWalls[i].setPosition(20, 305);
-	}
+		for (int i = 0; i <= 10; i++) {
+			sPlayerWalls[i].setTexture(tPlayerWalls);
+			sPlayerWalls[i].setTextureRect(sf::IntRect(i * 99, 0, 99, 83));
+			sPlayerWalls[i].setPosition(20, 305);
+		}
 
-	//////// PLACE THE WALL AT A PERFECT POSITION /////////
-	leftMarginForPlacingWalls = 181;
-	topMarginForPlacingWalls = 43;
-	wallActiveZone = 76;
+		//////// PLACE THE WALL AT A PERFECT POSITION /////////
+		leftMarginForPlacingWalls = 181;
+		topMarginForPlacingWalls = 43;
+		wallActiveZone = 76;
 
-	//wall activate button
+		//wall activate button
 
-	tButtonWall1.loadFromFile("images/ButtonWall1.png");
-	tButtonWall2.loadFromFile("images/ButtonWall2.png");
+		tButtonWall1.loadFromFile("images/ButtonWall1.png");
+		tButtonWall2.loadFromFile("images/ButtonWall2.png");
 
-	sButtonWall1.setTexture(tButtonWall1);
-	isWallPlaceable = false;
-	wallOrientation = false;
-	JustOneWall = false;
-	sButtonWall1.setPosition(19, 25);
+		sButtonWall1.setTexture(tButtonWall1);
+		isWallPlaceable = false;
+		wallOrientation = false;
+		JustOneWall = false;
+		sButtonWall1.setPosition(19, 25);
 
-	//exit button
-	isExit = false;
-	tExit1.loadFromFile("images/Exit1.png");
-	tExit2.loadFromFile("images/Exit2.png");
+		//exit button
+		isExit = false;
+		tExit1.loadFromFile("images/Exit1.png");
+		tExit2.loadFromFile("images/Exit2.png");
 
-	sExit1.setTexture(tExit1);
-	sExit1.setPosition(850, 25);
+		sExit1.setTexture(tExit1);
+		sExit1.setPosition(850, 25);
 
-	//turn indicator GUI
-	tTurn[0].loadFromFile("images/Player1Turn.png");
-	tTurn[1].loadFromFile("images/Player2Turn.png");
-	tTurn[2].loadFromFile("images/Player3Turn.png");
-	tTurn[3].loadFromFile("images/Player4Turn.png");
-	sTurn.setTexture(tTurn[0]);
-	sTurn.setPosition(19, 90);
-
-
-
-	tPawn[0].loadFromFile("images/QuoridorPawn0.png");
-	tPawn[1].loadFromFile("images/QuoridorPawn1.png");
-	tPawn[2].loadFromFile("images/QuoridorPawn2.png");
-	tPawn[3].loadFromFile("images/QuoridorPawn3.png");
-
-	for (int i = 0; i <= 3; i++)
-		sPawn[i].setTexture(tPawn[i]);
-
-	isMove = false;
+		//turn indicator GUI
+		tTurn[0].loadFromFile("images/Player1Turn.png");
+		tTurn[1].loadFromFile("images/Player2Turn.png");
+		tTurn[2].loadFromFile("images/Player3Turn.png");
+		tTurn[3].loadFromFile("images/Player4Turn.png");
+		sTurn.setTexture(tTurn[0]);
+		sTurn.setPosition(19, 90);
 
 
 
-	//////////////////// ACTION WHEN WINDOW IS OPEN //////////////////////////
+		tPawn[0].loadFromFile("images/QuoridorPawn0.png");
+		tPawn[1].loadFromFile("images/QuoridorPawn1.png");
+		tPawn[2].loadFromFile("images/QuoridorPawn2.png");
+		tPawn[3].loadFromFile("images/QuoridorPawn3.png");
+
+		for (int i = 0; i <= 3; i++)
+			sPawn[i].setTexture(tPawn[i]);
+
+		isMove = false;
+
+
+
+//////////////////// ACTION WHEN WINDOW IS OPEN //////////////////////////
 	while (window.isOpen())
 	{
-		sf::Vector2i posMouse = sf::Mouse::getPosition(window);
-		sf::Event e;
-		while (window.pollEvent(e))
-		{
-			///// PREPARING THE GAME
-			if (gameStatus == 2)
-			{
-				turn = -1;
-				for (int i = 0;i < nrOfPlayers;i++)
-					playerType[i] = 0;
-				playerType[1] = 1;
-				playerType[2] = 1;
-				playerType[3] = 1;
-				for (int i = 0;i < 17;i++)
-					for (int j = 0;j < 9;j++)
-						wallMatrix[i][j] = 0;
-				for (int i = 0; i < 8;i++)
-					for (int j = 0;j < 8;j++)
-						crossWalls[i][j] = 0;
-				winner = 0;
-				isMove = false;
-				isWallPlaceable = false;
-				wallOrientation = false;
-				JustOneWall = false;
-				nrOfPlacedWalls = 0;
-				WallsPlaceableLimit = 40;
-
-
-				pawn[0] = sf::Vector2i(0, 4);//blue
-				pawn[1] = sf::Vector2i(8, 4);//green
-				pawn[2] = sf::Vector2i(4, 0);//yellow
-				pawn[3] = sf::Vector2i(4, 8);//red
-				for (int i = 0; i <= nrOfPlayers - 1; i++)
-					sPawn[i].setPosition(marginWidth + sizeTotal*pawn[i].y, widthWall + sizeTotal*pawn[i].x);
-
-				//// SET WALLS FOR PLAYERS ////
-				for (int i = 0; i < nrOfPlayers; i++)
+			sf::Vector2i posMouse = sf::Mouse::getPosition(window);
+			sf::Event e;
+			while (window.pollEvent(e))
+			{	
+				///// PREPARING THE GAME
+				if (gameStatus == 2) 
 				{
-					int maxNumber = 10;
-					if (nrOfPlayers == 4)
-						maxNumber = 10;
-					maxWallsPerPlayer[i] = maxNumber;
-				}
-				nextTurn(turn);
-				gameStatus = 3;
-				sBack.setPosition(872, 90);
-			}
+					turn = -1;
+					for (int i = 0;i < nrOfPlayers ;i++)
+						playerType[i] = 0;
+					playerType[1] = 1;
+					playerType[2] = 1;
+					playerType[3] = 1;
+					for (int i = 0;i < 17;i++)
+						for (int j = 0;j < 9;j++)
+							wallMatrix[i][j] = 0;
+					for (int i = 0; i < 8;i++)
+						for (int j = 0;j < 8;j++)
+							crossWalls[i][j] = 0;
+					winner = 0;
+					isMove = false;
+					isWallPlaceable = false;
+					wallOrientation = false;
+					JustOneWall = false;
+					nrOfPlacedWalls = 0;
+					WallsPlaceableLimit = 40;
 
-			/////////// CLOSE THE WINDOW /////////////
-			if (e.type == sf::Event::Closed)
-				window.close();
-			if (gameStatus == 0) {
-				///// CLOSE MENU
-				if (e.type == sf::Event::MouseButtonPressed)
-					if (e.key.code == sf::Mouse::Left)
-						if (sButtonQuit.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
-							sButtonQuit.setTexture(tButtonQuit1);
-							isExit = true;
+
+					pawn[0] = sf::Vector2i(0, 4);//blue
+					pawn[1] = sf::Vector2i(8, 4);//green
+					pawn[2] = sf::Vector2i(4, 0);//yellow
+					pawn[3] = sf::Vector2i(4, 8);//red
+					for (int i = 0; i <= nrOfPlayers - 1; i++)
+						sPawn[i].setPosition(marginWidth + sizeTotal*pawn[i].y, widthWall + sizeTotal*pawn[i].x);
+					
+					//// SET WALLS FOR PLAYERS ////
+					for (int i = 0; i < nrOfPlayers; i++) 
+					{
+						int maxNumber = 10;
+						if (nrOfPlayers == 4)
+							maxNumber = 10;
+						maxWallsPerPlayer[i] = maxNumber;
+					}
+					nextTurn(turn);
+					gameStatus = 3;
+					sBack.setPosition(872, 90);
+				}
+
+				/////////// CLOSE THE WINDOW /////////////
+				if (e.type == sf::Event::Closed)
+					window.close();
+				if (gameStatus == 0) {
+						///// CLOSE MENU
+						if (e.type == sf::Event::MouseButtonPressed)
+							if (e.key.code == sf::Mouse::Left)
+								if (sButtonQuit.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+									sButtonQuit.setTexture(tButtonQuit1);
+									isExit = true;
+								}
+						if (e.type == sf::Event::MouseButtonReleased)
+							if (e.key.code == sf::Mouse::Left && isExit)
+								window.close();
+						//// GO TO NEXT WINDOW FROM MENU
+						if (e.type == sf::Event::MouseButtonPressed)
+							if (e.key.code == sf::Mouse::Left)
+								if (sButtonClassic.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+									sButtonClassic.setTexture(tButtonClassic1);
+									buttonState = 1;
+									setMode = false;
+								}
+								else
+									if (sButtonWild.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+										sButtonWild.setTexture(tButtonWild1);
+										buttonState = 1;
+										setMode = true;
+									}
+						if (e.type == sf::Event::MouseButtonReleased)
+							if (e.key.code == sf::Mouse::Left)
+								if (buttonState)
+								{
+									gameStatus = 1;
+									sButtonClassic.setTexture(tButtonClassic);
+									sButtonWild.setTexture(tButtonWild);
+									buttonState = 0;
+								}
 						}
-				if (e.type == sf::Event::MouseButtonReleased)
-					if (e.key.code == sf::Mouse::Left && isExit)
-						window.close();
-				//// GO TO NEXT WINDOW FROM MENU
-				if (e.type == sf::Event::MouseButtonPressed)
-					if (e.key.code == sf::Mouse::Left)
-						if (sButtonClassic.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
-							sButtonClassic.setTexture(tButtonClassic1);
-							buttonState = 1;
-							setMode = false;
-						}
-						else
-							if (sButtonWild.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
-								sButtonWild.setTexture(tButtonWild1);
-								buttonState = 1;
-								setMode = true;
-							}
-				if (e.type == sf::Event::MouseButtonReleased)
-					if (e.key.code == sf::Mouse::Left)
-						if (buttonState)
+					////////// SET GAME PLAYERS AND OTHERS
+					if (gameStatus == 1) 
 						{
-							gameStatus = 1;
-							sButtonClassic.setTexture(tButtonClassic);
-							sButtonWild.setTexture(tButtonWild);
-							buttonState = 0;
+							if (e.type == sf::Event::MouseButtonPressed)
+								if (e.key.code == sf::Mouse::Left)
+									if (sAdd.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+										sAdd.setTexture(tAdd1);
+										addWindow = true;
+									}else
+										if (sRemove.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+											sRemove.setTexture(tRemove1);
+											removeWindow = true;
+										}else
+											if (sBack.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+												sBack.setTexture(tBack1);
+												goBack = true;
+											}else
+												if (sStart.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+													sStart.setTexture(tStart1);
+													goStart = true;
+												}
+							if (e.type == sf::Event::MouseButtonReleased)
+								if (e.key.code == sf::Mouse::Left)
+									if (addWindow)
+									{
+										nrOfPlayers += 1;
+										if (nrOfPlayers > 4)
+											nrOfPlayers = 4;
+										sAdd.setTexture(tAdd);
+										addWindow = false;
+									}else
+										if (removeWindow)
+										{
+											nrOfPlayers -= 1;
+											if (nrOfPlayers < 2)
+												nrOfPlayers = 2;
+											sRemove.setTexture(tRemove);
+											removeWindow = false;
+										}else
+											if (goBack)
+											{
+												sBack.setTexture(tBack);
+												goBack = false;
+												gameStatus = 0;
+											}else
+												if (goStart)
+												{
+													sStart.setTexture(tStart);
+													goStart = false;
+													gameStatus = 2;
+												}
+							
 						}
-			}
-			////////// SET GAME PLAYERS AND OTHERS
-			if (gameStatus == 1)
-			{
-				if (e.type == sf::Event::MouseButtonPressed)
-					if (e.key.code == sf::Mouse::Left)
-						if (sAdd.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
-							sAdd.setTexture(tAdd1);
-							addWindow = true;
-						}
-						else
-							if (sRemove.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
-								sRemove.setTexture(tRemove1);
-								removeWindow = true;
-							}
-							else
-								if (sBack.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+
+					///// Game is Started !
+					if (gameStatus == 3)
+					{
+						if (e.type == sf::Event::MouseButtonPressed)
+							if (e.key.code == sf::Mouse::Left)
+								if (sExit1.getGlobalBounds().contains(posMouse.x, posMouse.y)) 
+								{
+									sExit1.setTexture(tExit2);
+									isExit = true;
+								}
+								else if (sBack.getGlobalBounds().contains(posMouse.x, posMouse.y)) 
+								{
 									sBack.setTexture(tBack1);
 									goBack = true;
 								}
-								else
-									if (sStart.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
-										sStart.setTexture(tStart1);
-										goStart = true;
-									}
-				if (e.type == sf::Event::MouseButtonReleased)
-					if (e.key.code == sf::Mouse::Left)
-						if (addWindow)
-						{
-							nrOfPlayers += 1;
-							if (nrOfPlayers > 4)
-								nrOfPlayers = 4;
-							sAdd.setTexture(tAdd);
-							addWindow = false;
-						}
-						else
-							if (removeWindow)
-							{
-								nrOfPlayers -= 1;
-								if (nrOfPlayers < 2)
-									nrOfPlayers = 2;
-								sRemove.setTexture(tRemove);
-								removeWindow = false;
-							}
-							else
+						if (e.type == sf::Event::MouseButtonReleased)
+							if (e.key.code == sf::Mouse::Left && isExit)
+								window.close();
+						
+						if (e.type == sf::Event::MouseButtonReleased)
+							if (e.key.code == sf::Mouse::Left)
 								if (goBack)
 								{
 									sBack.setTexture(tBack);
 									goBack = false;
 									gameStatus = 0;
+									sBack.setPosition(462, 570);
 								}
-								else
-									if (goStart)
+						/////////////// CHECK FOR THE WIN
+						if (pawn[0].x != 8 && pawn[1].x != 0 && pawn[2].y != 8 && pawn[3].y != 0)
+						{
+							if (e.type == sf::Event::MouseButtonPressed)
+								if (e.key.code == sf::Mouse::Left)
+									if (sPawn[turn].getGlobalBounds().contains(posMouse.x, posMouse.y))
+										isMove = true;
+
+							if (e.type == sf::Event::MouseButtonReleased)
+								if (e.key.code == sf::Mouse::Left)
+									sButtonWall1.setTexture(tButtonWall1);
+
+							////////// PLACE THE WALL ////////  
+							posWall.x = (posMouse.x - leftMarginForPlacingWalls) / wallActiveZone;
+							posWall.y = (posMouse.y - topMarginForPlacingWalls) / wallActiveZone;
+							//Clamp
+							if (posWall.x < 0)
+								posWall.x = 0;
+							else if (posWall.x > 7)
+								posWall.x = 7;
+							if (posWall.y < 0)
+								posWall.y = 0;
+							else if (posWall.y > 7)
+								posWall.y = 7;
+
+							fixedPosWall.x = 219 + wallActiveZone*posWall.x;
+							fixedPosWall.y = 81 + wallActiveZone*posWall.y;
+							if (e.type == sf::Event::MouseButtonPressed)
+								if (e.key.code == sf::Mouse::Left)
+									if (JustOneWall == true && funWallCanBePlaced(wallRotation, posWall))
 									{
-										sStart.setTexture(tStart);
-										goStart = false;
-										gameStatus = 2;
+										//Mark walls in matrix
+										if (wallRotation == 0) 
+										{
+											wallMatrix[posWall.y * 2][posWall.x] = 1;
+											wallMatrix[posWall.y * 2 + 2][posWall.x] = 1;
+										}
+										else 
+										{
+											wallMatrix[posWall.y * 2 + 1][posWall.x] = 1;
+											wallMatrix[posWall.y * 2 + 1][posWall.x + 1] = 1;
+										}
+
+
+										if (!funBlocksPlayer(0))
+										{
+
+											crossWalls[posWall.x][posWall.y] = 1;
+											sWalls[nrOfPlacedWalls + 1].setTexture(tWall);
+											JustOneWall = false;
+											maxWallsPerPlayer[turn] -= 1;
+											nextTurn(turn);
+											canWallBePlaced = true;
+										}
+										else
+										{
+											if (wallRotation == 0)
+											{
+												wallMatrix[posWall.y * 2][posWall.x] = 0;
+												wallMatrix[posWall.y * 2 + 2][posWall.x] = 0;
+											}
+											else
+											{
+												wallMatrix[posWall.y * 2 + 1][posWall.x] = 0;
+												wallMatrix[posWall.y * 2 + 1][posWall.x + 1] = 0;
+											}
+										}
+										//debug walls
+										for (int i = 0; i <= 16; i++)
+										{
+											if (i % 2 == 0)
+												std::cout << " ";
+											for (int j = 0; j <= 7 + i%2; j++)
+												std::cout << wallMatrix[i][j] << " ";
+											std::cout << std::endl;
+										}
+										std::cout << std::endl;
+
 									}
 
-			}
-
-			///// Game is Started !
-			if (gameStatus == 3)
-			{
-				if (e.type == sf::Event::MouseButtonPressed)
-					if (e.key.code == sf::Mouse::Left)
-						if (sExit1.getGlobalBounds().contains(posMouse.x, posMouse.y))
-						{
-							sExit1.setTexture(tExit2);
-							isExit = true;
-						}
-						else if (sBack.getGlobalBounds().contains(posMouse.x, posMouse.y))
-						{
-							sBack.setTexture(tBack1);
-							goBack = true;
-						}
-				if (e.type == sf::Event::MouseButtonReleased)
-					if (e.key.code == sf::Mouse::Left && isExit)
-						window.close();
-
-				if (e.type == sf::Event::MouseButtonReleased)
-					if (e.key.code == sf::Mouse::Left)
-						if (goBack)
-						{
-							sBack.setTexture(tBack);
-							goBack = false;
-							gameStatus = 0;
-							sBack.setPosition(462, 570);
-						}
-				/////////////// CHECK FOR THE WIN
-				if (pawn[0].x != 8 && pawn[1].x != 0 && pawn[2].y != 8 && pawn[3].y != 0)
-				{
-					if (e.type == sf::Event::MouseButtonPressed)
-						if (e.key.code == sf::Mouse::Left)
-							if (sPawn[turn].getGlobalBounds().contains(posMouse.x, posMouse.y))
-								isMove = true;
-
-					if (e.type == sf::Event::MouseButtonReleased)
-						if (e.key.code == sf::Mouse::Left)
-							sButtonWall1.setTexture(tButtonWall1);
-
-					////////// PLACE THE WALL ////////  
-					posWall.x = (posMouse.x - leftMarginForPlacingWalls) / wallActiveZone;
-					posWall.y = (posMouse.y - topMarginForPlacingWalls) / wallActiveZone;
-					//Clamp
-					if (posWall.x < 0)
-						posWall.x = 0;
-					else if (posWall.x > 7)
-						posWall.x = 7;
-					if (posWall.y < 0)
-						posWall.y = 0;
-					else if (posWall.y > 7)
-						posWall.y = 7;
-
-					fixedPosWall.x = 219 + wallActiveZone*posWall.x;
-					fixedPosWall.y = 81 + wallActiveZone*posWall.y;
-					if (e.type == sf::Event::MouseButtonPressed)
-						if (e.key.code == sf::Mouse::Left)
-							if (JustOneWall == true && funWallCanBePlaced(wallRotation, posWall))
-							{
-								//Mark walls in matrix
-								if (wallRotation == 0)
-								{
-									wallMatrix[posWall.y * 2][posWall.x] = 1;
-									wallMatrix[posWall.y * 2 + 2][posWall.x] = 1;
-								}
-								else
-								{
-									wallMatrix[posWall.y * 2 + 1][posWall.x] = 1;
-									wallMatrix[posWall.y * 2 + 1][posWall.x + 1] = 1;
-								}
-
-
-								if (!funBlocksPlayer(0))
-								{
-
-									crossWalls[posWall.x][posWall.y] = 1;
-									sWalls[nrOfPlacedWalls + 1].setTexture(tWall);
-									JustOneWall = false;
-									maxWallsPerPlayer[turn] -= 1;
-									nextTurn(turn);
-									canWallBePlaced = true;
-								}
-								else
-								{
-									if (wallRotation == 0)
+							//Wall button
+							if (e.type == sf::Event::MouseButtonPressed)
+								if (e.key.code == sf::Mouse::Left)
+									if (sButtonWall1.getGlobalBounds().contains(posMouse.x, posMouse.y) && JustOneWall == false && nrOfPlacedWalls < WallsPlaceableLimit && maxWallsPerPlayer[turn]>0)
 									{
-										wallMatrix[posWall.y * 2][posWall.x] = 0;
-										wallMatrix[posWall.y * 2 + 2][posWall.x] = 0;
+										sButtonWall1.setTexture(tButtonWall2);
+										sWalls[nrOfPlacedWalls].setTexture(tWall);
+										sWalls[nrOfPlacedWalls].setOrigin(7.5, 68.5);
+										nrOfPlacedWalls += 1;
+										//std::cout << nrOfPlacedWalls << " ";
+										JustOneWall = true;
+										wallRotation = 0;
+									}
+
+							if (e.type == sf::Event::MouseButtonReleased)
+								if (e.key.code == sf::Mouse::Right && isMove == false && !isWallPlaceable && JustOneWall == true)
+								{
+									nrOfPlacedWalls -= 1;
+									JustOneWall = false;
+								}
+							if (e.type == sf::Event::MouseWheelMoved || (e.type == sf::Event::KeyPressed && e.key.code == sf::Keyboard::R))
+								if (JustOneWall)
+								{
+									sWalls[nrOfPlacedWalls - 1].rotate(90 * e.mouseWheel.delta);
+									wallRotation = (wallRotation + 1) % 2;
+								}
+
+							if (e.type == sf::Event::MouseButtonReleased)
+								if (e.key.code == sf::Mouse::Left && isMove == true)
+								{
+
+									isMove = false;
+									nextPawn[turn].x = posMouse.y / sizeTotal;
+									nextPawn[turn].y = (posMouse.x - marginWidth) / sizeTotal;
+
+									//Clamp
+									if (nextPawn[turn].x < 0)
+										nextPawn[turn].x = 0;
+									else if (nextPawn[turn].x > 8)
+										nextPawn[turn].x = 8;
+									if (nextPawn[turn].y < 0)
+										nextPawn[turn].y = 0;
+									else if (nextPawn[turn].y > 8)
+										nextPawn[turn].y = 8;
+
+									sf::Vector2i deltaPawn = sf::Vector2i(pawn[turn].x - nextPawn[turn].x, pawn[turn].y - nextPawn[turn].y);
+									sf::Vector2i dirPawn = sf::Vector2i(((deltaPawn.x > 0) - (deltaPawn.x < 0)), ((deltaPawn.y > 0) - (deltaPawn.y < 0)));
+									sf::Vector2i adjacentPawn = sf::Vector2i(pawn[turn].x - dirPawn.x, pawn[turn].y - dirPawn.y);
+
+									//placed above another player
+									if (isOccupiedByPawn(nextPawn[turn]))
+										nextPawn[turn] = pawn[turn];
+
+									//hop above a pawn
+										//vertically
+									else if (deltaPawn.y == 0 && abs(deltaPawn.x) == 2 && wallMatrix[2 * adjacentPawn.x - dirPawn.x][pawn[turn].y] == 0)
+									{
+										if (!isOccupiedByPawn(sf::Vector2i(adjacentPawn.x, pawn[turn].y)))
+											nextPawn[turn] = pawn[turn];
+										//check for wall
+										else if (funCheckforWall(pawn[turn], sf::Vector2i(adjacentPawn.x, pawn[turn].y)))
+											nextPawn[turn] = pawn[turn];
+									}
+									//diagonal
+									else if (abs(deltaPawn.y) == 1 && abs(deltaPawn.x) == 1)
+									{
+										if (!((!funCheckforWall(pawn[turn], sf::Vector2i(adjacentPawn.x, pawn[turn].y)) && !funCheckforWall(nextPawn[turn], sf::Vector2i(adjacentPawn.x, pawn[turn].y)) && isOccupiedByPawn(sf::Vector2i(adjacentPawn.x, pawn[turn].y)) && wallMatrix[2 * adjacentPawn.x - dirPawn.x][pawn[turn].y] != 0) || (!funCheckforWall(pawn[turn], sf::Vector2i(pawn[turn].x, adjacentPawn.y)) && !funCheckforWall(nextPawn[turn], sf::Vector2i(pawn[turn].x, adjacentPawn.y)) && isOccupiedByPawn(sf::Vector2i(pawn[turn].x, adjacentPawn.y)) && wallMatrix[2 * pawn[turn].x][adjacentPawn.y - (dirPawn.y > 0)] != 0)))
+											nextPawn[turn] = pawn[turn];
+									}
+									//horizontally
+									else if (deltaPawn.x == 0 && abs(deltaPawn.y) == 2 && wallMatrix[2 * pawn[turn].x][adjacentPawn.y - (dirPawn.y > 0)] == 0)
+									{
+										if (!isOccupiedByPawn(sf::Vector2i(pawn[turn].x, adjacentPawn.y)))
+											nextPawn[turn] = pawn[turn];
+										//check for wall
+										else if (funCheckforWall(pawn[turn], sf::Vector2i(pawn[turn].x, adjacentPawn.y)))
+											nextPawn[turn] = pawn[turn];
+									}
+
+
+									//more than one position
+									else if (abs(deltaPawn.x) > 1 || abs(deltaPawn.y) > 1)
+										nextPawn[turn] = pawn[turn];
+									//diagonal move
+									else if (abs(abs(deltaPawn.x) - abs(deltaPawn.y)) != 1)
+										nextPawn[turn] = pawn[turn];
+
+									//check for wall
+									else if (nextPawn[turn] != pawn[turn])
+										if (funCheckforWall(pawn[turn], nextPawn[turn]))
+											nextPawn[turn] = pawn[turn];
+
+									if (pawn[turn] != nextPawn[turn])
+									{
+										sf::Vector2i tempPawn = pawn[turn];
+										pawn[turn] = nextPawn[turn];
+
+										//blocks off other players
+										if (funBlocksPlayer(1))
+										{
+											pawn[turn] = tempPawn;
+											posPawn[turn] = sf::Vector2i(marginWidth + sizeTotal*pawn[turn].y, widthWall + sizeTotal*pawn[turn].x);
+											sPawn[turn].setPosition(posPawn[turn].x, posPawn[turn].y);
+										}
+										else
+										{
+											posPawn[turn] = sf::Vector2i(marginWidth + sizeTotal*pawn[turn].y, widthWall + sizeTotal*pawn[turn].x);
+											sPawn[turn].setPosition(posPawn[turn].x, posPawn[turn].y);
+											nextTurn(turn);
+										}
 									}
 									else
 									{
-										wallMatrix[posWall.y * 2 + 1][posWall.x] = 0;
-										wallMatrix[posWall.y * 2 + 1][posWall.x + 1] = 0;
+										posPawn[turn] = sf::Vector2i(marginWidth + sizeTotal*pawn[turn].y, widthWall + sizeTotal*pawn[turn].x);
+										sPawn[turn].setPosition(posPawn[turn].x, posPawn[turn].y);
 									}
+
 								}
-								//debug walls
-								for (int i = 0; i <= 16; i++)
-								{
-									if (i % 2 == 0)
-										std::cout << " ";
-									for (int j = 0; j <= 7 + i % 2; j++)
-										std::cout << wallMatrix[i][j] << " ";
-									std::cout << std::endl;
-								}
-								std::cout << std::endl;
-
-							}
-
-					//Wall button
-					if (e.type == sf::Event::MouseButtonPressed)
-						if (e.key.code == sf::Mouse::Left)
-							if (sButtonWall1.getGlobalBounds().contains(posMouse.x, posMouse.y) && JustOneWall == false && nrOfPlacedWalls < WallsPlaceableLimit && maxWallsPerPlayer[turn]>0)
-							{
-								sButtonWall1.setTexture(tButtonWall2);
-								sWalls[nrOfPlacedWalls].setTexture(tWall);
-								sWalls[nrOfPlacedWalls].setOrigin(7.5, 68.5);
-								nrOfPlacedWalls += 1;
-								//std::cout << nrOfPlacedWalls << " ";
-								JustOneWall = true;
-								wallRotation = 0;
-							}
-
-					if (e.type == sf::Event::MouseButtonReleased)
-						if (e.key.code == sf::Mouse::Right && isMove == false && !isWallPlaceable && JustOneWall == true)
-						{
-							nrOfPlacedWalls -= 1;
-							JustOneWall = false;
 						}
-					if (e.type == sf::Event::MouseWheelMoved || (e.type == sf::Event::KeyPressed && e.key.code == sf::Keyboard::R))
-						if (JustOneWall)
-						{
-							sWalls[nrOfPlacedWalls - 1].rotate(90 * e.mouseWheel.delta);
-							wallRotation = (wallRotation + 1) % 2;
-						}
-
-					if (e.type == sf::Event::MouseButtonReleased)
-						if (e.key.code == sf::Mouse::Left && isMove == true)
-						{
-
-							isMove = false;
-							nextPawn[turn].x = posMouse.y / sizeTotal;
-							nextPawn[turn].y = (posMouse.x - marginWidth) / sizeTotal;
-
-							//Clamp
-							if (nextPawn[turn].x < 0)
-								nextPawn[turn].x = 0;
-							else if (nextPawn[turn].x > 8)
-								nextPawn[turn].x = 8;
-							if (nextPawn[turn].y < 0)
-								nextPawn[turn].y = 0;
-							else if (nextPawn[turn].y > 8)
-								nextPawn[turn].y = 8;
-
-							sf::Vector2i deltaPawn = sf::Vector2i(pawn[turn].x - nextPawn[turn].x, pawn[turn].y - nextPawn[turn].y);
-							sf::Vector2i dirPawn = sf::Vector2i(((deltaPawn.x > 0) - (deltaPawn.x < 0)), ((deltaPawn.y > 0) - (deltaPawn.y < 0)));
-							sf::Vector2i adjacentPawn = sf::Vector2i(pawn[turn].x - dirPawn.x, pawn[turn].y - dirPawn.y);
-
-							//placed above another player
-							if (isOccupiedByPawn(nextPawn[turn]))
-								nextPawn[turn] = pawn[turn];
-
-							//hop above a pawn
-							//vertically
-							else if (deltaPawn.y == 0 && abs(deltaPawn.x) == 2 && wallMatrix[2 * adjacentPawn.x - dirPawn.x][pawn[turn].y] == 0)
-							{
-								if (!isOccupiedByPawn(sf::Vector2i(adjacentPawn.x, pawn[turn].y)))
-									nextPawn[turn] = pawn[turn];
-								//check for wall
-								else if (funCheckforWall(pawn[turn], sf::Vector2i(adjacentPawn.x, pawn[turn].y)))
-									nextPawn[turn] = pawn[turn];
-							}
-							//diagonal
-							else if (abs(deltaPawn.y) == 1 && abs(deltaPawn.x) == 1)
-							{
-								if (!((!funCheckforWall(pawn[turn], sf::Vector2i(adjacentPawn.x, pawn[turn].y)) && !funCheckforWall(nextPawn[turn], sf::Vector2i(adjacentPawn.x, pawn[turn].y)) && isOccupiedByPawn(sf::Vector2i(adjacentPawn.x, pawn[turn].y)) && wallMatrix[2 * adjacentPawn.x - dirPawn.x][pawn[turn].y] != 0) || (!funCheckforWall(pawn[turn], sf::Vector2i(pawn[turn].x, adjacentPawn.y)) && !funCheckforWall(nextPawn[turn], sf::Vector2i(pawn[turn].x, adjacentPawn.y)) && isOccupiedByPawn(sf::Vector2i(pawn[turn].x, adjacentPawn.y)) && wallMatrix[2 * pawn[turn].x][adjacentPawn.y - (dirPawn.y > 0)] != 0)))
-									nextPawn[turn] = pawn[turn];
-							}
-							//horizontally
-							else if (deltaPawn.x == 0 && abs(deltaPawn.y) == 2 && wallMatrix[2 * pawn[turn].x][adjacentPawn.y - (dirPawn.y > 0)] == 0)
-							{
-								if (!isOccupiedByPawn(sf::Vector2i(pawn[turn].x, adjacentPawn.y)))
-									nextPawn[turn] = pawn[turn];
-								//check for wall
-								else if (funCheckforWall(pawn[turn], sf::Vector2i(pawn[turn].x, adjacentPawn.y)))
-									nextPawn[turn] = pawn[turn];
-							}
-
-
-							//more than one position
-							else if (abs(deltaPawn.x) > 1 || abs(deltaPawn.y) > 1)
-								nextPawn[turn] = pawn[turn];
-							//diagonal move
-							else if (abs(abs(deltaPawn.x) - abs(deltaPawn.y)) != 1)
-								nextPawn[turn] = pawn[turn];
-
-							//check for wall
-							else if (nextPawn[turn] != pawn[turn])
-								if (funCheckforWall(pawn[turn], nextPawn[turn]))
-									nextPawn[turn] = pawn[turn];
-
-							if (pawn[turn] != nextPawn[turn])
-							{
-								sf::Vector2i tempPawn = pawn[turn];
-								pawn[turn] = nextPawn[turn];
-
-								//blocks off other players
-								if (funBlocksPlayer(1))
-								{
-									pawn[turn] = tempPawn;
-									posPawn[turn] = sf::Vector2i(marginWidth + sizeTotal*pawn[turn].y, widthWall + sizeTotal*pawn[turn].x);
-									sPawn[turn].setPosition(posPawn[turn].x, posPawn[turn].y);
-								}
-								else
-								{
-									posPawn[turn] = sf::Vector2i(marginWidth + sizeTotal*pawn[turn].y, widthWall + sizeTotal*pawn[turn].x);
-									sPawn[turn].setPosition(posPawn[turn].x, posPawn[turn].y);
-									nextTurn(turn);
-								}
-							}
-							else
-							{
-								posPawn[turn] = sf::Vector2i(marginWidth + sizeTotal*pawn[turn].y, widthWall + sizeTotal*pawn[turn].x);
-								sPawn[turn].setPosition(posPawn[turn].x, posPawn[turn].y);
-							}
-
-						}
+						else
+							winner = 1;
+					}
 				}
-				else
-					winner = 1;
+			if (gameStatus == 3)
+			{
+				if (JustOneWall)
+					sWalls[nrOfPlacedWalls - 1].setPosition(fixedPosWall.x, fixedPosWall.y);
+
+				if (isMove)
+					sPawn[turn].setPosition(posMouse.x - sPawn[turn].getTextureRect().width / 2, posMouse.y - sPawn[turn].getTextureRect().height / 2);
+
+				window.clear(sf::Color::White);
+				window.draw(sBoard);
+				window.draw(sPlayerWalls[maxWallsPerPlayer[turn]]);
+
+				if (nrOfPlacedWalls > WallsPlaceableLimit)
+					nrOfPlacedWalls = WallsPlaceableLimit;
+				for (int i = 0; i <= nrOfPlacedWalls - 1; i++)
+					window.draw(sWalls[i]);
+
+				//Draw Buttons
+				window.draw(sTurn);
+				window.draw(sButtonWall1);
+				window.draw(sExit1);
+				window.draw(sBack);
+				for (int i = 0; i <= nrOfPlayers - 1; i++)
+					window.draw(sPawn[i]);
+				if (winner == 1) {
+					if (pawn[0].x == 8)
+						sWin.setTexture(twin1);
+					else if (pawn[1].x == 0)
+						sWin.setTexture(twin2);
+					else if (pawn[2].y == 8)
+						sWin.setTexture(twin3);
+					else if (pawn[3].y == 0)
+						sWin.setTexture(twin4);
+					winner = 2;
+				}
+				if (winner == 2)
+					window.draw(sWin);
 			}
-		}
-		if (gameStatus == 3)
-		{
-			if (JustOneWall)
-				sWalls[nrOfPlacedWalls - 1].setPosition(fixedPosWall.x, fixedPosWall.y);
-
-			if (isMove)
-				sPawn[turn].setPosition(posMouse.x - sPawn[turn].getTextureRect().width / 2, posMouse.y - sPawn[turn].getTextureRect().height / 2);
-
-			window.clear(sf::Color::White);
-			window.draw(sBoard);
-			window.draw(sPlayerWalls[maxWallsPerPlayer[turn]]);
-
-			if (nrOfPlacedWalls > WallsPlaceableLimit)
-				nrOfPlacedWalls = WallsPlaceableLimit;
-			for (int i = 0; i <= nrOfPlacedWalls - 1; i++)
-				window.draw(sWalls[i]);
-
-			//Draw Buttons
-			window.draw(sTurn);
-			window.draw(sButtonWall1);
-			window.draw(sExit1);
-			window.draw(sBack);
-			for (int i = 0; i <= nrOfPlayers - 1; i++)
-				window.draw(sPawn[i]);
-			if (winner == 1) {
-				if (pawn[0].x == 8)
-					sWin.setTexture(twin1);
-				else if (pawn[1].x == 0)
-					sWin.setTexture(twin2);
-				else if (pawn[2].y == 8)
-					sWin.setTexture(twin3);
-				else if (pawn[3].y == 0)
-					sWin.setTexture(twin4);
-				winner = 2;
-			}
-			if (winner == 2)
-				window.draw(sWin);
-		}
-		else
+			else
 			if (gameStatus == 0) {
 				window.clear(sf::Color::White);
 				window.draw(sMenuBackground);
 				window.draw(sButtonClassic);
 				window.draw(sButtonWild);
 				window.draw(sButtonQuit);
-			}
-			else
+			}else
 				if (gameStatus == 1) {
 					window.clear(sf::Color::White);
 					window.draw(sMenuBackground);
@@ -855,7 +848,7 @@ int main()
 					window.draw(sBack);
 					window.draw(sStart);
 				}
-		window.display();
+				window.display();
 	}
 	return 0;
 }
