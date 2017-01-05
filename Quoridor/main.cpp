@@ -14,6 +14,7 @@ sf::Sprite sPawn[4];
 
 int turn;
 int playerType[4];
+int playerSkin[4];
 int wallMatrix[17][9];
 int nrOfPlayers = 2;
 //// DON'T LET WALLS TO COLIDE EACHOTHER ////
@@ -32,6 +33,9 @@ bool goBack = false;
 bool goStart = false;
 bool next[4];
 bool previous[4];
+bool nextSkin[4];
+bool previousSkin[4];
+
 //////// Set The Mode : Classic is 0 , Wild is 1
 bool setMode = false;
 
@@ -259,6 +263,8 @@ void nextTurn(int &currentTurn)
 
 int main()
 {
+	for (int i = 0;i <= 3;i++)
+		playerSkin[i] = i;
 	sf::RenderWindow window(sf::VideoMode(969, 696), "Game");
 	sf::Texture tBoard;
 	sf::Sprite sBoard;
@@ -288,7 +294,7 @@ int main()
 	sButtonQuit.setPosition(410, 420);
 
 	///// SECOND MENU
-	sf::Sprite sSetPlayerBackground[4], sAdd, sRemove, sBack, sStart, sNext[4], sPrevious[4], sState[4][3];
+	sf::Sprite sSetPlayerBackground[4], sAdd, sRemove, sBack, sStart, sNext[8], sPrevious[8], sState[4][3], sSkin[4][4];
 	sf::Texture tSPB1, tSPB2, tSPB3, tSPB4, tAdd, tRemove, tAdd1, tRemove1, tBack, tBack1, tStart, tStart1, tNext, tPrevious, tState[3], tNext1, tPrevious1;
 	tSPB1.loadFromFile("images/SetPlayer1.png");
 	tSPB2.loadFromFile("images/SetPlayer2.png");
@@ -326,6 +332,19 @@ int main()
 	sRemove.setPosition(543, 570);
 	sStart.setTexture(tStart);
 	sStart.setPosition(425, 630);
+
+	tPawn[0].loadFromFile("images/QuoridorPawn0.png");
+	tPawn[1].loadFromFile("images/QuoridorPawn1.png");
+	tPawn[2].loadFromFile("images/QuoridorPawn2.png");
+	tPawn[3].loadFromFile("images/QuoridorPawn3.png");
+	
+	for (int i = 0;i <= 3;i++)
+		for (int j = 0;j <= 3;j++)
+		{
+			sSkin[i][j].setTexture(tPawn[j]);
+			sSkin[i][j].setPosition(696, 72 + i * 130);
+		}
+
 	for (int i = 0;i <= 3;i++)
 		for (int j = 0;j <= 2;j++)
 		{
@@ -338,6 +357,13 @@ int main()
 		sPrevious[i].setTexture(tPrevious);
 		sNext[i].setPosition(583, 86 + i * 130);
 		sPrevious[i].setPosition(395, 86 + i * 130);
+	}
+	for (int i = 4;i <= 7;i++)
+	{
+		sNext[i].setTexture(tNext);
+		sPrevious[i].setTexture(tPrevious);
+		sNext[i].setPosition(806, 86 + (i-4) * 130);
+		sPrevious[i].setPosition(620, 86 + (i-4) * 130);
 	}
 
 	////// [images]Display number of walls for each player /////
@@ -427,13 +453,7 @@ int main()
 
 
 
-		tPawn[0].loadFromFile("images/QuoridorPawn0.png");
-		tPawn[1].loadFromFile("images/QuoridorPawn1.png");
-		tPawn[2].loadFromFile("images/QuoridorPawn2.png");
-		tPawn[3].loadFromFile("images/QuoridorPawn3.png");
-
-		for (int i = 0; i <= 3; i++)
-			sPawn[i].setTexture(tPawn[i]);
+		
 
 		isMove = false;
 
@@ -563,6 +583,18 @@ int main()
 									sPrevious[i].setTexture(tPrevious1);
 								}
 							}
+					if (e.type == sf::Event::MouseButtonPressed)
+						if (e.key.code == sf::Mouse::Left)
+							for (int i = 0;i < nrOfPlayers;i++) {
+								if (sNext[i + 4].getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+									nextSkin[i] = true;
+									sNext[i + 4].setTexture(tNext1);
+								}
+								if (sPrevious[i + 4].getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+									previousSkin[i] = true;
+									sPrevious[i + 4].setTexture(tPrevious1);
+								}
+							}
 					if (e.type == sf::Event::MouseButtonReleased)
 						if (e.key.code == sf::Mouse::Left)
 							for (int i = 0;i < nrOfPlayers;i++) {
@@ -581,6 +613,24 @@ int main()
 									std::cout << "playerType[" << i << "]= " << playerType[i] << std::endl;
 									previous[i] = false;
 									sPrevious[i].setTexture(tPrevious);
+								}
+							}
+					if (e.type == sf::Event::MouseButtonReleased)
+						if (e.key.code == sf::Mouse::Left)
+							for (int i = 0;i < nrOfPlayers;i++) {
+								if (nextSkin[i]) {
+									playerSkin[i] += 1;
+									if (playerSkin[i] > 3)
+										playerSkin[i] = 3;
+									nextSkin[i] = false;
+									sNext[i + 4].setTexture(tNext);
+								}
+								if (previousSkin[i]) {
+									playerSkin[i] -= 1;
+									if (playerSkin[i] < 0)
+										playerSkin[i] = 0;
+									previousSkin[i] = false;
+									sPrevious[i + 4].setTexture(tPrevious);
 								}
 							}
 					if (e.type == sf::Event::MouseButtonReleased)
@@ -907,7 +957,14 @@ int main()
 					window.draw(sStart);
 					for (int i = 0;i < nrOfPlayers;i++)
 						window.draw(sState[i][playerType[i]]);
+					for (int i = 0; i < nrOfPlayers;i++)
+						window.draw(sSkin[i][playerSkin[i]]);
 					for (int i = 0;i < nrOfPlayers;i++)
+					{
+						window.draw(sNext[i]);
+						window.draw(sPrevious[i]);
+					}
+					for (int i = 4;i < 4 + nrOfPlayers;i++)
 					{
 						window.draw(sNext[i]);
 						window.draw(sPrevious[i]);
