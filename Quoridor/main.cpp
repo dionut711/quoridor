@@ -28,6 +28,8 @@ int buttonState;
 bool addWindow = false;
 bool removeWindow = false;
 bool goBack = false;
+bool goStart = false;
+
 //////// Set The Mode : Classic is 0 , Wild is 1
 bool setMode = false;
 
@@ -261,8 +263,8 @@ int main()
 	sButtonQuit.setPosition(410, 420);
 
 	///// SECOND MENU
-	sf::Sprite sSetPlayerBackground[4],sAdd,sRemove,sBack;
-	sf::Texture tSPB1,tSPB2,tSPB3,tSPB4,tAdd,tRemove,tAdd1,tRemove1,tBack,tBack1;
+	sf::Sprite sSetPlayerBackground[4],sAdd,sRemove,sBack,sStart;
+	sf::Texture tSPB1,tSPB2,tSPB3,tSPB4,tAdd,tRemove,tAdd1,tRemove1,tBack,tBack1,tStart,tStart1;
 	tSPB1.loadFromFile("images/SetPlayer1.png");
 	tSPB2.loadFromFile("images/SetPlayer2.png");
 	tSPB3.loadFromFile("images/SetPlayer3.png");
@@ -273,6 +275,8 @@ int main()
 	tRemove1.loadFromFile("images/remove1.png");
 	tBack.loadFromFile("images/back.png");
 	tBack1.loadFromFile("images/back1.png");
+	tStart.loadFromFile("images/start.png");
+	tStart1.loadFromFile("images/start1.png");
 
 	sSetPlayerBackground[0].setTexture(tSPB1);
 	sSetPlayerBackground[0].setPosition(135, 50);
@@ -288,6 +292,8 @@ int main()
 	sAdd.setPosition(381, 570);
 	sRemove.setTexture(tRemove);
 	sRemove.setPosition(543, 570);
+	sStart.setTexture(tStart);
+	sStart.setPosition(425, 630);
 
 	////// [images]Display number of walls for each player /////
 	sf::Texture tPlayerWalls;
@@ -467,7 +473,11 @@ int main()
 											if (sBack.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
 												sBack.setTexture(tBack1);
 												goBack = true;
-											}
+											}else
+												if (sStart.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+													sStart.setTexture(tStart1);
+													goStart = true;
+												}
 							if (e.type == sf::Event::MouseButtonReleased)
 								if (e.key.code == sf::Mouse::Left)
 									if (addWindow)
@@ -491,7 +501,13 @@ int main()
 												sBack.setTexture(tBack);
 												goBack = false;
 												gameStatus = 0;
-											}
+											}else
+												if (goStart)
+												{
+													sStart.setTexture(tStart);
+													goStart = false;
+													gameStatus = 3;
+												}
 							
 						}
 
@@ -755,6 +771,7 @@ int main()
 					window.draw(sAdd);
 					window.draw(sRemove);
 					window.draw(sBack);
+					window.draw(sStart);
 				}
 				window.display();
 	}
