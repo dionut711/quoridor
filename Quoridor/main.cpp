@@ -12,6 +12,7 @@ int gameStatus = 0;
 sf::Vector2i pawn[4];
 sf::Sprite sPawn[4];
 
+int turn;
 int playerType[4];
 int wallMatrix[17][9];
 int nrOfPlayers = 2;
@@ -88,7 +89,7 @@ bool funWallCanBePlaced(int wallRotation,sf::Vector2i posWall)
 			return 0;
 	return 1;
 }
-bool funWallBlocksPlayer()
+bool funBlocksPlayer(bool checkforplayer)
 {
 	int dl[4] = { -1, 0, 1, 0 };
 	int dc[4] = { 0, 1, 0, -1 };
@@ -121,26 +122,38 @@ bool funWallBlocksPlayer()
 				v[0] = p[0] + dl[k];
 				v[1] = p[1] + dc[k];
 
-				if (board[v[0]][v[1]] == 0 && v[0] >= 0 && v[0] <= 8 && v[1] >= 0 && v[1] <= 8 && !funCheckforWall(sf::Vector2i(p[0],p[1]),sf::Vector2i(v[0],v[1])))
+				if (board[v[0]][v[1]] == 0 && v[0] >= 0 && v[0] <= 8 && v[1] >= 0 && v[1] <= 8 && !funCheckforWall(sf::Vector2i(p[0], p[1]), sf::Vector2i(v[0], v[1])))
 				{
-					board[v[0]][v[1]] = board[p[0]][p[1]] + 1;
+					/*
+					sf::Vector2i tempPawn = pawn[g];
+					pawn[g] = sf::Vector2i(v[0], v[1]);
+					if (funBlocksPlayer(1))
+					{
+						pawn[g] = sf::Vector2i(tempPawn.x, tempPawn.y);
+					}
+					else
+					{
+					*/
+						board[v[0]][v[1]] = board[p[0]][p[1]] + 1;
 
-					ultim++;
-					c[ultim][0] = v[0];
-					c[ultim][1] = v[1];
-					if (g == 0 || g == 1)
-						if (v[0] == (1 - g) * 8)
-							foundPath = true;
-							
-					if (g == 2 || g == 3)
-						if (v[1] == (3 - g) * 8)
-							foundPath = true;
+						ultim++;
+						c[ultim][0] = v[0];
+						c[ultim][1] = v[1];
+						if (g == 0 || g == 1)
+							if (v[0] == (1 - g) * 8)
+								foundPath = true;
+
+						if (g == 2 || g == 3)
+							if (v[1] == (3 - g) * 8)
+								foundPath = true;
+					//}
 				}
 			}
 		}
 
 		if (foundPath == false)
 			return true;
+		
 	}
 	return false;
 }
@@ -194,20 +207,31 @@ sf::Vector2i funAImove(int turn)
 
 				if (board[v[0]][v[1]] == 0 && v[0] >= 0 && v[0] <= 8 && v[1] >= 0 && v[1] <= 8 && !funCheckforWall(sf::Vector2i(p[0], p[1]), sf::Vector2i(v[0], v[1])))
 				{
-					board[v[0]][v[1]] = board[p[0]][p[1]] + 1;
+					sf::Vector2i tempPawn = pawn[turn];
+					pawn[turn] = sf::Vector2i(v[0],v[1]);
+					if (funBlocksPlayer(1))
+					{
+						pawn[turn] = sf::Vector2i(tempPawn.x, tempPawn.y);
+					}
+					else
+					{
+						board[v[0]][v[1]] = board[p[0]][p[1]] + 1;
 
-					ultim++;
-					c[ultim][0] = v[0];
-					c[ultim][1] = v[1];
-					if (turn == 0 || turn == 1)
-						if (v[0] == (1 - turn) * 8)
-						{
-							return funReverseLee(board, sf::Vector2i(v[0], v[1]));
-						}
+						ultim++;
+						c[ultim][0] = v[0];
+						c[ultim][1] = v[1];
+						if (turn == 0 || turn == 1)
+							if (v[0] == (1 - turn) * 8)
+							{
+								return funReverseLee(board, sf::Vector2i(v[0], v[1]));
+							}
 
-					if (turn == 2 || turn == 3)
-						if (v[1] == (3 - turn) * 8)
-							return funReverseLee(board, sf::Vector2i(v[0], v[1]));
+						if (turn == 2 || turn == 3)
+							if (v[1] == (3 - turn) * 8)
+								return funReverseLee(board, sf::Vector2i(v[0], v[1]));
+					}
+
+					
 				}
 			}
 
@@ -237,7 +261,7 @@ int main()
 	sf::RenderWindow window(sf::VideoMode(969, 696), "Game");
 	sf::Texture tBoard;
 	sf::Sprite sBoard;
-	int turn = -1;
+
 
 	sf::Texture tPawn[4];
 	sf::Texture tWall;
@@ -406,7 +430,7 @@ int main()
 				{
 					turn = -1;
 					for (int i = 0;i < nrOfPlayers ;i++)
-						playerType[i] = 1;
+						playerType[i] = 0;
 					playerType[1] = 1;
 					playerType[2] = 1;
 					playerType[3] = 1;
@@ -433,7 +457,8 @@ int main()
 						sPawn[i].setPosition(marginWidth + sizeTotal*pawn[i].y, widthWall + sizeTotal*pawn[i].x);
 					
 					//// SET WALLS FOR PLAYERS ////
-					for (int i = 0; i < nrOfPlayers; i++) {
+					for (int i = 0; i < nrOfPlayers; i++) 
+					{
 						int maxNumber = 10;
 						if (nrOfPlayers == 4)
 							maxNumber = 10;
@@ -447,7 +472,7 @@ int main()
 				/////////// CLOSE THE WINDOW /////////////
 				if (e.type == sf::Event::Closed)
 					window.close();
-					if (gameStatus == 0) {
+				if (gameStatus == 0) {
 						///// CLOSE MENU
 						if (e.type == sf::Event::MouseButtonPressed)
 							if (e.key.code == sf::Mouse::Left)
@@ -482,8 +507,8 @@ int main()
 									buttonState = 0;
 								}
 						}
-						////////// SET GAME PLAYERS AND OTHERS
-						if (gameStatus == 1) 
+					////////// SET GAME PLAYERS AND OTHERS
+					if (gameStatus == 1) 
 						{
 							if (e.type == sf::Event::MouseButtonPressed)
 								if (e.key.code == sf::Mouse::Left)
@@ -541,14 +566,16 @@ int main()
 					{
 						if (e.type == sf::Event::MouseButtonPressed)
 							if (e.key.code == sf::Mouse::Left)
-								if (sExit1.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+								if (sExit1.getGlobalBounds().contains(posMouse.x, posMouse.y)) 
+								{
 									sExit1.setTexture(tExit2);
 									isExit = true;
-								}else
-									if (sBack.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
-										sBack.setTexture(tBack1);
-										goBack = true;
-									}
+								}
+								else if (sBack.getGlobalBounds().contains(posMouse.x, posMouse.y)) 
+								{
+									sBack.setTexture(tBack1);
+									goBack = true;
+								}
 						if (e.type == sf::Event::MouseButtonReleased)
 							if (e.key.code == sf::Mouse::Left && isExit)
 								window.close();
@@ -565,13 +592,10 @@ int main()
 						/////////////// CHECK FOR THE WIN
 						if (pawn[0].x != 8 && pawn[1].x != 0 && pawn[2].y != 8 && pawn[3].y != 0)
 						{
-
 							if (e.type == sf::Event::MouseButtonPressed)
 								if (e.key.code == sf::Mouse::Left)
 									if (sPawn[turn].getGlobalBounds().contains(posMouse.x, posMouse.y))
-									{
 										isMove = true;
-									}
 
 							if (e.type == sf::Event::MouseButtonReleased)
 								if (e.key.code == sf::Mouse::Left)
@@ -597,17 +621,19 @@ int main()
 									if (JustOneWall == true && funWallCanBePlaced(wallRotation, posWall))
 									{
 										//Mark walls in matrix
-										if (wallRotation == 0) {
+										if (wallRotation == 0) 
+										{
 											wallMatrix[posWall.y * 2][posWall.x] = 1;
 											wallMatrix[posWall.y * 2 + 2][posWall.x] = 1;
 										}
-										else {
+										else 
+										{
 											wallMatrix[posWall.y * 2 + 1][posWall.x] = 1;
 											wallMatrix[posWall.y * 2 + 1][posWall.x + 1] = 1;
 										}
 
 
-										if (!funWallBlocksPlayer())
+										if (!funBlocksPlayer(0))
 										{
 
 											crossWalls[posWall.x][posWall.y] = 1;
@@ -630,6 +656,16 @@ int main()
 												wallMatrix[posWall.y * 2 + 1][posWall.x + 1] = 0;
 											}
 										}
+										//debug walls
+										for (int i = 0; i <= 16; i++)
+										{
+											if (i % 2 == 0)
+												std::cout << " ";
+											for (int j = 0; j <= 7 + i%2; j++)
+												std::cout << wallMatrix[i][j] << " ";
+											std::cout << std::endl;
+										}
+										std::cout << std::endl;
 
 									}
 
@@ -731,7 +767,7 @@ int main()
 										pawn[turn] = nextPawn[turn];
 
 										//blocks off other players
-										if (funWallBlocksPlayer())
+										if (funBlocksPlayer(1))
 										{
 											pawn[turn] = tempPawn;
 											posPawn[turn] = sf::Vector2i(marginWidth + sizeTotal*pawn[turn].y, widthWall + sizeTotal*pawn[turn].x);
