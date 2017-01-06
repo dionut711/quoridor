@@ -168,84 +168,109 @@ bool funBlocksPlayer(bool checkforplayer)
 }
 sf::Vector2i funReverseLee(int board[9][9], sf::Vector2i pos)
 {
+	bool foundPath = false;
 	int dl[4] = { -1, 0, 1, 0 };
 	int dc[4] = { 0, 1, 0, -1 };
+
 	if (board[pos.x][pos.y] == 2)
 		return pos;
+		
 	sf::Vector2i mn(pos.x, pos.y);
 	for (int i = 0; i <= 3; i++)
 	{
-		if(pos.x + dl[i] >= 0 && pos.x + dl[i] <= 8 && pos.y + dc[i] >= 0 && pos.y + dc[i] <= 8)
-			if(!funCheckforWall(sf::Vector2i(pos.x, pos.y),sf::Vector2i(pos.x + dl[i], pos.y + dc[i])))
-				if (board[mn.x][mn.y] > board[pos.x + dl[i]][pos.y + dc[i]] && board[pos.x + dl[i]][pos.y + dc[i]] > 1)
+		
+		if(pos.x + dl[i] >= 0 && pos.x + dl[i] <= 8 && pos.y + dc[i] >= 0 && pos.y + dc[i] <= 8)//check if within boundaries
+			if(!funCheckforWall(sf::Vector2i(pos.x, pos.y),sf::Vector2i(pos.x + dl[i], pos.y + dc[i])))//wall
+				if (board[mn.x][mn.y] > board[pos.x + dl[i]][pos.y + dc[i]] && board[pos.x + dl[i]][pos.y + dc[i]] > 1)//minimal path
 				{
-					mn.x = pos.x + dl[i];
-					mn.y = pos.y + dc[i];
+					if (board[pos.x + dl[i]][pos.y + dc[i]] == 2)
+					{
+						sf::Vector2i tempPawn = pawn[turn];
+						pawn[turn] = sf::Vector2i(pos.x + dl[i], pos.y + dc[i]);
+						if (funBlocksPlayer(1))
+							pawn[turn] = tempPawn;
+						else
+						{
+							mn.x = pos.x + dl[i];
+							mn.y = pos.y + dc[i];
+							foundPath = true;
+						}
+					}
+					else
+					{
+						mn.x = pos.x + dl[i];
+						mn.y = pos.y + dc[i];
+						foundPath = true;
+					}
 				}
 	}
-	return funReverseLee(board, mn);
+	if (foundPath)
+		return funReverseLee(board, mn);
+	else
+		return sf::Vector2i(-1, -1);
 }
 sf::Vector2i funAImove(int turn)
 {
+	sf::Vector2i oldPawn = pawn[turn];
 	sf::Vector2i nextPawn;
 	int dl[4] = { -1, 0, 1, 0 };
 	int dc[4] = { 0, 1, 0, -1 };
 	int prim, ultim, p[2], v[2], c[81][2];
 
 	int board[9][9];
-		c[0][0] = pawn[turn].x;
-		c[0][1] = pawn[turn].y;
-		prim = ultim = 0;
+	c[0][0] = pawn[turn].x;
+	c[0][1] = pawn[turn].y;
+	prim = ultim = 0;
 
-		for (int i = 0; i <= 8; i++)
-			for (int j = 0; j <= 8; j++)
-				board[i][j] = 0;
-		for (int i = 0; i <= nrOfPlayers - 1; i++)
-			board[pawn[i].x][pawn[i].y] = 1;
+	for (int i = 0; i <= 8; i++)
+		for (int j = 0; j <= 8; j++)
+			board[i][j] = 0;
+	for (int i = 0; i <= nrOfPlayers - 1; i++)
+		board[pawn[i].x][pawn[i].y] = 1;
 
-		while (prim <= ultim)
+	while (prim <= ultim)
+	{
+		p[0] = c[prim][0];
+		p[1] = c[prim][1];
+		prim++;
+
+		for (int k = 0; k <= 3; k++)
 		{
-			p[0] = c[prim][0];
-			p[1] = c[prim][1];
-			prim++;
+			v[0] = p[0] + dl[k];
+			v[1] = p[1] + dc[k];
 
-			for (int k = 0; k <= 3; k++)
+			if (board[v[0]][v[1]] == 0 && v[0] >= 0 && v[0] <= 8 && v[1] >= 0 && v[1] <= 8 && !funCheckforWall(sf::Vector2i(p[0], p[1]), sf::Vector2i(v[0], v[1])))
 			{
-				v[0] = p[0] + dl[k];
-				v[1] = p[1] + dc[k];
+				board[v[0]][v[1]] = board[p[0]][p[1]] + 1;
 
-				if (board[v[0]][v[1]] == 0 && v[0] >= 0 && v[0] <= 8 && v[1] >= 0 && v[1] <= 8 && !funCheckforWall(sf::Vector2i(p[0], p[1]), sf::Vector2i(v[0], v[1])))
-				{
-					sf::Vector2i tempPawn = pawn[turn];
-					pawn[turn] = sf::Vector2i(v[0],v[1]);
-					if (funBlocksPlayer(1))
+				ultim++;
+				c[ultim][0] = v[0];
+				c[ultim][1] = v[1];
+				if (turn == 0 || turn == 1)
+					if (v[0] == (1 - turn) * 8)
 					{
-						pawn[turn] = sf::Vector2i(tempPawn.x, tempPawn.y);
-					}
-					else
-					{
-						board[v[0]][v[1]] = board[p[0]][p[1]] + 1;
-
-						ultim++;
-						c[ultim][0] = v[0];
-						c[ultim][1] = v[1];
-						if (turn == 0 || turn == 1)
-							if (v[0] == (1 - turn) * 8)
-							{
-								return funReverseLee(board, sf::Vector2i(v[0], v[1]));
-							}
-
-						if (turn == 2 || turn == 3)
-							if (v[1] == (3 - turn) * 8)
-								return funReverseLee(board, sf::Vector2i(v[0], v[1]));
+						sf::Vector2i tempPawn = funReverseLee(board, sf::Vector2i(v[0], v[1]));
+						if (tempPawn.x >= 0)
+							return funReverseLee(board, sf::Vector2i(v[0], v[1]));
+						else
+							return oldPawn;
 					}
 
-					
-				}
+				if (turn == 2 || turn == 3)
+					if (v[1] == (3 - turn) * 8)
+					{
+						sf::Vector2i tempPawn = funReverseLee(board, sf::Vector2i(v[0], v[1]));
+						if (tempPawn.x >= 0)
+							return funReverseLee(board, sf::Vector2i(v[0], v[1]));
+						else
+							return oldPawn;
+					}
 			}
 
+		}
+
 	}
-	
+	return oldPawn;
 }
 void nextTurn(int &currentTurn)
 {
