@@ -431,11 +431,10 @@ int main()
 
 
 	////////// WINNER ///////////
-	sf::Texture twin1, twin2, twin3, twin4;
-	twin1.loadFromFile("images/BluePawnWin1.png");
-	twin2.loadFromFile("images/GreenPawnWin1.png");
-	twin3.loadFromFile("images/YellowPawnWin1.png");
-	twin4.loadFromFile("images/RedPawnWin1.png");
+	sf::Texture tWinPlayer, tWinComputer;
+	tWinPlayer.loadFromFile("images/PlayerWin.png");
+	tWinComputer.loadFromFile("images/ComputerWin.png");
+	
 	sf::Sprite sWin;
 
 	bool isExit = false;
@@ -494,6 +493,7 @@ int main()
 				///// PREPARING THE GAME
 				if (gameStatus == 2) 
 				{
+					turnUI.setPosition(43, 80);
 					for (int i = 0;i < nrOfPlayers;i++)
 						sPawn[i].setTexture(tPawn[playerSkin[i]]);
 					turn = -1;
@@ -728,6 +728,7 @@ int main()
 									goBack = false;
 									gameStatus = 0;
 									sBack.setPosition(462, 570);
+									turnUI.setPosition(-100, -100);
 								}
 						/////////////// CHECK FOR THE WIN
 						if (pawn[0].x != 8 && pawn[1].x != 0 && pawn[2].y != 8 && pawn[3].y != 0)
@@ -961,13 +962,25 @@ int main()
 					window.draw(sPawn[i]);
 				if (winner == 1) {
 					if (pawn[0].x == 8)
-						sWin.setTexture(twin1);
+						if (playerType[0] == 0)
+							sWin.setTexture(tWinPlayer);
+						else
+							sWin.setTexture(tWinComputer);
 					else if (pawn[1].x == 0)
-						sWin.setTexture(twin2);
+						if (playerType[1] == 0)
+							sWin.setTexture(tWinPlayer);
+						else
+							sWin.setTexture(tWinComputer);
 					else if (pawn[2].y == 8)
-						sWin.setTexture(twin3);
+						if (playerType[2] == 0)
+							sWin.setTexture(tWinPlayer);
+						else
+							sWin.setTexture(tWinComputer);
 					else if (pawn[3].y == 0)
-						sWin.setTexture(twin4);
+						if (playerType[3] == 0)
+							sWin.setTexture(tWinPlayer);
+						else
+							sWin.setTexture(tWinComputer);
 					winner = 2;
 				}
 				if (winner == 2)
