@@ -36,6 +36,10 @@ bool previous[4];
 bool nextSkin[4];
 bool previousSkin[4];
 
+//current turn displayer
+sf::Sprite turnUI;
+
+
 //////// Set The Mode : Classic is 0 , Wild is 1
 bool setMode = false;
 
@@ -246,6 +250,8 @@ sf::Vector2i funAImove(int turn)
 void nextTurn(int &currentTurn)
 {
 	currentTurn = (currentTurn + 1) % nrOfPlayers;
+	//sf::Texture tTemp = *sPawn[turn].getTexture();
+	turnUI.setTexture(*sPawn[turn].getTexture());
 	//Check if next turn is AI
 	if (playerType[currentTurn] == 1)
 	{
@@ -262,6 +268,8 @@ void nextTurn(int &currentTurn)
 
 int main()
 {
+	turnUI.setPosition(50, 120);
+
 	for (int i = 0;i <= 3;i++)
 		playerSkin[i] = i;
 	sf::RenderWindow window(sf::VideoMode(969, 696), "Game");
@@ -594,8 +602,10 @@ int main()
 							}
 					if (e.type == sf::Event::MouseButtonReleased)
 						if (e.key.code == sf::Mouse::Left)
-							for (int i = 0;i < nrOfPlayers;i++) {
-								if (next[i]) {
+							for (int i = 0;i < nrOfPlayers;i++) 
+							{
+								if (next[i]) 
+								{
 									playerType[i] += 1;
 									if (playerType[i] > 2)
 										playerType[i] = 2;
@@ -603,7 +613,8 @@ int main()
 									next[i] = false;
 									sNext[i].setTexture(tNext);
 								}
-								if (previous[i]) {
+								if (previous[i]) 
+								{
 									playerType[i] -= 1;
 									if (playerType[i] < 0)
 										playerType[i] = 0;
@@ -614,15 +625,18 @@ int main()
 							}
 					if (e.type == sf::Event::MouseButtonReleased)
 						if (e.key.code == sf::Mouse::Left)
-							for (int i = 0;i < nrOfPlayers;i++) {
-								if (nextSkin[i]) {
+							for (int i = 0;i < nrOfPlayers;i++) 
+							{
+								if (nextSkin[i]) 
+								{
 									playerSkin[i] += 1;
 									if (playerSkin[i] > 10)
 										playerSkin[i] = 10;
 									nextSkin[i] = false;
 									sNext[i + 4].setTexture(tNext);
 								}
-								if (previousSkin[i]) {
+								if (previousSkin[i]) 
+								{
 									playerSkin[i] -= 1;
 									if (playerSkin[i] < 0)
 										playerSkin[i] = 0;
@@ -971,7 +985,8 @@ int main()
 						window.draw(sPrevious[i]);
 					}
 				}
-				window.display();
+			window.draw(turnUI);
+			window.display();
 	}
 	return 0;
 	/////// IAR FACE FIGURI GIT HUB-UL
