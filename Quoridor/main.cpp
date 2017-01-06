@@ -19,9 +19,6 @@ int wallMatrix[17][9];
 int nrOfPlayers = 2;
 //// DON'T LET WALLS TO COLIDE EACHOTHER ////
 int crossWalls[8][8];
-/////// DISPLAY PLAYER'S TURN IMAGES ////////
-sf::Texture tTurn;
-sf::Sprite sTurn;
 ///// no winner
 int winner;
 
@@ -293,7 +290,7 @@ void nextTurn(int &currentTurn)
 
 int main()
 {
-	turnUI.setPosition(50, 120);
+	turnUI.setPosition(43, 80);
 
 	for (int i = 0;i <= 3;i++)
 		playerSkin[i] = i;
@@ -307,7 +304,7 @@ int main()
 	sf::Sprite sWalls[42];
 
 	///// Menu
-	sf::Texture tMenuBackground,tButtonClassic,tButtonWild,tButtonQuit,tButtonClassic1,tButtonWild1,tButtonQuit1;
+	sf::Texture tMenuBackground,tButtonClassic,tButtonWild,tButtonQuit,tButtonClassic1,tButtonWild1,tButtonQuit1,tTurnDisplay;
 	tMenuBackground.loadFromFile("images/MenuBackground.png");
 	tButtonClassic.loadFromFile("images/Classic1.png");
 	tButtonWild.loadFromFile("images/Wild1.png");
@@ -315,8 +312,9 @@ int main()
 	tButtonClassic1.loadFromFile("images/Classic2.png");
 	tButtonWild1.loadFromFile("images/Wild2.png");
 	tButtonQuit1.loadFromFile("images/Quit2.png");
+	tTurnDisplay.loadFromFile("images/PlayerTurnDisplay.png");
 
-	sf::Sprite sMenuBackground, sButtonClassic, sButtonWild, sButtonQuit;
+	sf::Sprite sMenuBackground, sButtonClassic, sButtonWild, sButtonQuit,sTurnDisplay;
 	sMenuBackground.setTexture(tMenuBackground);
 	sButtonClassic.setTexture(tButtonClassic);
 	sButtonQuit.setTexture(tButtonQuit);
@@ -324,6 +322,8 @@ int main()
 	sButtonClassic.setPosition(410, 300);
 	sButtonWild.setPosition(410, 360);
 	sButtonQuit.setPosition(410, 420);
+	sTurnDisplay.setTexture(tTurnDisplay);
+	sTurnDisplay.setPosition(19, 70);
 
 	///// SECOND MENU
 	sf::Sprite sSetPlayerBackground[4], sAdd, sRemove, sBack, sStart, sNext[8], sPrevious[8], sState[4][3], sSkin[4][11];
@@ -482,9 +482,6 @@ int main()
 		sExit1.setTexture(tExit1);
 		sExit1.setPosition(850, 25);
 
-		tTurn.loadFromFile("images/turnMark.png");
-		sTurn.setTexture(tTurn);
-
 		isMove = false;
 
 //////////////////// ACTION WHEN WINDOW IS OPEN //////////////////////////
@@ -525,7 +522,6 @@ int main()
 					pawn[3] = sf::Vector2i(4, 8);//red
 					for (int i = 0; i <= nrOfPlayers - 1; i++)
 						sPawn[i].setPosition(marginWidth + sizeTotal*pawn[i].y, widthWall + sizeTotal*pawn[i].x);
-					sTurn.setPosition(marginWidth + sizeTotal * 4, widthWall);
 					//// SET WALLS FOR PLAYERS ////
 					for (int i = 0; i < nrOfPlayers; i++) 
 					{
@@ -708,7 +704,6 @@ int main()
 					///// Game is Started !
 					if (gameStatus == 3)
 					{
-						sTurn.setPosition(marginWidth + sizeTotal*pawn[turn].y, widthWall + sizeTotal*pawn[turn].x);
 						if (e.type == sf::Event::MouseButtonPressed)
 							if (e.key.code == sf::Mouse::Left)
 								if (sExit1.getGlobalBounds().contains(posMouse.x, posMouse.y)) 
@@ -949,6 +944,7 @@ int main()
 
 				window.clear(sf::Color::White);
 				window.draw(sBoard);
+				window.draw(sTurnDisplay);
 				window.draw(sPlayerWalls[maxWallsPerPlayer[turn]]);
 
 				if (nrOfPlacedWalls > WallsPlaceableLimit)
@@ -963,7 +959,6 @@ int main()
 				//draw players and win display
 				for (int i = 0; i <= nrOfPlayers - 1; i++)
 					window.draw(sPawn[i]);
-				window.draw(sTurn);
 				if (winner == 1) {
 					if (pawn[0].x == 8)
 						sWin.setTexture(twin1);
