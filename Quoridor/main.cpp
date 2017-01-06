@@ -784,11 +784,10 @@ int main()
 										sWalls[nrOfPlacedWalls].setTexture(tWall);
 										sWalls[nrOfPlacedWalls].setOrigin(7.5, 68.5);
 										nrOfPlacedWalls += 1;
-										//std::cout << nrOfPlacedWalls << " ";
 										JustOneWall = true;
 
 										wallRotation = 0;
-										sWalls[nrOfPlacedWalls].setRotation(90 * wallRotation);
+										sWalls[nrOfPlacedWalls-1].setRotation(90 * wallRotation);
 										
 									}
 
@@ -802,7 +801,7 @@ int main()
 								if (JustOneWall)
 								{
 									wallRotation = (wallRotation + 1) % 2;
-									sWalls[nrOfPlacedWalls - 1].rotate(90 * wallRotation);
+									sWalls[nrOfPlacedWalls - 1].setRotation(90 * wallRotation);
 								}
 
 							if (e.type == sf::Event::MouseButtonReleased)
