@@ -786,7 +786,10 @@ int main()
 										nrOfPlacedWalls += 1;
 										//std::cout << nrOfPlacedWalls << " ";
 										JustOneWall = true;
+
 										wallRotation = 0;
+										sWalls[nrOfPlacedWalls].setRotation(90 * wallRotation);
+										
 									}
 
 							if (e.type == sf::Event::MouseButtonReleased)
@@ -798,8 +801,8 @@ int main()
 							if (e.type == sf::Event::MouseWheelMoved || (e.type == sf::Event::KeyPressed && e.key.code == sf::Keyboard::R))
 								if (JustOneWall)
 								{
-									sWalls[nrOfPlacedWalls - 1].rotate(90 * e.mouseWheel.delta);
 									wallRotation = (wallRotation + 1) % 2;
+									sWalls[nrOfPlacedWalls - 1].rotate(90 * wallRotation);
 								}
 
 							if (e.type == sf::Event::MouseButtonReleased)
