@@ -281,8 +281,33 @@ void nextTurn(int &currentTurn)
 		pawn[currentTurn].x = nextPawn.x;
 		pawn[currentTurn].y = nextPawn.y;
 
-
+		//sf::Vector2i posCurrent = sPawn[currentTurn];
 		sf::Vector2i posPawn = sf::Vector2i(155 + 76*pawn[currentTurn].y, 15 + 76*pawn[currentTurn].x);
+		/*if (posCurrent.x > posPawn.x) {
+			for (int i = posCurrent.x;i > posPawn.x;i--) {
+				sPawn[currentTurn].setPosition(i, posPawn.y);
+				window.draw(sPawn[currentTurn]);
+			}
+		}
+		if (posCurrent.x < posPawn.x) {
+			for (int i = posCurrent.x;i < posPawn.x;i++) {
+				sPawn[currentTurn].setPosition(i, posPawn.y);
+				window.draw(sPawn[currentTurn]);
+			}
+		}
+		if (posCurrent.y < posPawn.y) {
+			for (int i = posCurrent.y;i < posPawn.y;i++) {
+				sPawn[currentTurn].setPosition(posPawn.x, i);
+				window.draw(sPawn[currentTurn]);
+			}
+		}
+		if (posCurrent.y > posPawn.y) {
+			for (int i = posCurrent.y;i > posPawn.y;i--) {
+				sPawn[currentTurn].setPosition(posPawn.x, i);
+				window.draw(sPawn[currentTurn]);
+			}
+		}
+		*/
 		sPawn[currentTurn].setPosition(posPawn.x, posPawn.y);
 		nextTurn(currentTurn);
 	}
@@ -962,25 +987,38 @@ int main()
 					window.draw(sPawn[i]);
 				if (winner == 1) {
 					if (pawn[0].x == 8)
+					{
 						if (playerType[0] == 0)
 							sWin.setTexture(tWinPlayer);
 						else
 							sWin.setTexture(tWinComputer);
+						turnUI.setTexture(*sPawn[0].getTexture());
+					}
 					else if (pawn[1].x == 0)
+					{
 						if (playerType[1] == 0)
 							sWin.setTexture(tWinPlayer);
 						else
 							sWin.setTexture(tWinComputer);
+						turnUI.setTexture(*sPawn[1].getTexture());
+					}
 					else if (pawn[2].y == 8)
+					{
 						if (playerType[2] == 0)
 							sWin.setTexture(tWinPlayer);
 						else
 							sWin.setTexture(tWinComputer);
+						turnUI.setTexture(*sPawn[2].getTexture());
+					}
 					else if (pawn[3].y == 0)
+					{
 						if (playerType[3] == 0)
 							sWin.setTexture(tWinPlayer);
 						else
 							sWin.setTexture(tWinComputer);
+						turnUI.setTexture(*sPawn[3].getTexture());
+					}
+					turnUI.setPosition(460, 210);
 					winner = 2;
 				}
 				if (winner == 2)
