@@ -14,7 +14,7 @@ sf::Sprite sPawn[4];
 
 int turn;
 int playerType[4];
-int playerSkin[4];
+int playerSkin[11];
 int wallMatrix[17][9];
 int nrOfPlayers = 2;
 //// DON'T LET WALLS TO COLIDE EACHOTHER ////
@@ -269,7 +269,7 @@ int main()
 	sf::Sprite sBoard;
 
 
-	sf::Texture tPawn[4];
+	sf::Texture tPawn[11];
 	sf::Texture tWall;
 	sf::Sprite sWalls[42];
 
@@ -293,7 +293,7 @@ int main()
 	sButtonQuit.setPosition(410, 420);
 
 	///// SECOND MENU
-	sf::Sprite sSetPlayerBackground[4], sAdd, sRemove, sBack, sStart, sNext[8], sPrevious[8], sState[4][3], sSkin[4][4];
+	sf::Sprite sSetPlayerBackground[4], sAdd, sRemove, sBack, sStart, sNext[8], sPrevious[8], sState[4][3], sSkin[4][11];
 	sf::Texture tSPB1, tSPB2, tSPB3, tSPB4, tAdd, tRemove, tAdd1, tRemove1, tBack, tBack1, tStart, tStart1, tNext, tPrevious, tState[3], tNext1, tPrevious1;
 	tSPB1.loadFromFile("images/SetPlayer1.png");
 	tSPB2.loadFromFile("images/SetPlayer2.png");
@@ -336,9 +336,16 @@ int main()
 	tPawn[1].loadFromFile("images/QuoridorPawn1.png");
 	tPawn[2].loadFromFile("images/QuoridorPawn2.png");
 	tPawn[3].loadFromFile("images/QuoridorPawn3.png");
+	tPawn[4].loadFromFile("images/QuoridorPawn4.png");
+	tPawn[5].loadFromFile("images/QuoridorPawn5.png");
+	tPawn[6].loadFromFile("images/QuoridorPawn6.png");
+	tPawn[7].loadFromFile("images/QuoridorPawn7.png");
+	tPawn[8].loadFromFile("images/QuoridorPawn8.png");
+	tPawn[9].loadFromFile("images/QuoridorPawn9.png");
+	tPawn[10].loadFromFile("images/QuoridorPawn10.png");
 	
 	for (int i = 0;i <= 3;i++)
-		for (int j = 0;j <= 3;j++)
+		for (int j = 0;j <= 10;j++)
 		{
 			sSkin[i][j].setTexture(tPawn[j]);
 			sSkin[i][j].setPosition(696, 72 + i * 130);
@@ -610,8 +617,8 @@ int main()
 							for (int i = 0;i < nrOfPlayers;i++) {
 								if (nextSkin[i]) {
 									playerSkin[i] += 1;
-									if (playerSkin[i] > 3)
-										playerSkin[i] = 3;
+									if (playerSkin[i] > 10)
+										playerSkin[i] = 10;
 									nextSkin[i] = false;
 									sNext[i + 4].setTexture(tNext);
 								}
