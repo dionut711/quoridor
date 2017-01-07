@@ -41,6 +41,7 @@ sf::Sprite turnUI;
 //////// Set The Mode : Classic is 0 , Wild is 1
 bool setMode = false;
 int countDown;
+int threeMoves = 0;
 
 sf::Vector2i powerUP() {
 	sf::Vector2i randomUpCoord;
@@ -328,13 +329,15 @@ int main()
 {
 	//Get random position
 	sf::Vector2i randPos;
-
+	sf::Vector2i powerUpPos;
 	////// POWER UPS
 	sf::Texture tpowerUp;
 	tpowerUp.loadFromFile("images/powerUp.png");
 	sf::Sprite spowerUp;
 	spowerUp.setTexture(tpowerUp);
-	spowerUp.setPosition(-100, -100);
+	powerUpPos.x = -100;
+	powerUpPos.y = -100;
+	spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
 
 	turnUI.setPosition(43, 80);
 
@@ -539,7 +542,9 @@ int main()
 				///// PREPARING THE GAME
 				if (gameStatus == 2) 
 				{
-					spowerUp.setPosition(-100, -100);
+					powerUpPos.x = -100;
+					powerUpPos.y = -100;
+					spowerUp.setPosition(powerUpPos.x,powerUpPos.y);
 					if (setMode) {
 						countDown = 15;
 						//Reset random numbers
@@ -760,7 +765,9 @@ int main()
 						if (setMode) {
 						if (countDown <= 0) {
 								randPos = powerUP();
-								spowerUp.setPosition(marginWidth + sizeTotal*randPos.y, widthWall + sizeTotal*randPos.x);
+								powerUpPos.x = marginWidth + sizeTotal*randPos.y;
+								powerUpPos.y = widthWall + sizeTotal*randPos.x;
+								spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
 								countDown = 15;
 							}
 						}
@@ -843,8 +850,8 @@ int main()
 											sWalls[nrOfPlacedWalls + 1].setTexture(tWall);
 											JustOneWall = false;
 											maxWallsPerPlayer[turn] -= 1;
-											nextTurn(turn);
 											canWallBePlaced = true;
+											nextTurn(turn);
 										}
 										else
 										{
@@ -982,7 +989,17 @@ int main()
 										{
 											posPawn[turn] = sf::Vector2i(marginWidth + sizeTotal*pawn[turn].y, widthWall + sizeTotal*pawn[turn].x);
 											sPawn[turn].setPosition(posPawn[turn].x, posPawn[turn].y);
-											nextTurn(turn);
+											if(setMode)
+											if(posPawn[turn].x == powerUpPos.x && posPawn[turn].y == powerUpPos.y){
+												threeMoves = 3;
+												powerUpPos.x = -100;
+												powerUpPos.y = -100;
+												spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
+											}
+											if (threeMoves == 0)
+												nextTurn(turn);
+											else
+												threeMoves--;
 										}
 									}
 									else
