@@ -13,6 +13,7 @@ int gameStatus = 0;
 sf::Vector2i pawn[4];
 sf::Sprite sPawn[4];
 
+int maxNumber;
 int turn;
 int playerType[4];
 int playerSkin[11];
@@ -40,7 +41,7 @@ sf::Sprite turnUI;
 
 //////// Set The Mode : Classic is 0 , Wild is 1
 bool setMode = false;
-int countDown;
+int countDown,countDown2;
 int threeMoves = 0;
 
 sf::Vector2i powerUP() {
@@ -283,6 +284,7 @@ sf::Vector2i funAImove(int turn)
 void nextTurn(int &currentTurn)
 {
 	countDown--;
+	countDown2--;
 	currentTurn = (currentTurn + 1) % nrOfPlayers;
 	//sf::Texture tTemp = *sPawn[turn].getTexture();
 	turnUI.setTexture(*sPawn[turn].getTexture());
@@ -330,14 +332,20 @@ int main()
 	//Get random position
 	sf::Vector2i randPos;
 	sf::Vector2i powerUpPos;
+	sf::Vector2i powerUpPos2;
 	////// POWER UPS
-	sf::Texture tpowerUp;
+	sf::Texture tpowerUp,tpowerUp2;
 	tpowerUp.loadFromFile("images/powerUp.png");
-	sf::Sprite spowerUp;
+	tpowerUp2.loadFromFile("images/powerUp2.png");
+	sf::Sprite spowerUp,spowerUp2;
 	spowerUp.setTexture(tpowerUp);
+	spowerUp2.setTexture(tpowerUp2);
 	powerUpPos.x = -100;
 	powerUpPos.y = -100;
 	spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
+	powerUpPos2.x = -100;
+	powerUpPos2.y = -100;
+	spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
 
 	turnUI.setPosition(43, 80);
 
@@ -350,7 +358,7 @@ int main()
 
 	sf::Texture tPawn[11];
 	sf::Texture tWall;
-	sf::Sprite sWalls[42];
+	sf::Sprite sWalls[100];
 
 	///// Menu
 	sf::Texture tMenuBackground,tButtonClassic,tButtonWild,tButtonQuit,tButtonClassic1,tButtonWild1,tButtonQuit1,tTurnDisplay;
@@ -546,7 +554,8 @@ int main()
 					powerUpPos.y = -100;
 					spowerUp.setPosition(powerUpPos.x,powerUpPos.y);
 					if (setMode) {
-						countDown = 15;
+						countDown = 4;
+						countDown2 = 5;
 						//Reset random numbers
 						srand(time(NULL));
 					}
@@ -579,11 +588,15 @@ int main()
 					for (int i = 0; i <= nrOfPlayers - 1; i++)
 						sPawn[i].setPosition(marginWidth + sizeTotal*pawn[i].y, widthWall + sizeTotal*pawn[i].x);
 					//// SET WALLS FOR PLAYERS ////
+					if (nrOfPlayers == 4)
+						maxNumber = 5;
+					else
+						if (nrOfPlayers == 3)
+							maxNumber = 7;
+						else
+						maxNumber = 10;
 					for (int i = 0; i < nrOfPlayers; i++) 
 					{
-						int maxNumber = 10;
-						if (nrOfPlayers == 4)
-							maxNumber = 10;
 						maxWallsPerPlayer[i] = maxNumber;
 					}
 					nextTurn(turn);
@@ -768,7 +781,14 @@ int main()
 								powerUpPos.x = marginWidth + sizeTotal*randPos.y;
 								powerUpPos.y = widthWall + sizeTotal*randPos.x;
 								spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
-								countDown = 15;
+								countDown = 20;
+							}
+						if (countDown2 <= 0) {
+							randPos = powerUP();
+							powerUpPos2.x = marginWidth + sizeTotal*randPos.y;
+							powerUpPos2.y = widthWall + sizeTotal*randPos.x;
+							spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
+							countDown2 = 15;
 							}
 						}
 
@@ -989,17 +1009,30 @@ int main()
 										{
 											posPawn[turn] = sf::Vector2i(marginWidth + sizeTotal*pawn[turn].y, widthWall + sizeTotal*pawn[turn].x);
 											sPawn[turn].setPosition(posPawn[turn].x, posPawn[turn].y);
-											if(setMode)
-											if(posPawn[turn].x == powerUpPos.x && posPawn[turn].y == powerUpPos.y){
-												threeMoves = 3;
-												powerUpPos.x = -100;
-												powerUpPos.y = -100;
-												spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
+											if (setMode)
+											{
+												if (posPawn[turn].x == powerUpPos.x && posPawn[turn].y == powerUpPos.y) {
+													threeMoves = 3;
+													countDown = 3;
+													powerUpPos.x = -100;
+													powerUpPos.y = -100;
+													spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
+												}
+												if (posPawn[turn].x == powerUpPos2.x && posPawn[turn].y == powerUpPos2.y) {
+													maxWallsPerPlayer[turn] = maxNumber;
+													powerUpPos2.x = -100;
+													powerUpPos2.y = -100;
+													spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
+													countDown2 = 0;
+												}
 											}
 											if (threeMoves == 0)
 												nextTurn(turn);
 											else
+											{
 												threeMoves--;
+												countDown--;
+											}
 										}
 									}
 									else
@@ -1027,8 +1060,10 @@ int main()
 				window.draw(sTurnDisplay);
 				window.draw(sPlayerWalls[maxWallsPerPlayer[turn]]);
 				if (setMode)
+				{
 					window.draw(spowerUp);
-
+					window.draw(spowerUp2);
+				}
 				if (nrOfPlacedWalls > WallsPlaceableLimit)
 					nrOfPlacedWalls = WallsPlaceableLimit;
 				for (int i = 0; i <= nrOfPlacedWalls - 1; i++)
