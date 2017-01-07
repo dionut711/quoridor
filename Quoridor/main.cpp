@@ -13,6 +13,12 @@ int gameStatus = 0;
 sf::Vector2i pawn[4];
 sf::Sprite sPawn[4];
 
+///// power ups
+sf::Vector2i powerUpPos;
+sf::Vector2i powerUpPos2;
+sf::Sprite spowerUp, spowerUp2;
+
+int maxWallsPerPlayer[4];
 int maxNumber;
 int turn;
 int playerType[4];
@@ -295,35 +301,33 @@ void nextTurn(int &currentTurn)
 		pawn[currentTurn].x = nextPawn.x;
 		pawn[currentTurn].y = nextPawn.y;
 
-		//sf::Vector2i posCurrent = sPawn[currentTurn];
 		sf::Vector2i posPawn = sf::Vector2i(155 + 76*pawn[currentTurn].y, 15 + 76*pawn[currentTurn].x);
-		/*if (posCurrent.x > posPawn.x) {
-			for (int i = posCurrent.x;i > posPawn.x;i--) {
-				sPawn[currentTurn].setPosition(i, posPawn.y);
-				window.draw(sPawn[currentTurn]);
-			}
-		}
-		if (posCurrent.x < posPawn.x) {
-			for (int i = posCurrent.x;i < posPawn.x;i++) {
-				sPawn[currentTurn].setPosition(i, posPawn.y);
-				window.draw(sPawn[currentTurn]);
-			}
-		}
-		if (posCurrent.y < posPawn.y) {
-			for (int i = posCurrent.y;i < posPawn.y;i++) {
-				sPawn[currentTurn].setPosition(posPawn.x, i);
-				window.draw(sPawn[currentTurn]);
-			}
-		}
-		if (posCurrent.y > posPawn.y) {
-			for (int i = posCurrent.y;i > posPawn.y;i--) {
-				sPawn[currentTurn].setPosition(posPawn.x, i);
-				window.draw(sPawn[currentTurn]);
-			}
-		}
-		*/
 		sPawn[currentTurn].setPosition(posPawn.x, posPawn.y);
-		nextTurn(currentTurn);
+
+		if (setMode)
+		{
+			if (posPawn.x == powerUpPos.x && posPawn.y == powerUpPos.y) {
+				threeMoves = 3;
+				countDown = 3;
+				powerUpPos.x = -100;
+				powerUpPos.y = -100;
+				spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
+			}
+			if (posPawn.x == powerUpPos2.x && posPawn.y == powerUpPos2.y) {
+				maxWallsPerPlayer[currentTurn] = maxNumber;
+				powerUpPos2.x = -100;
+				powerUpPos2.y = -100;
+				spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
+				countDown2 = 0;
+			}
+		}
+		if (threeMoves == 0)
+			nextTurn(currentTurn);
+		else
+		{
+			threeMoves--;
+			countDown--;
+		}
 	}
 }
 
@@ -331,13 +335,10 @@ int main()
 {
 	//Get random position
 	sf::Vector2i randPos;
-	sf::Vector2i powerUpPos;
-	sf::Vector2i powerUpPos2;
 	////// POWER UPS
 	sf::Texture tpowerUp,tpowerUp2;
 	tpowerUp.loadFromFile("images/powerUp.png");
 	tpowerUp2.loadFromFile("images/powerUp2.png");
-	sf::Sprite spowerUp,spowerUp2;
 	spowerUp.setTexture(tpowerUp);
 	spowerUp2.setTexture(tpowerUp2);
 	powerUpPos.x = -100;
@@ -470,7 +471,6 @@ int main()
 	sf::Vector2i posWall;
 	sf::Vector2i fixedPosWall;
 	int leftMarginForPlacingWalls, topMarginForPlacingWalls, wallActiveZone;
-	int maxWallsPerPlayer[4];
 	int wallRotation = 0;
 	bool canWallBePlaced = false;
 
