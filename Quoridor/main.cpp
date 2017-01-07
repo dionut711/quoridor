@@ -2,6 +2,7 @@
 #include <time.h>
 #include <cmath>
 #include <iostream>
+#include <random>
 
 int gameStatus = 0;
 //0 - menu
@@ -39,6 +40,15 @@ sf::Sprite turnUI;
 
 //////// Set The Mode : Classic is 0 , Wild is 1
 bool setMode = false;
+int countDown;
+
+sf::Vector2i powerUP() {
+	sf::Vector2i randomUpCoord;
+	randomUpCoord.x = rand() % 9;
+	randomUpCoord.y = rand() % 9;
+	std::cout << "PowerUp" << " x= " << randomUpCoord.x << " y= " << randomUpCoord.y<<std::endl;
+	return randomUpCoord;
+}
 
 bool isOccupiedByPawn(sf::Vector2i pos)
 {
@@ -271,6 +281,7 @@ sf::Vector2i funAImove(int turn)
 }
 void nextTurn(int &currentTurn)
 {
+	countDown--;
 	currentTurn = (currentTurn + 1) % nrOfPlayers;
 	//sf::Texture tTemp = *sPawn[turn].getTexture();
 	turnUI.setTexture(*sPawn[turn].getTexture());
@@ -315,6 +326,16 @@ void nextTurn(int &currentTurn)
 
 int main()
 {
+	//Get random position
+	sf::Vector2i randPos;
+
+	////// POWER UPS
+	sf::Texture tpowerUp;
+	tpowerUp.loadFromFile("images/powerUp.png");
+	sf::Sprite spowerUp;
+	spowerUp.setTexture(tpowerUp);
+	spowerUp.setPosition(-100, -100);
+
 	turnUI.setPosition(43, 80);
 
 	for (int i = 0;i <= 3;i++)
@@ -518,6 +539,12 @@ int main()
 				///// PREPARING THE GAME
 				if (gameStatus == 2) 
 				{
+					spowerUp.setPosition(-100, -100);
+					if (setMode) {
+						countDown = 15;
+						//Reset random numbers
+						srand(time(NULL));
+					}
 					turnUI.setPosition(43, 80);
 					for (int i = 0;i < nrOfPlayers;i++)
 						sPawn[i].setTexture(tPawn[playerSkin[i]]);
@@ -539,7 +566,6 @@ int main()
 					JustOneWall = false;
 					nrOfPlacedWalls = 0;
 					WallsPlaceableLimit = 40;
-
 
 					pawn[0] = sf::Vector2i(0, 4);//blue
 					pawn[1] = sf::Vector2i(8, 4);//green
@@ -714,6 +740,7 @@ int main()
 									{
 										sBack.setTexture(tBack);
 										goBack = false;
+										bool setMode = false;
 										gameStatus = 0;
 									}
 									else
@@ -729,6 +756,15 @@ int main()
 					///// Game is Started !
 					if (gameStatus == 3)
 					{
+						////// NEED POWER UPS ???
+						if (setMode) {
+						if (countDown <= 0) {
+								randPos = powerUP();
+								spowerUp.setPosition(marginWidth + sizeTotal*randPos.y, widthWall + sizeTotal*randPos.x);
+								countDown = 15;
+							}
+						}
+
 						if (e.type == sf::Event::MouseButtonPressed)
 							if (e.key.code == sf::Mouse::Left)
 								if (sExit1.getGlobalBounds().contains(posMouse.x, posMouse.y)) 
@@ -751,6 +787,7 @@ int main()
 								{
 									sBack.setTexture(tBack);
 									goBack = false;
+									bool setMode = false;
 									gameStatus = 0;
 									sBack.setPosition(462, 570);
 									turnUI.setPosition(-100, -100);
@@ -972,6 +1009,8 @@ int main()
 				window.draw(sBoard);
 				window.draw(sTurnDisplay);
 				window.draw(sPlayerWalls[maxWallsPerPlayer[turn]]);
+				if (setMode)
+					window.draw(spowerUp);
 
 				if (nrOfPlacedWalls > WallsPlaceableLimit)
 					nrOfPlacedWalls = WallsPlaceableLimit;
