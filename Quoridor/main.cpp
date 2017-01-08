@@ -17,7 +17,9 @@ sf::Sprite sPawn[4];
 ///// power ups
 sf::Vector2i powerUpPos;
 sf::Vector2i powerUpPos2;
-sf::Sprite spowerUp, spowerUp2;
+sf::Vector2i powerUpPos3;
+sf::Sprite spowerUp, spowerUp2, spowerUp3;
+bool deleteWalls = false;
 
 int maxWallsPerPlayer[4];
 int maxNumber;
@@ -48,7 +50,7 @@ sf::Sprite turnUI;
 
 //////// Set The Mode : Classic is 0 , Wild is 1
 bool setMode = false;
-int countDown,countDown2;
+int countDown,countDown2,countDown3;
 int threeMoves = 0;
 
 sf::Vector2i powerUP() {
@@ -292,6 +294,7 @@ void nextTurn(int &currentTurn)
 {
 	countDown--;
 	countDown2--;
+	countDown3--;
 	currentTurn = (currentTurn + 1) % nrOfPlayers;
 	//sf::Texture tTemp = *sPawn[turn].getTexture();
 	turnUI.setTexture(*sPawn[turn].getTexture());
@@ -302,6 +305,7 @@ void AImoves(int &currentTurn)
 {
 	countDown--;
 	countDown2--;
+	countDown3--;
 	//sf::Texture tTemp = *sPawn[turn].getTexture();
 	
 	//Check if next turn is AI
@@ -329,6 +333,13 @@ void AImoves(int &currentTurn)
 				spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
 				countDown2 = 0;
 			}
+			if (posPawn.x == powerUpPos3.x && posPawn.y == powerUpPos3.y) {
+				deleteWalls = true;
+				powerUpPos3.x = -100;
+				powerUpPos3.y = -100;
+				spowerUp3.setPosition(powerUpPos3.x, powerUpPos3.y);
+				countDown3 = 0;
+			}
 		}
 		if (threeMoves != 0)
 		{
@@ -344,17 +355,22 @@ int main()
 	//Get random position
 	sf::Vector2i randPos;
 	////// POWER UPS
-	sf::Texture tpowerUp,tpowerUp2;
+	sf::Texture tpowerUp,tpowerUp2,tpowerUp3;
 	tpowerUp.loadFromFile("images/powerUp.png");
 	tpowerUp2.loadFromFile("images/powerUp2.png");
+	tpowerUp3.loadFromFile("images/powerUp3.png");
 	spowerUp.setTexture(tpowerUp);
 	spowerUp2.setTexture(tpowerUp2);
+	spowerUp3.setTexture(tpowerUp3);
 	powerUpPos.x = -100;
 	powerUpPos.y = -100;
 	spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
 	powerUpPos2.x = -100;
 	powerUpPos2.y = -100;
 	spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
+	powerUpPos3.x = -100;
+	powerUpPos3.y = -100;
+	spowerUp3.setPosition(powerUpPos3.x, powerUpPos3.y);
 
 	turnUI.setPosition(43, 80);
 
@@ -368,7 +384,7 @@ int main()
 	sf::Texture tPawn[11];
 	sf::Texture tWall;
 	sf::Sprite sWalls[100];
-
+	bool checkRotation[100];
 	///// Menu
 	sf::Texture tMenuBackground,tButtonClassic,tButtonWild,tButtonQuit,tButtonClassic1,tButtonWild1,tButtonQuit1,tTurnDisplay;
 	tMenuBackground.loadFromFile("images/MenuBackground.png");
@@ -560,15 +576,20 @@ int main()
 				///// PREPARING THE GAME
 				if (gameStatus == 2) 
 				{
+					deleteWalls = false;
 					powerUpPos.x = -100;
 					powerUpPos.y = -100;
 					spowerUp.setPosition(powerUpPos.x,powerUpPos.y);
 					powerUpPos2.x = -100;
 					powerUpPos2.y = -100;
 					spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
+					powerUpPos3.x = -100;
+					powerUpPos3.y = -100;
+					spowerUp3.setPosition(powerUpPos3.x, powerUpPos3.y);
 					if (setMode) {
 						countDown = 4;
 						countDown2 = 5;
+						countDown3 = 6;
 						//Reset random numbers
 						srand(time(NULL));
 					}
@@ -592,8 +613,10 @@ int main()
 					wallOrientation = false;
 					JustOneWall = false;
 					nrOfPlacedWalls = 0;
-					WallsPlaceableLimit = 40;
-
+					if (!setMode)
+						WallsPlaceableLimit = 40;
+					else
+						WallsPlaceableLimit = 80;
 					pawn[0] = sf::Vector2i(0, 4);//blue
 					pawn[1] = sf::Vector2i(8, 4);//green
 					pawn[2] = sf::Vector2i(4, 0);//yellow
@@ -803,6 +826,13 @@ int main()
 							spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
 							countDown2 = 15;
 							}
+						if (countDown3 <= 0) {
+							randPos = powerUP();
+							powerUpPos3.x = marginWidth + sizeTotal*randPos.y;
+							powerUpPos3.y = widthWall + sizeTotal*randPos.x;
+							spowerUp3.setPosition(powerUpPos3.x, powerUpPos3.y);
+							countDown3 = 18;
+						}
 						}
 		
 						if (e.type == sf::Event::MouseButtonPressed)
@@ -886,6 +916,8 @@ int main()
 												maxWallsPerPlayer[turn] -= 1;
 												canWallBePlaced = true;
 												nextTurn(turn);
+												checkRotation[nrOfPlacedWalls - 1] = wallRotation;
+												std::cout << "This wall is rotate ? " << checkRotation[nrOfPlacedWalls - 1] << " his number is: " << nrOfPlacedWalls - 1 << std::endl;
 											}
 											else
 											{
@@ -1039,9 +1071,38 @@ int main()
 														spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
 														countDown2 = 0;
 													}
+													if (posPawn[turn].x == powerUpPos3.x && posPawn[turn].y == powerUpPos3.y) {
+														deleteWalls = true;
+														powerUpPos3.x = -100;
+														powerUpPos3.y = -100;
+														spowerUp3.setPosition(powerUpPos3.x, powerUpPos3.y);
+														countDown3 = 0;
+													}
 												}
 												if (threeMoves == 0)
+												{
 													nextTurn(turn);
+													if (deleteWalls) {
+														for (int i = nrOfPlacedWalls - 1;i > nrOfPlacedWalls - nrOfPlayers - 1;i--) {
+															sf::Vector2f deleteWallPos = sWalls[i].getPosition();
+															posWall.x = (deleteWallPos.x - leftMarginForPlacingWalls) / wallActiveZone;
+															posWall.y = (deleteWallPos.y - topMarginForPlacingWalls) / wallActiveZone;
+															if (checkRotation[i] == 0)
+															{
+																wallMatrix[posWall.y * 2][posWall.x] = 0;
+																wallMatrix[posWall.y * 2 + 2][posWall.x] = 0;
+															}
+															else
+															{
+																wallMatrix[posWall.y * 2 + 1][posWall.x] = 0;
+																wallMatrix[posWall.y * 2 + 1][posWall.x + 1] = 0;
+															}
+															sWalls[i].setPosition(-100,-100);
+														}
+														deleteWalls = false;
+														nrOfPlacedWalls -= nrOfPlayers;
+													}
+												}
 												else
 												{
 													threeMoves--;
@@ -1072,8 +1133,9 @@ int main()
 			if (gameStatus == 3)
 			{
 				if (JustOneWall)
+				{
 					sWalls[nrOfPlacedWalls - 1].setPosition(fixedPosWall.x, fixedPosWall.y);
-
+				}
 				if (isMove)
 					sPawn[turn].setPosition(posMouse.x - sPawn[turn].getTextureRect().width / 2, posMouse.y - sPawn[turn].getTextureRect().height / 2);
 
@@ -1085,6 +1147,7 @@ int main()
 				{
 					window.draw(spowerUp);
 					window.draw(spowerUp2);
+					window.draw(spowerUp3);
 				}
 				if (nrOfPlacedWalls > WallsPlaceableLimit)
 					nrOfPlacedWalls = WallsPlaceableLimit;
