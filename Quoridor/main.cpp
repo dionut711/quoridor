@@ -6,6 +6,14 @@
 #include <Windows.h>
 #include <SFML/Audio.hpp>
 
+sf::RenderWindow window(sf::VideoMode(969, 696), "Game");
+sf::Sprite sBoard,sWalls[100], sTurnDisplay;
+sf::Sprite sButtonWall1;
+sf::Sprite sExit1, sBack;
+sf::Sprite sPlayerWalls[11];
+
+int nrOfPlacedWalls;
+
 bool musicOn = false;
 bool goPrev = false;
 bool goUrm = false;
@@ -367,10 +375,45 @@ void nextTurn(int &currentTurn)
 	//sf::Texture tTemp = *sPawn[turn].getTexture();
 	turnUI.setTexture(*sPawn[turn].getTexture());
 	//Check if next turn is AI
+	if (playerType[currentTurn] > 0)
+	{
+		
+		sf::Vector2i nextPawn = funAImove(currentTurn);
+		pawn[currentTurn].x = nextPawn.x;
+		pawn[currentTurn].y = nextPawn.y;
+
+		window.clear();
+		window.draw(sBoard);
+		for (int i = 0; i <= nrOfPlacedWalls - 1; i++)
+			window.draw(sWalls[i]);
+		for (int i = 0; i <= nrOfPlayers - 1; i++)
+			window.draw(sPawn[i]);
+
+		window.draw(sTurnDisplay);
+		window.draw(sPlayerWalls[maxWallsPerPlayer[turn]]);
+		if (setMode)
+		{
+			window.draw(spowerUp);
+			window.draw(spowerUp2);
+			window.draw(spowerUp3);
+		}
+		window.draw(sButtonWall1);
+		window.draw(sExit1);
+		window.draw(sBack);
+		window.draw(turnUI);
+		window.display();
+		
+		Sleep(1000);
+
+		sf::Vector2i posPawn = sf::Vector2i(155 + 76 * pawn[currentTurn].y, 15 + 76 * pawn[currentTurn].x);
+		sPawn[currentTurn].setPosition(posPawn.x, posPawn.y);
+		nextTurn(currentTurn);
+	}
 
 }
 void AImoves(int &currentTurn)
 {
+	Sleep(1000);
 	countDown--;
 	countDown2--;
 	countDown3--;
@@ -413,10 +456,13 @@ void AImoves(int &currentTurn)
 	}
 	if (threeMoves == 0)
 		currentTurn = (currentTurn + 1) % nrOfPlayers;
+
+	nextTurn(turn);
 	turnUI.setTexture(*sPawn[turn].getTexture());
 }
 int main()
 {
+	#pragma region FILE_LOADING
 	// Add music
 	sf::Music MenuMusic;
 	MenuMusic.openFromFile("music/MenuMusic.ogg");
@@ -446,14 +492,13 @@ int main()
 
 	for (int i = 0; i <= 3; i++)
 		playerSkin[i] = i;
-	sf::RenderWindow window(sf::VideoMode(969, 696), "Game");
+
 	sf::Texture tBoard;
-	sf::Sprite sBoard;
+
 
 
 	sf::Texture tPawn[11];
 	sf::Texture tWall;
-	sf::Sprite sWalls[100];
 	bool checkRotation[100];
 	///// Menu
 	sf::Texture tMenuBackground, tButtonClassic, tButtonWild, tButtonQuit, tButtonClassic1, tButtonWild1, tButtonQuit1, tTurnDisplay;
@@ -466,7 +511,7 @@ int main()
 	tButtonQuit1.loadFromFile("images/Quit2.png");
 	tTurnDisplay.loadFromFile("images/PlayerTurnDisplay.png");
 
-	sf::Sprite sMenuBackground, sButtonClassic, sButtonWild, sButtonQuit, sTurnDisplay;
+	sf::Sprite sMenuBackground, sButtonClassic, sButtonWild, sButtonQuit;
 	sMenuBackground.setTexture(tMenuBackground);
 	sButtonClassic.setTexture(tButtonClassic);
 	sButtonQuit.setTexture(tButtonQuit);
@@ -536,7 +581,7 @@ int main()
 	sHelpBackground.setTexture(tHB1);
 	
 	///// SECOND MENU
-	sf::Sprite sSetPlayerBackground[4], sAdd, sRemove, sBack, sStart, sNext[8], sPrevious[8], sState[4][3], sSkin[4][11];
+	sf::Sprite sSetPlayerBackground[4], sAdd, sRemove, sStart, sNext[8], sPrevious[8], sState[4][3], sSkin[4][11];
 	sf::Texture tSPB1, tSPB2, tSPB3, tSPB4, tAdd, tRemove, tAdd1, tRemove1, tBack, tBack1, tStart, tStart1, tNext, tPrevious, tState[3], tNext1, tPrevious1;
 	tSPB1.loadFromFile("images/SetPlayer1.png");
 	tSPB2.loadFromFile("images/SetPlayer2.png");
@@ -618,8 +663,8 @@ int main()
 	////// [images]Display number of walls for each player /////
 	sf::Texture tPlayerWalls;
 	tPlayerWalls.loadFromFile("images/Walls.png");
-	sf::Sprite sPlayerWalls[11];
-	int nrOfPlacedWalls, WallsPlaceableLimit;
+
+	int WallsPlaceableLimit;
 	sf::Vector2i posWall;
 	sf::Vector2i fixedPosWall;
 	int leftMarginForPlacingWalls, topMarginForPlacingWalls, wallActiveZone;
@@ -631,9 +676,8 @@ int main()
 
 	//buttons
 	sf::Texture tButtonWall1, tButtonWall2;
-	sf::Sprite sButtonWall1;
+
 	sf::Texture tExit1, tExit2;
-	sf::Sprite sExit1;
 
 	sf::Vector2i nextPawn[4];
 	sf::Vector2i posPawn[4];
@@ -691,8 +735,8 @@ int main()
 	sExit1.setPosition(850, 25);
 
 	isMove = false;
+	#pragma endregion FILE_LOADING
 
-	//////////////////// ACTION WHEN WINDOW IS OPEN //////////////////////////
 	while (window.isOpen())
 	{
 		if (gameStatus == 0 && musicOn == false)
@@ -705,6 +749,8 @@ int main()
 		sf::Event e;
 		while (window.pollEvent(e) && AIsTime == 0)
 		{
+			if (e.type == sf::Event::Closed)
+				window.close();
 
 			///// PREPARING THE GAME
 			if (gameStatus == 2)
@@ -770,62 +816,64 @@ int main()
 				{
 					maxWallsPerPlayer[i] = maxNumber;
 				}
-				nextTurn(turn);
 				gameStatus = 3;
+				nextTurn(turn);
 				sBack.setPosition(872, 90);
 			}
 
-			/////////// CLOSE THE WINDOW /////////////
-			if (e.type == sf::Event::Closed)
-				window.close();
-			if (gameStatus == 0) {
+			// MENU
+			if (gameStatus == 0) 
+			{
 				///// CLOSE MENU
-				if (sButtonClassic.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+				if (sButtonClassic.getGlobalBounds().contains(posMouse.x, posMouse.y))
 					drawSclassic = true;
-				}
 				else
 					drawSclassic = false;
 
-				if (sButtonWild.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+				if (sButtonWild.getGlobalBounds().contains(posMouse.x, posMouse.y))
 					drawSwild = true;
-				}
 				else
 					drawSwild = false;
 
-				if (sHelpButton.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+				if (sHelpButton.getGlobalBounds().contains(posMouse.x, posMouse.y))
 					drawShelp = true;
-				}
 				else
 					drawShelp = false;
 
 				if (e.type == sf::Event::MouseButtonPressed)
 					if (e.key.code == sf::Mouse::Left)
-						if (sButtonQuit.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+						if (sButtonQuit.getGlobalBounds().contains(posMouse.x, posMouse.y)) 
+						{
 							sButtonQuit.setTexture(tButtonQuit1);
 							isExit = true;
 						}
 				if (e.type == sf::Event::MouseButtonReleased)
 					if (e.key.code == sf::Mouse::Left && isExit)
 						window.close();
+
 				//// GO TO NEXT WINDOW FROM MENU
 				if (e.type == sf::Event::MouseButtonPressed)
 					if (e.key.code == sf::Mouse::Left)
-						if (sButtonClassic.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+						if (sButtonClassic.getGlobalBounds().contains(posMouse.x, posMouse.y)) 
+						{
 							sButtonClassic.setTexture(tButtonClassic1);
 							buttonState = 1;
 							setMode = false;
 						}
 						else
-							if (sButtonWild.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+							if (sButtonWild.getGlobalBounds().contains(posMouse.x, posMouse.y)) 
+							{
 								sButtonWild.setTexture(tButtonWild1);
 								buttonState = 1;
 								setMode = true;
 							}
 							else
-								if (sHelpButton.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+								if (sHelpButton.getGlobalBounds().contains(posMouse.x, posMouse.y)) 
+								{
 									sHelpButton.setTexture(tHelpButton1);
 									helpMode = true;
 								}
+
 				if (e.type == sf::Event::MouseButtonReleased)
 					if (e.key.code == sf::Mouse::Left)
 						if (buttonState)
@@ -834,7 +882,8 @@ int main()
 							sButtonClassic.setTexture(tButtonClassic);
 							sButtonWild.setTexture(tButtonWild);
 							buttonState = 0;
-						}else
+						}
+						else
 							if (helpMode)
 							{
 								gameStatus = 4;
@@ -843,7 +892,7 @@ int main()
 							}
 						
 			}
-			////////// SET GAME PLAYERS AND OTHERS
+			// ROOM
 			if (gameStatus == 1)
 			{
 				drawSclassic = false;
@@ -851,22 +900,26 @@ int main()
 				drawSwild = false;
 				if (e.type == sf::Event::MouseButtonPressed)
 					if (e.key.code == sf::Mouse::Left)
-						if (sAdd.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+						if (sAdd.getGlobalBounds().contains(posMouse.x, posMouse.y)) 
+						{
 							sAdd.setTexture(tAdd1);
 							addWindow = true;
 						}
 						else
-							if (sRemove.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+							if (sRemove.getGlobalBounds().contains(posMouse.x, posMouse.y)) 
+							{
 								sRemove.setTexture(tRemove1);
 								removeWindow = true;
 							}
 							else
-								if (sBack.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+								if (sBack.getGlobalBounds().contains(posMouse.x, posMouse.y)) 
+								{
 									sBack.setTexture(tBack1);
 									goBack = true;
 								}
 								else
-									if (sStart.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+									if (sStart.getGlobalBounds().contains(posMouse.x, posMouse.y)) 
+									{
 										sStart.setTexture(tStart1);
 										goStart = true;
 									}
@@ -1096,7 +1149,8 @@ int main()
 				/////////////// CHECK FOR THE WIN
 				if (pawn[0].x != 8 && pawn[1].x != 0 && pawn[2].y != 8 && pawn[3].y != 0)
 				{
-					if (playerType[turn] == 0) {
+					//if (playerType[turn] == 0) 
+					//{
 						if (e.type == sf::Event::MouseButtonPressed)
 							if (e.key.code == sf::Mouse::Left)
 								if (sPawn[turn].getGlobalBounds().contains(posMouse.x, posMouse.y))
@@ -1205,10 +1259,11 @@ int main()
 								sWalls[nrOfPlacedWalls - 1].setRotation(90 * wallRotation);
 							}
 
+
+						//Move a pawn
 						if (e.type == sf::Event::MouseButtonReleased)
 							if (e.key.code == sf::Mouse::Left && isMove == true)
 							{
-
 								isMove = false;
 								nextPawn[turn].x = posMouse.y / sizeTotal;
 								nextPawn[turn].y = (posMouse.x - marginWidth) / sizeTotal;
@@ -1313,7 +1368,8 @@ int main()
 										if (threeMoves == 0)
 										{
 											nextTurn(turn);
-											if (deleteWalls) {
+											if (deleteWalls) 
+											{
 												for (int i = nrOfPlacedWalls - 1; i > nrOfPlacedWalls - nrOfPlayers - 1; i--)
 												{
 													if (i < 0)
@@ -1353,18 +1409,12 @@ int main()
 								}
 
 							}
-					}
-					else
-					{
-						Sleep(1000);
-						//if(playerType[turn]==1)
-							AImoves(turn);
-						//else
-						//{
-
-						//}
-						AIsTime = 1;
-					}
+					//}
+					//else
+					//{
+						//AImoves(turn);
+						//AIsTime = 1;
+					//}
 				}
 				else
 					winner = 1;
