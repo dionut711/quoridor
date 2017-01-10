@@ -15,6 +15,10 @@ int gameStatus = 0;
 //2 - initializing game
 //3 - classic game
 
+bool drawSclassic = false;
+bool drawSwild = false;
+bool drawShelp = false;
+
 sf::Vector2i pawn[4];
 sf::Sprite sPawn[4];
 
@@ -294,6 +298,64 @@ sf::Vector2i funAImove(int turn)
 	}
 	return oldPawn;
 }
+
+///// NORMAL COMPUTER CALCULATES WITH LEE TO PUT AN WALL
+/*int funAIcheckForPlacingWall(int turn)
+{
+	sf::Vector2i oldPawn = pawn[turn];
+	sf::Vector2i nextPawn;
+	int dl[4] = { -1, 0, 1, 0 };
+	int dc[4] = { 0, 1, 0, -1 };
+	int prim, ultim, p[2], v[2], c[81][2];
+
+	int board[9][9];
+	c[0][0] = pawn[turn].x;
+	c[0][1] = pawn[turn].y;
+	prim = ultim = 0;
+
+	for (int i = 0; i <= 8; i++)
+		for (int j = 0; j <= 8; j++)
+			board[i][j] = 0;
+	for (int i = 0; i <= nrOfPlayers - 1; i++)
+		board[pawn[i].x][pawn[i].y] = 1;
+
+	while (prim <= ultim)
+	{
+		p[0] = c[prim][0];
+		p[1] = c[prim][1];
+		prim++;
+
+		for (int k = 0; k <= 3; k++)
+		{
+			v[0] = p[0] + dl[k];
+			v[1] = p[1] + dc[k];
+
+			if (board[v[0]][v[1]] == 0 && v[0] >= 0 && v[0] <= 8 && v[1] >= 0 && v[1] <= 8 && !funCheckforWall(sf::Vector2i(p[0], p[1]), sf::Vector2i(v[0], v[1])))
+			{
+				board[v[0]][v[1]] = board[p[0]][p[1]] + 1;
+
+				ultim++;
+				c[ultim][0] = v[0];
+				c[ultim][1] = v[1];
+				if (turn == 0 || turn == 1)
+					if (v[0] == (1 - turn) * 8)
+					{
+						return board[v[0]][v[1]];
+					}
+
+				if (turn == 2 || turn == 3)
+					if (v[1] == (3 - turn) * 8)
+					{
+						return board[v[0]][v[1]];
+					}
+			}
+
+		}
+
+	}
+	return -1;
+}
+*/
 void nextTurn(int &currentTurn)
 {
 	countDown--;
@@ -310,9 +372,6 @@ void AImoves(int &currentTurn)
 	countDown--;
 	countDown2--;
 	countDown3--;
-	//sf::Texture tTemp = *sPawn[turn].getTexture();
-
-	//Check if next turn is AI
 
 	sf::Vector2i nextPawn = funAImove(currentTurn);
 	pawn[currentTurn].x = nextPawn.x;
@@ -410,6 +469,20 @@ int main()
 	sButtonQuit.setPosition(410, 420);
 	sTurnDisplay.setTexture(tTurnDisplay);
 	sTurnDisplay.setPosition(19, 70);
+
+	///// MENU TRICKS
+	sf::Texture tStateClassic, tStateWild, tStateHelp;
+	sf::Sprite sStateClassic, sStateWild, sStateHelp;
+	tStateClassic.loadFromFile("images/stateClassic.png");
+	tStateWild.loadFromFile("images/stateWild.png");
+	tStateHelp.loadFromFile("images/stateHelp.png");
+	sStateClassic.setTexture(tStateClassic);
+	sStateWild.setTexture(tStateWild);
+	sStateHelp.setTexture(tStateHelp);
+	sStateClassic.setPosition(410, 180);
+	sStateHelp.setPosition(410, 180);
+	sStateWild.setPosition(410, 180);
+
 
 	///// HELP MENU
 	sf::Sprite sPrev, sUrm, sHelpButton, sHelpBackground;
@@ -674,6 +747,24 @@ int main()
 				window.close();
 			if (gameStatus == 0) {
 				///// CLOSE MENU
+				if (sButtonClassic.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+					drawSclassic = true;
+				}
+				else
+					drawSclassic = false;
+
+				if (sButtonWild.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+					drawSwild = true;
+				}
+				else
+					drawSwild = false;
+
+				if (sHelpButton.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+					drawShelp = true;
+				}
+				else
+					drawShelp = false;
+
 				if (e.type == sf::Event::MouseButtonPressed)
 					if (e.key.code == sf::Mouse::Left)
 						if (sButtonQuit.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
@@ -722,6 +813,9 @@ int main()
 			////////// SET GAME PLAYERS AND OTHERS
 			if (gameStatus == 1)
 			{
+				drawSclassic = false;
+				drawShelp = false;
+				drawSwild = false;
 				if (e.type == sf::Event::MouseButtonPressed)
 					if (e.key.code == sf::Mouse::Left)
 						if (sAdd.getGlobalBounds().contains(posMouse.x, posMouse.y)) {
@@ -850,6 +944,9 @@ int main()
 
 			///// Game Help Menu
 			if (gameStatus == 4) {
+				drawSclassic = false;
+				drawShelp = false;
+				drawSwild = false;
 				if (helpStatus == 1)
 					sHelpBackground.setTexture(tHB1);
 				else
@@ -1227,7 +1324,12 @@ int main()
 					else
 					{
 						Sleep(1000);
-						AImoves(turn);
+						//if(playerType[turn]==1)
+							AImoves(turn);
+						//else
+						//{
+
+						//}
 						AIsTime = 1;
 					}
 				}
@@ -1314,6 +1416,12 @@ int main()
 				window.draw(sButtonWild);
 				window.draw(sButtonQuit);
 				window.draw(sHelpButton);
+				if (drawSclassic)
+					window.draw(sStateClassic);
+				if (drawSwild)
+					window.draw(sStateWild);
+				if (drawShelp)
+					window.draw(sStateHelp);
 			}
 			else
 				if (gameStatus == 1) {
