@@ -4,7 +4,9 @@
 #include <iostream>
 #include <random>
 #include <Windows.h>
+#include <SFML/Audio.hpp>
 
+bool musicOn = false;
 bool goPrev = false;
 bool goUrm = false;
 bool helpMode = false;
@@ -415,6 +417,11 @@ void AImoves(int &currentTurn)
 }
 int main()
 {
+	// Add music
+	sf::Music MenuMusic;
+	MenuMusic.openFromFile("music/MenuMusic.ogg");
+	MenuMusic.setLoop(true);
+
 	//Get random position
 	sf::Vector2i randPos;
 	////// POWER UPS
@@ -482,6 +489,25 @@ int main()
 	sStateClassic.setPosition(410, 180);
 	sStateHelp.setPosition(410, 180);
 	sStateWild.setPosition(410, 180);
+	sf::Text textRef,textRef2,textRef3;
+	sf::Font textFont;
+	textFont.loadFromFile("textFont/Dalila Oblique.ttf");
+	textRef.setFont(textFont);
+	textRef.setFillColor(sf::Color::White);
+	textRef.setPosition(50,650);
+	textRef2.setFont(textFont);
+	textRef2.setFillColor(sf::Color::Black);
+	textRef2.setPosition(48, 652);
+	textRef3.setFont(textFont);
+	textRef3.setFillColor(sf::Color::Black);
+	textRef3.setPosition(52, 648);
+	std::string textChars = "Created by: Dominteanu Ionut - Lucian & Marian Alexandru - Daniel";
+	textRef.setString(textChars);
+	textRef2.setString(textChars);
+	textRef3.setString(textChars);
+	textRef.setCharacterSize(30);
+	textRef2.setCharacterSize(30);
+	textRef3.setCharacterSize(30);
 
 
 	///// HELP MENU
@@ -669,6 +695,11 @@ int main()
 	//////////////////// ACTION WHEN WINDOW IS OPEN //////////////////////////
 	while (window.isOpen())
 	{
+		if (gameStatus == 0 && musicOn == false)
+		{
+			MenuMusic.play();
+			musicOn = true;
+		}
 		int AIsTime = 0;
 		sf::Vector2i posMouse = sf::Mouse::getPosition(window);
 		sf::Event e;
@@ -678,6 +709,8 @@ int main()
 			///// PREPARING THE GAME
 			if (gameStatus == 2)
 			{
+				MenuMusic.stop();
+				musicOn = false;
 				deleteWalls = false;
 				powerUpPos.x = -100;
 				powerUpPos.y = -100;
@@ -1422,6 +1455,9 @@ int main()
 					window.draw(sStateWild);
 				if (drawShelp)
 					window.draw(sStateHelp);
+				window.draw(textRef2);
+				window.draw(textRef3);
+				window.draw(textRef);
 			}
 			else
 				if (gameStatus == 1) {
