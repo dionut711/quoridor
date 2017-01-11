@@ -310,7 +310,8 @@ sf::Vector2i funAImove(int turn)
 			v[0] = p[0] + dl[k];
 			v[1] = p[1] + dc[k];
 
-			if (board[v[0]][v[1]] == -1) {
+			if (board[v[0]][v[1]] == -1 && !funCheckforWall(sf::Vector2i(p[0], p[1]), sf::Vector2i(v[0], v[1])))
+			{
 				v[0] = v[0] + dl[k];
 				v[1] = v[1] + dc[k];
 			}
@@ -832,7 +833,7 @@ int main()
 					WallsPlaceableLimit = 40;
 				else
 					WallsPlaceableLimit = 80;
-				pawn[0] = sf::Vector2i(0, 4);//blue
+				pawn[0] = sf::Vector2i(7, 4);//blue
 				pawn[1] = sf::Vector2i(8, 4);//green
 				pawn[2] = sf::Vector2i(4, 0);//yellow
 				pawn[3] = sf::Vector2i(4, 8);//red
