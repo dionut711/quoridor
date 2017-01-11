@@ -431,21 +431,24 @@ void AImoves(int &currentTurn)
 
 	if (setMode)
 	{
-		if (posPawn.x == powerUpPos.x && posPawn.y == powerUpPos.y) {
+		if (posPawn.x == powerUpPos.x && posPawn.y == powerUpPos.y) 
+		{
 			threeMoves = 3;
 			countDown = 3;
 			powerUpPos.x = -100;
 			powerUpPos.y = -100;
 			spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
 		}
-		if (posPawn.x == powerUpPos2.x && posPawn.y == powerUpPos2.y) {
+		if (posPawn.x == powerUpPos2.x && posPawn.y == powerUpPos2.y) 
+		{
 			maxWallsPerPlayer[currentTurn] = maxNumber;
 			powerUpPos2.x = -100;
 			powerUpPos2.y = -100;
 			spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
 			countDown2 = 0;
 		}
-		if (posPawn.x == powerUpPos3.x && posPawn.y == powerUpPos3.y) {
+		if (posPawn.x == powerUpPos3.x && posPawn.y == powerUpPos3.y) 
+		{
 			deleteWalls = true;
 			powerUpPos3.x = -100;
 			powerUpPos3.y = -100;
@@ -561,28 +564,28 @@ int main()
 
 	///// HELP MENU
 	sf::Sprite sPrev, sUrm, sHelpButton, sHelpBackground;
-	sf::Texture tPrev, tPrev1, tUrm, tUrm1, tHelpButton, tHelpButton1, tHB1, tHB2, tHB3, tHB4, tHB5, tHB6, tHB7, tHB8;
+	sf::Texture tPrev, tPrev1, tUrm, tUrm1, tHelpButton, tHelpButton1, tHB[8];
 	tPrev.loadFromFile("images/prev.png");
 	tPrev1.loadFromFile("images/prev1.png");
 	tUrm.loadFromFile("images/urm.png");
 	tUrm1.loadFromFile("images/urm1.png");
 	tHelpButton.loadFromFile("images/help.png");
 	tHelpButton1.loadFromFile("images/help1.png");
-	tHB1.loadFromFile("images/helpBackground1.jpg");
-	tHB2.loadFromFile("images/helpBackground2.jpg");
-	tHB3.loadFromFile("images/helpBackground3.jpg");
-	tHB4.loadFromFile("images/helpBackground4.jpg");
-	tHB5.loadFromFile("images/helpBackground5.jpg");
-	tHB6.loadFromFile("images/helpBackground6.jpg");
-	tHB7.loadFromFile("images/helpBackground7.jpg");
-	tHB8.loadFromFile("images/helpBackground8.jpg");
+	tHB[0].loadFromFile("images/helpBackground1.jpg");
+	tHB[1].loadFromFile("images/helpBackground2.jpg");
+	tHB[2].loadFromFile("images/helpBackground3.jpg");
+	tHB[3].loadFromFile("images/helpBackground4.jpg");
+	tHB[4].loadFromFile("images/helpBackground5.jpg");
+	tHB[5].loadFromFile("images/helpBackground6.jpg");
+	tHB[6].loadFromFile("images/helpBackground7.jpg");
+	tHB[7].loadFromFile("images/helpBackground8.jpg");
 	sPrev.setTexture(tPrev);
 	sUrm.setTexture(tUrm);
 	sHelpButton.setTexture(tHelpButton);
 	sHelpButton.setPosition(869, 50);
 	sPrev.setPosition(350, 570);
 	sUrm.setPosition(570, 570);
-	sHelpBackground.setTexture(tHB1);
+	sHelpBackground.setTexture(tHB[0]);
 	
 	///// SECOND MENU
 	sf::Sprite sSetPlayerBackground[4], sAdd, sRemove, sStart, sNext[8], sPrevious[8], sState[4][3], sSkin[4][11];
@@ -1037,6 +1040,7 @@ int main()
 				drawSclassic = false;
 				drawShelp = false;
 				drawSwild = false;
+				/*
 				if (helpStatus == 1)
 					sHelpBackground.setTexture(tHB1);
 				else
@@ -1060,6 +1064,7 @@ int main()
 										else
 											if (helpStatus == 8)
 												sHelpBackground.setTexture(tHB8);
+												*/
 				if (e.type == sf::Event::MouseButtonPressed)
 					if (e.key.code == sf::Mouse::Left)
 						if (sPrev.getGlobalBounds().contains(posMouse.x, posMouse.y))
@@ -1075,16 +1080,21 @@ int main()
 							}
 				if (e.type == sf::Event::MouseButtonReleased)
 					if (e.key.code == sf::Mouse::Left)
-						if (goPrev) {
+						if (goPrev) 
+						{
 							helpStatus--;
 							goPrev = false;
 							sPrev.setTexture(tPrev);
+							if(helpStatus >= 1)
+								sHelpBackground.setTexture(tHB[helpStatus-1]);
 						}
 						else
 							if (goUrm) {
 								helpStatus++;
 								goUrm = false;
 								sUrm.setTexture(tUrm);
+								if(helpStatus <= 8)
+									sHelpBackground.setTexture(tHB[helpStatus-1]);
 							}
 				if (helpStatus > 8)
 					helpStatus = 8;
