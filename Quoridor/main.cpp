@@ -5,10 +5,10 @@
 #include <random>
 #include <Windows.h>
 #include <SFML/Audio.hpp>
-//test
+
 sf::RenderWindow window(sf::VideoMode(969, 696), "Game");
 sf::Sprite sBoard,sWalls[100], sTurnDisplay;
-sf::Sprite sButtonWall1;
+sf::Sprite sButtonWall1;  
 sf::Sprite sExit1, sBack;
 sf::Sprite sPlayerWalls[11];
 
@@ -1040,31 +1040,7 @@ int main()
 				drawSclassic = false;
 				drawShelp = false;
 				drawSwild = false;
-				/*
-				if (helpStatus == 1)
-					sHelpBackground.setTexture(tHB1);
-				else
-					if (helpStatus == 2)
-						sHelpBackground.setTexture(tHB2);
-					else
-						if (helpStatus == 3)
-							sHelpBackground.setTexture(tHB3);
-						else
-							if (helpStatus == 4)
-								sHelpBackground.setTexture(tHB4);
-							else
-								if (helpStatus == 5)
-									sHelpBackground.setTexture(tHB5);
-								else
-									if (helpStatus == 6)
-										sHelpBackground.setTexture(tHB6);
-									else
-										if (helpStatus == 7)
-											sHelpBackground.setTexture(tHB7);
-										else
-											if (helpStatus == 8)
-												sHelpBackground.setTexture(tHB8);
-												*/
+				
 				if (e.type == sf::Event::MouseButtonPressed)
 					if (e.key.code == sf::Mouse::Left)
 						if (sPrev.getGlobalBounds().contains(posMouse.x, posMouse.y))
@@ -1072,12 +1048,11 @@ int main()
 							goPrev = true;
 							sPrev.setTexture(tPrev1);
 						}
-						else
-							if (sUrm.getGlobalBounds().contains(posMouse.x, posMouse.y))
-							{
-								goUrm = true;
-								sUrm.setTexture(tUrm1);
-							}
+						else if (sUrm.getGlobalBounds().contains(posMouse.x, posMouse.y))
+						{
+							goUrm = true;
+							sUrm.setTexture(tUrm1);
+						}
 				if (e.type == sf::Event::MouseButtonReleased)
 					if (e.key.code == sf::Mouse::Left)
 						if (goPrev) 
@@ -1088,14 +1063,14 @@ int main()
 							if(helpStatus >= 1)
 								sHelpBackground.setTexture(tHB[helpStatus-1]);
 						}
-						else
-							if (goUrm) {
-								helpStatus++;
-								goUrm = false;
-								sUrm.setTexture(tUrm);
-								if(helpStatus <= 8)
-									sHelpBackground.setTexture(tHB[helpStatus-1]);
-							}
+						else if (goUrm) 
+						{
+							helpStatus++;
+							goUrm = false;
+							sUrm.setTexture(tUrm);
+							if(helpStatus <= 8)
+								sHelpBackground.setTexture(tHB[helpStatus-1]);
+						}
 				if (helpStatus > 8)
 					helpStatus = 8;
 				if (helpStatus == 0)
@@ -1437,7 +1412,7 @@ int main()
 			}
 			if (isMove)
 				sPawn[turn].setPosition(posMouse.x - sPawn[turn].getTextureRect().width / 2, posMouse.y - sPawn[turn].getTextureRect().height / 2);
-			
+
 			window.clear(sf::Color::White);
 			window.draw(sBoard);
 			window.draw(sTurnDisplay);
