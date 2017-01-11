@@ -231,35 +231,45 @@ sf::Vector2i funReverseLee(int board[9][9], sf::Vector2i pos)
 	bool foundPath = false;
 	int dl[4] = { -1, 0, 1, 0 };
 	int dc[4] = { 0, 1, 0, -1 };
-
+	int v[2];
 	if (board[pos.x][pos.y] == 2)
 		return pos;
 
 	sf::Vector2i mn(pos.x, pos.y);
 	for (int i = 0; i <= 3; i++)
 	{
-
-		if (pos.x + dl[i] >= 0 && pos.x + dl[i] <= 8 && pos.y + dc[i] >= 0 && pos.y + dc[i] <= 8)//check if within boundaries
-			if (!funCheckforWall(sf::Vector2i(pos.x, pos.y), sf::Vector2i(pos.x + dl[i], pos.y + dc[i])))//wall
-				if (board[mn.x][mn.y] > board[pos.x + dl[i]][pos.y + dc[i]] && board[pos.x + dl[i]][pos.y + dc[i]] > 1)//minimal path
+		v[0] = pos.x + dl[i];
+		v[1] = pos.y + dc[i];
+		if (board[v[0]][v[1]] == -1)
+		{
+			v[0] = v[0] + dl[i];
+			v[1] = v[1] + dc[i];
+		}
+		if (v[0] >= 0 && v[0] <= 8 && v[1] >= 0 && v[1] <= 8)//check if within boundaries
+			//if (!funCheckforWall(sf::Vector2i(pos.x, pos.y), sf::Vector2i(v[0], v[1])))//wall
+				if (board[mn.x][mn.y] > board[v[0]][v[1]] && board[v[0]][v[1]] > 1)//minimal path
 				{
+					std::cout << v[0] << " " << v[1] << std::endl;
 					if (board[pos.x + dl[i]][pos.y + dc[i]] == 2)
 					{
+						
 						sf::Vector2i tempPawn = pawn[turn];
 						pawn[turn] = sf::Vector2i(pos.x + dl[i], pos.y + dc[i]);
+						/*
 						if (funBlocksPlayer(1))
 							pawn[turn] = tempPawn;
 						else
 						{
-							mn.x = pos.x + dl[i];
-							mn.y = pos.y + dc[i];
+						*/
+							mn.x = v[0];
+							mn.y = v[1];
 							foundPath = true;
-						}
+						//}
 					}
 					else
 					{
-						mn.x = pos.x + dl[i];
-						mn.y = pos.y + dc[i];
+						mn.x = v[0];
+						mn.y = v[1];
 						foundPath = true;
 					}
 				}
@@ -286,7 +296,8 @@ sf::Vector2i funAImove(int turn)
 		for (int j = 0; j <= 8; j++)
 			board[i][j] = 0;
 	for (int i = 0; i <= nrOfPlayers - 1; i++)
-		board[pawn[i].x][pawn[i].y] = 1;
+		board[pawn[i].x][pawn[i].y] = -1;
+	board[pawn[turn].x][pawn[turn].y] = 1;
 
 	while (prim <= ultim)
 	{
@@ -299,6 +310,10 @@ sf::Vector2i funAImove(int turn)
 			v[0] = p[0] + dl[k];
 			v[1] = p[1] + dc[k];
 
+			if (board[v[0]][v[1]] == -1) {
+				v[0] = v[0] + dl[k];
+				v[1] = v[1] + dc[k];
+			}
 			if (board[v[0]][v[1]] == 0 && v[0] >= 0 && v[0] <= 8 && v[1] >= 0 && v[1] <= 8 && !funCheckforWall(sf::Vector2i(p[0], p[1]), sf::Vector2i(v[0], v[1])))
 			{
 				board[v[0]][v[1]] = board[p[0]][p[1]] + 1;
@@ -309,6 +324,12 @@ sf::Vector2i funAImove(int turn)
 				if (turn == 0 || turn == 1)
 					if (v[0] == (1 - turn) * 8)
 					{
+						for (int qwe = 0; qwe <= 8; qwe++) {
+							for (int rty = 0; rty <= 8; rty++) {
+								std::cout << board[qwe][rty] << " ";
+							}
+							std::cout << std::endl;
+						}
 						sf::Vector2i tempPawn = funReverseLee(board, sf::Vector2i(v[0], v[1]));
 						if (tempPawn.x >= 0)
 							return funReverseLee(board, sf::Vector2i(v[0], v[1]));
@@ -319,6 +340,12 @@ sf::Vector2i funAImove(int turn)
 				if (turn == 2 || turn == 3)
 					if (v[1] == (3 - turn) * 8)
 					{
+						for (int qwe = 0; qwe <= 8; qwe++) {
+							for (int rty = 0; rty <= 8; rty++) {
+								std::cout << board[qwe][rty] << " ";
+							}
+							std::cout << std::endl;
+						}
 						sf::Vector2i tempPawn = funReverseLee(board, sf::Vector2i(v[0], v[1]));
 						if (tempPawn.x >= 0)
 							return funReverseLee(board, sf::Vector2i(v[0], v[1]));
