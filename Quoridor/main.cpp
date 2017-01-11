@@ -504,10 +504,14 @@ void AImoves(int &currentTurn)
 }
 int main()
 {
+	sf::Clock clock;
+	sf::Time timer;
+
 	#pragma region FILE_LOADING
 	// Add music
 	sf::Music MenuMusic;
-	MenuMusic.openFromFile("music/MenuMusic.ogg");
+	if (!MenuMusic.openFromFile("music/MenuMusic.ogg"))
+		return 0;
 	MenuMusic.setLoop(true);
 
 	//Get random position
@@ -543,8 +547,8 @@ int main()
 	sf::Texture tWall;
 	bool checkRotation[100];
 	///// Menu
-	sf::Texture tMenuBackground, tButtonClassic, tButtonWild, tButtonQuit, tButtonClassic1, tButtonWild1, tButtonQuit1, tTurnDisplay;
-	tMenuBackground.loadFromFile("images/MenuBackground.png");
+	sf::Texture tMenuBackground, tButtonClassic, tButtonWild, tButtonQuit, tButtonClassic1, tButtonWild1, tButtonQuit1, tTurnDisplay,tTitle;
+	tMenuBackground.loadFromFile("images/MenuBackgroundTest.png");
 	tButtonClassic.loadFromFile("images/Classic1.png");
 	tButtonWild.loadFromFile("images/Wild1.png");
 	tButtonQuit.loadFromFile("images/Quit1.png");
@@ -552,9 +556,11 @@ int main()
 	tButtonWild1.loadFromFile("images/Wild2.png");
 	tButtonQuit1.loadFromFile("images/Quit2.png");
 	tTurnDisplay.loadFromFile("images/PlayerTurnDisplay.png");
+	tTitle.loadFromFile("images/title.png");
 
-	sf::Sprite sMenuBackground, sButtonClassic, sButtonWild, sButtonQuit;
+	sf::Sprite sMenuBackground, sButtonClassic, sButtonWild, sButtonQuit, sTitle;
 	sMenuBackground.setTexture(tMenuBackground);
+	sMenuBackground.setTextureRect(sf::IntRect(0, 0, 969, 696));
 	sButtonClassic.setTexture(tButtonClassic);
 	sButtonQuit.setTexture(tButtonQuit);
 	sButtonWild.setTexture(tButtonWild);
@@ -563,6 +569,8 @@ int main()
 	sButtonQuit.setPosition(410, 420);
 	sTurnDisplay.setTexture(tTurnDisplay);
 	sTurnDisplay.setPosition(19, 70);
+	sTitle.setTexture(tTitle);
+	sTitle.setPosition(140, 100);
 
 	///// MENU TRICKS
 	sf::Texture tStateClassic, tStateWild, tStateHelp;
@@ -777,10 +785,33 @@ int main()
 	sExit1.setPosition(850, 25);
 
 	isMove = false;
-	#pragma endregion FILE_LOADING
 
+	#pragma endregion FILE_LOADING
+	int pos_x = 0,pos_y = 0,dir_x = 1,dir_y = 1;
+	float showTime;
 	while (window.isOpen())
 	{
+		timer = clock.getElapsedTime();
+		showTime = timer.asSeconds();
+		if (showTime > 0.02)
+		{
+			pos_x = pos_x + dir_x;
+			pos_y = pos_y + dir_y;
+			clock.restart();
+			if (pos_x > 600 || pos_x < 0)
+			{
+				dir_x = -1 * dir_x;
+				pos_x = pos_x + dir_x;
+			}
+			if (pos_y > 430 || pos_y < 0)
+			{
+				dir_y = -1 * dir_y;
+				pos_y = pos_y + dir_y;
+			}
+		}
+		
+		sMenuBackground.setTextureRect(sf::IntRect(pos_x, pos_y, 969, 696));
+
 		if (gameStatus == 0 && musicOn == false)
 		{
 			MenuMusic.play();
@@ -1517,6 +1548,7 @@ int main()
 				window.draw(sButtonWild);
 				window.draw(sButtonQuit);
 				window.draw(sHelpButton);
+				window.draw(sTitle);
 				if (drawSclassic)
 					window.draw(sStateClassic);
 				if (drawSwild)
