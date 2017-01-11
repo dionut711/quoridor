@@ -79,6 +79,30 @@ sf::Vector2i powerUP() {
 	return randomUpCoord;
 }
 
+void funDrawBoard()
+{
+	window.clear(sf::Color::White);
+	window.draw(sBoard);
+	
+	for (int i = 0; i <= nrOfPlacedWalls - 1; i++)
+		window.draw(sWalls[i]);
+	for (int i = 0; i <= nrOfPlayers - 1; i++)
+		window.draw(sPawn[i]);
+	window.draw(sTurnDisplay);
+	window.draw(sPlayerWalls[maxWallsPerPlayer[turn]]);
+	if (setMode)
+	{
+		window.draw(spowerUp);
+		window.draw(spowerUp2);
+		window.draw(spowerUp3);
+	}
+	window.draw(sButtonWall1);
+	window.draw(sExit1);
+	window.draw(sBack);
+	window.draw(turnUI);
+	window.display();
+
+}
 bool isOccupiedByPawn(sf::Vector2i pos)
 {
 	for (int i = 0; i <= nrOfPlayers - 1; i++)
@@ -382,27 +406,7 @@ void nextTurn(int &currentTurn)
 		pawn[currentTurn].x = nextPawn.x;
 		pawn[currentTurn].y = nextPawn.y;
 
-		window.clear();
-		window.draw(sBoard);
-		for (int i = 0; i <= nrOfPlacedWalls - 1; i++)
-			window.draw(sWalls[i]);
-		for (int i = 0; i <= nrOfPlayers - 1; i++)
-			window.draw(sPawn[i]);
-
-		window.draw(sTurnDisplay);
-		window.draw(sPlayerWalls[maxWallsPerPlayer[turn]]);
-		if (setMode)
-		{
-			window.draw(spowerUp);
-			window.draw(spowerUp2);
-			window.draw(spowerUp3);
-		}
-		window.draw(sButtonWall1);
-		window.draw(sExit1);
-		window.draw(sBack);
-		window.draw(turnUI);
-		window.display();
-		
+		funDrawBoard();
 		Sleep(1000);
 
 		sf::Vector2i posPawn = sf::Vector2i(155 + 76 * pawn[currentTurn].y, 15 + 76 * pawn[currentTurn].x);
@@ -1409,12 +1413,6 @@ int main()
 								}
 
 							}
-					//}
-					//else
-					//{
-						//AImoves(turn);
-						//AIsTime = 1;
-					//}
 				}
 				else
 					winner = 1;
@@ -1429,7 +1427,7 @@ int main()
 			}
 			if (isMove)
 				sPawn[turn].setPosition(posMouse.x - sPawn[turn].getTextureRect().width / 2, posMouse.y - sPawn[turn].getTextureRect().height / 2);
-
+			
 			window.clear(sf::Color::White);
 			window.draw(sBoard);
 			window.draw(sTurnDisplay);
@@ -1445,14 +1443,14 @@ int main()
 			for (int i = 0; i <= nrOfPlacedWalls - 1; i++)
 				window.draw(sWalls[i]);
 
-			//Draw Buttons
 			window.draw(sButtonWall1);
 			window.draw(sExit1);
 			window.draw(sBack);
-			//draw players and win display
 			for (int i = 0; i <= nrOfPlayers - 1; i++)
 				window.draw(sPawn[i]);
-			if (winner == 1) {
+
+			if (winner == 1) 
+			{
 				if (pawn[0].x == 8)
 				{
 					if (playerType[0] == 0)
@@ -1510,7 +1508,8 @@ int main()
 				window.draw(textRef);
 			}
 			else
-				if (gameStatus == 1) {
+				if (gameStatus == 1) 
+				{
 					window.clear(sf::Color::White);
 					window.draw(sMenuBackground);
 					for (int i = 0; i < nrOfPlayers; i++)
