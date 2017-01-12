@@ -919,6 +919,7 @@ int main()
 	isMove = false;
 
 	#pragma endregion FILE_LOADING
+	turnUI.setPosition(460, 210);
 	int pos_x = 0,pos_y = 0,dir_x = 1,dir_y = 1;
 	float showTime;
 	while (window.isOpen())
@@ -1369,7 +1370,7 @@ int main()
 								turnUI.setPosition(-100, -100);
 							}
 					/////////////// CHECK FOR THE WIN
-					if (pawn[0].x != 8 && pawn[1].x != 0 && pawn[2].y != 8 && pawn[3].y != 0)
+					if (winner == 0)
 					{
 						//if (playerType[turn] == 0) 
 						//{
@@ -1600,8 +1601,76 @@ int main()
 												countDown3 = 0;
 											}
 										}
+										//check win condition
+										if (turn < 2)
+										{
+											if (pawn[turn].x == (1 - turn) * 8)
+											{
+												if(playerType[turn] == 0)
+													sWin.setTexture(tWinPlayer);
+												else
+													sWin.setTexture(tWinComputer);
+
+												turnUI.setTexture(*sPawn[turn].getTexture());
+												turnUI.setPosition(0, 0);
+												winner = 1;
+											}
+										}
+										else if (turn >= 2)
+										{
+											if (pawn[turn].x == (3 - turn) * 8)
+											{
+												if (playerType[turn] == 0)
+													sWin.setTexture(tWinPlayer);
+												else
+													sWin.setTexture(tWinComputer);
+
+												turnUI.setTexture(*sPawn[turn].getTexture());
+												turnUI.setPosition(0, 0);
+												winner = 1;
+											}
+										}
+										/*
+										if (pawn[0].x == 8)
+										{
+											if (playerType[0] == 0)
+												sWin.setTexture(tWinPlayer);
+											else
+												sWin.setTexture(tWinComputer);
+											turnUI.setTexture(*sPawn[0].getTexture());
+											winner = 1;
+										}
+										else if (pawn[1].x == 0)
+										{
+											if (playerType[1] == 0)
+												sWin.setTexture(tWinPlayer);
+											else
+												sWin.setTexture(tWinComputer);
+											turnUI.setTexture(*sPawn[1].getTexture());
+											winner = 1;
+										}
+										else if (pawn[2].y == 8)
+										{
+											if (playerType[2] == 0)
+												sWin.setTexture(tWinPlayer);
+											else
+												sWin.setTexture(tWinComputer);
+											turnUI.setTexture(*sPawn[2].getTexture());
+											winner = 1;
+										}
+										else if (pawn[3].y == 0)
+										{
+											if (playerType[3] == 0)
+												sWin.setTexture(tWinPlayer);
+											else
+												sWin.setTexture(tWinComputer);
+											turnUI.setTexture(*sPawn[3].getTexture());
+											winner = 1;
+										}
+										*/
 										nextTurn(turn);
 									}
+									
 								}
 								else
 								{
@@ -1612,7 +1681,10 @@ int main()
 							}
 					}
 					else
-						winner = 1;
+					{
+						//winner = 2;
+					}
+
 				}
 				else if (waitingforAI > 0)
 				{
@@ -1685,44 +1757,7 @@ int main()
 			for (int i = 0; i <= nrOfPlayers - 1; i++)
 				window.draw(sPawn[i]);
 
-			if (winner == 1) 
-			{
-				if (pawn[0].x == 8)
-				{
-					if (playerType[0] == 0)
-						sWin.setTexture(tWinPlayer);
-					else
-						sWin.setTexture(tWinComputer);
-					turnUI.setTexture(*sPawn[0].getTexture());
-				}
-				else if (pawn[1].x == 0)
-				{
-					if (playerType[1] == 0)
-						sWin.setTexture(tWinPlayer);
-					else
-						sWin.setTexture(tWinComputer);
-					turnUI.setTexture(*sPawn[1].getTexture());
-				}
-				else if (pawn[2].y == 8)
-				{
-					if (playerType[2] == 0)
-						sWin.setTexture(tWinPlayer);
-					else
-						sWin.setTexture(tWinComputer);
-					turnUI.setTexture(*sPawn[2].getTexture());
-				}
-				else if (pawn[3].y == 0)
-				{
-					if (playerType[3] == 0)
-						sWin.setTexture(tWinPlayer);
-					else
-						sWin.setTexture(tWinComputer);
-					turnUI.setTexture(*sPawn[3].getTexture());
-				}
-				turnUI.setPosition(460, 210);
-				winner = 2;
-			}
-			if (winner == 2)
+			if (winner == 1)
 				window.draw(sWin);
 		}
 		else
