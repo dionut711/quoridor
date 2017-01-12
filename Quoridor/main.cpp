@@ -1554,6 +1554,7 @@ int main()
 									pawn[turn] = nextPawn[turn];
 
 									//blocks off other players
+									/*
 									if (funBlocksPlayer(1))
 									{
 										pawn[turn] = tempPawn;
@@ -1561,7 +1562,7 @@ int main()
 										sPawn[turn].setPosition(posPawn[turn].x, posPawn[turn].y);
 									}
 									else
-									{
+									{*/
 										posPawn[turn] = sf::Vector2i(marginWidth + sizeTotal*pawn[turn].y, widthWall + sizeTotal*pawn[turn].x);
 										sPawn[turn].setPosition(posPawn[turn].x, posPawn[turn].y);
 
@@ -1669,7 +1670,7 @@ int main()
 										}
 										*/
 										nextTurn(turn);
-									}
+									//}
 									
 								}
 								else
