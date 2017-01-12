@@ -253,7 +253,7 @@ sf::Vector2i funReverseLee(int board[9][9], sf::Vector2i pos)
 			v[1] = v[1] + dc[i];
 		}
 		if (v[0] >= 0 && v[0] <= 8 && v[1] >= 0 && v[1] <= 8)//check if within boundaries
-			//if (!funCheckforWall(sf::Vector2i(pos.x, pos.y), sf::Vector2i(v[0], v[1])))//wall
+			if (!funCheckforWall(sf::Vector2i(pos.x, pos.y), sf::Vector2i(v[0], v[1])))//wall
 				if (board[mn.x][mn.y] > board[v[0]][v[1]] && board[v[0]][v[1]] > 1)//minimal path
 				{
 					std::cout << v[0] << " " << v[1] << std::endl;
