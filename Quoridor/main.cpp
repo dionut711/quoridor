@@ -827,79 +827,81 @@ int main()
 		int AIsTime = 0;
 		sf::Vector2i posMouse = sf::Mouse::getPosition(window);
 		sf::Event e;
+
+		if (gameStatus == 2)
+		{
+			MenuMusic.stop();
+			musicOn = false;
+			deleteWalls = false;
+			powerUpPos.x = -100;
+			powerUpPos.y = -100;
+			spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
+			powerUpPos2.x = -100;
+			powerUpPos2.y = -100;
+			spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
+			powerUpPos3.x = -100;
+			powerUpPos3.y = -100;
+			spowerUp3.setPosition(powerUpPos3.x, powerUpPos3.y);
+			if (setMode) {
+				countDown = 4;
+				countDown2 = 5;
+				countDown3 = 6;
+				//Reset random numbers
+				srand(time(NULL));
+			}
+			turnUI.setPosition(43, 80);
+			for (int i = 0; i < nrOfPlayers; i++)
+				sPawn[i].setTexture(tPawn[playerSkin[i]]);
+			turn = -1;
+
+			//playerType[1] = 1;
+			//playerType[2] = 1;
+			//playerType[3] = 1;
+			for (int i = 0; i < 17; i++)
+				for (int j = 0; j < 9; j++)
+					wallMatrix[i][j] = 0;
+			for (int i = 0; i < 8; i++)
+				for (int j = 0; j < 8; j++)
+					crossWalls[i][j] = 0;
+			winner = 0;
+			isMove = false;
+			isWallPlaceable = false;
+			wallOrientation = false;
+			JustOneWall = false;
+			nrOfPlacedWalls = 0;
+			if (!setMode)
+				WallsPlaceableLimit = 40;
+			else
+				WallsPlaceableLimit = 80;
+			pawn[0] = sf::Vector2i(0, 4);//blue
+			pawn[1] = sf::Vector2i(8, 4);//green
+			pawn[2] = sf::Vector2i(4, 0);//yellow
+			pawn[3] = sf::Vector2i(4, 8);//red
+			for (int i = 0; i <= nrOfPlayers - 1; i++)
+				sPawn[i].setPosition(marginWidth + sizeTotal*pawn[i].y, widthWall + sizeTotal*pawn[i].x);
+			//// SET WALLS FOR PLAYERS ////
+			if (nrOfPlayers == 4)
+				maxNumber = 5;
+			else
+				if (nrOfPlayers == 3)
+					maxNumber = 7;
+				else
+					maxNumber = 10;
+			for (int i = 0; i < nrOfPlayers; i++)
+			{
+				maxWallsPerPlayer[i] = maxNumber;
+			}
+			gameStatus = 3;
+			nextTurn(turn);
+			sBack.setPosition(872, 90);
+		}
+
 		while (window.pollEvent(e) && AIsTime == 0)
 		{
 			if (e.type == sf::Event::Closed)
 				window.close();
 
 			///// PREPARING THE GAME
-			if (gameStatus == 2)
-			{
-				MenuMusic.stop();
-				musicOn = false;
-				deleteWalls = false;
-				powerUpPos.x = -100;
-				powerUpPos.y = -100;
-				spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
-				powerUpPos2.x = -100;
-				powerUpPos2.y = -100;
-				spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
-				powerUpPos3.x = -100;
-				powerUpPos3.y = -100;
-				spowerUp3.setPosition(powerUpPos3.x, powerUpPos3.y);
-				if (setMode) {
-					countDown = 4;
-					countDown2 = 5;
-					countDown3 = 6;
-					//Reset random numbers
-					srand(time(NULL));
-				}
-				turnUI.setPosition(43, 80);
-				for (int i = 0; i < nrOfPlayers; i++)
-					sPawn[i].setTexture(tPawn[playerSkin[i]]);
-				turn = -1;
-
-				//playerType[1] = 1;
-				//playerType[2] = 1;
-				//playerType[3] = 1;
-				for (int i = 0; i < 17; i++)
-					for (int j = 0; j < 9; j++)
-						wallMatrix[i][j] = 0;
-				for (int i = 0; i < 8; i++)
-					for (int j = 0; j < 8; j++)
-						crossWalls[i][j] = 0;
-				winner = 0;
-				isMove = false;
-				isWallPlaceable = false;
-				wallOrientation = false;
-				JustOneWall = false;
-				nrOfPlacedWalls = 0;
-				if (!setMode)
-					WallsPlaceableLimit = 40;
-				else
-					WallsPlaceableLimit = 80;
-				pawn[0] = sf::Vector2i(0, 4);//blue
-				pawn[1] = sf::Vector2i(8, 4);//green
-				pawn[2] = sf::Vector2i(4, 0);//yellow
-				pawn[3] = sf::Vector2i(4, 8);//red
-				for (int i = 0; i <= nrOfPlayers - 1; i++)
-					sPawn[i].setPosition(marginWidth + sizeTotal*pawn[i].y, widthWall + sizeTotal*pawn[i].x);
-				//// SET WALLS FOR PLAYERS ////
-				if (nrOfPlayers == 4)
-					maxNumber = 5;
-				else
-					if (nrOfPlayers == 3)
-						maxNumber = 7;
-					else
-						maxNumber = 10;
-				for (int i = 0; i < nrOfPlayers; i++)
-				{
-					maxWallsPerPlayer[i] = maxNumber;
-				}
-				gameStatus = 3;
-				nextTurn(turn);
-				sBack.setPosition(872, 90);
-			}
 
 			// MENU
 			if (gameStatus == 0) 
