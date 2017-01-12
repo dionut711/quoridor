@@ -6,7 +6,7 @@
 #include <Windows.h>
 #include <SFML/Audio.hpp>
 
-sf::RenderWindow window(sf::VideoMode(969, 696), "Game");
+sf::RenderWindow window(sf::VideoMode(969, 696), "QUORIDOR");
 sf::Sprite sBoard,sWalls[100], sTurnDisplay;
 sf::Sprite sButtonWall1;  
 sf::Sprite sExit1, sBack;
@@ -504,6 +504,9 @@ void AImoves(int &currentTurn)
 }
 int main()
 {
+	sf::Image icon;
+	icon.loadFromFile("images/QuoridorPawn0.png");
+	window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 	sf::Clock clock;
 	sf::Time timer;
 
