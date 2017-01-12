@@ -6,14 +6,14 @@
 #include <Windows.h>
 #include <SFML/Audio.hpp>
 
-sf::RenderWindow window(sf::VideoMode(969, 696), "QUORIDOR");
+sf::RenderWindow window(sf::VideoMode(969, 696), "QUORIDOR",sf::Style::Close | sf::Style::Titlebar);
 sf::Sprite sBoard,sWalls[100], sTurnDisplay;
 sf::Sprite sButtonWall1;  
 sf::Sprite sExit1, sBack;
 sf::Sprite sPlayerWalls[11];
 
 int nrOfPlacedWalls;
-
+bool leaveHelp = false;
 bool musicOn = false;
 bool goPrev = false;
 bool goUrm = false;
@@ -609,8 +609,10 @@ int main()
 
 
 	///// HELP MENU
-	sf::Sprite sPrev, sUrm, sHelpButton, sHelpBackground;
-	sf::Texture tPrev, tPrev1, tUrm, tUrm1, tHelpButton, tHelpButton1, tHB[8];
+	sf::Sprite sPrev, sUrm, sHelpButton, sHelpBackground,go_back;
+	sf::Texture tPrev, tPrev1, tUrm, tUrm1, tHelpButton, tHelpButton1, tHB[8], tgo_back, tgo_back1;
+	tgo_back.loadFromFile("images/close_help.png");
+	tgo_back1.loadFromFile("images/close_help1.png");
 	tPrev.loadFromFile("images/prev.png");
 	tPrev1.loadFromFile("images/prev1.png");
 	tUrm.loadFromFile("images/urm.png");
@@ -632,6 +634,8 @@ int main()
 	sPrev.setPosition(350, 570);
 	sUrm.setPosition(570, 570);
 	sHelpBackground.setTexture(tHB[0]);
+	go_back.setTexture(tgo_back);
+	go_back.setPosition(460, 570);
 	
 	///// SECOND MENU
 	sf::Sprite sSetPlayerBackground[4], sAdd, sRemove, sStart, sNext[8], sPrevious[8], sState[4][3], sSkin[4][11];
@@ -1122,6 +1126,11 @@ int main()
 							goUrm = true;
 							sUrm.setTexture(tUrm1);
 						}
+						else if (go_back.getGlobalBounds().contains(posMouse.x, posMouse.y))
+						{
+							leaveHelp = true;
+							go_back.setTexture(tgo_back1);
+						}
 				if (e.type == sf::Event::MouseButtonReleased)
 					if (e.key.code == sf::Mouse::Left)
 						if (goPrev) 
@@ -1139,6 +1148,12 @@ int main()
 							sUrm.setTexture(tUrm);
 							if(helpStatus <= 8)
 								sHelpBackground.setTexture(tHB[helpStatus-1]);
+						}
+						else if (leaveHelp)
+						{
+							leaveHelp = false;
+							go_back.setTexture(tgo_back);
+							gameStatus = 0;
 						}
 				if (helpStatus > 8)
 					helpStatus = 8;
@@ -1593,6 +1608,7 @@ int main()
 						window.draw(sHelpBackground);
 						window.draw(sPrev);
 						window.draw(sUrm);
+						window.draw(go_back);
 					}
 		window.draw(turnUI);
 		window.display();
