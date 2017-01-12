@@ -6,6 +6,8 @@
 #include <Windows.h>
 #include <SFML/Audio.hpp>
 
+int waitingforAI = 0;
+
 sf::RenderWindow window(sf::VideoMode(969, 696), "QUORIDOR",sf::Style::Close | sf::Style::Titlebar);
 sf::Sprite sBoard,sWalls[100], sTurnDisplay;
 sf::Sprite sButtonWall1;  
@@ -483,6 +485,7 @@ void nextTurn(int &currentTurn)
 				randPos.x = (powerUpPos3.y - widthWall) / sizeTotal;
 				powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
 			}
+
 	if (threeMoves > 0 && playerType[currentTurn] == 0)
 		threeMoves -= 1;
 	else
@@ -492,52 +495,67 @@ void nextTurn(int &currentTurn)
 			currentTurn -= 1;
 			threeMoves -= 1;
 		}
-			
-		currentTurn = (currentTurn + 1) % nrOfPlayers;
-		turnUI.setTexture(*sPawn[turn].getTexture());
 		
-		//Check if next turn is AI
-		if (playerType[currentTurn] > 0)
+		if (waitingforAI != 1)
 		{
-		
-			sf::Vector2i nextPawn = funAImove(currentTurn);
-			pawn[currentTurn].x = nextPawn.x;
-			pawn[currentTurn].y = nextPawn.y;
-
-			funDrawBoard();
-			Sleep(1000);
-
-			sf::Vector2i posPawn = sf::Vector2i(155 + 76 * pawn[currentTurn].y, 15 + 76 * pawn[currentTurn].x);
-			sPawn[currentTurn].setPosition(posPawn.x, posPawn.y);
-			
-			//stepped on power-up
-			if (posPawn.x == powerUpPos.x && posPawn.y == powerUpPos.y)
-			{
-				threeMoves = 3;
-				countDown = 3;
-				powerUpPos.x = -100;
-				powerUpPos.y = -100;
-				spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
-			}
-			if (posPawn.x == powerUpPos2.x && posPawn.y == powerUpPos2.y)
-			{
-				maxWallsPerPlayer[turn] = maxNumber;
-				powerUpPos2.x = -100;
-				powerUpPos2.y = -100;
-				spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
-				countDown2 = 0;
-			}
-			if (posPawn.x == powerUpPos3.x && posPawn.y == powerUpPos3.y)
-			{
-				funDeleteWalls();
-				powerUpPos3.x = -100;
-				powerUpPos3.y = -100;
-				spowerUp3.setPosition(powerUpPos3.x, powerUpPos3.y);
-				countDown3 = 0;
-			}
-
-			nextTurn(currentTurn);
+			currentTurn = (currentTurn + 1) % nrOfPlayers;
+			turnUI.setTexture(*sPawn[turn].getTexture());
 		}
+		
+		
+		if (waitingforAI == 0 && playerType[currentTurn] > 0)
+		{
+			waitingforAI = 500;
+			return;
+		}
+		else if (waitingforAI == 1)
+		{
+			std::wcout << "i should move - ai" << std::endl;
+			//Check if next turn is AI
+			if (playerType[currentTurn] > 0)
+			{
+
+				sf::Vector2i nextPawn = funAImove(currentTurn);
+				pawn[currentTurn].x = nextPawn.x;
+				pawn[currentTurn].y = nextPawn.y;
+
+				funDrawBoard();
+				//Sleep(1000);
+
+				sf::Vector2i posPawn = sf::Vector2i(155 + 76 * pawn[currentTurn].y, 15 + 76 * pawn[currentTurn].x);
+				sPawn[currentTurn].setPosition(posPawn.x, posPawn.y);
+
+				//stepped on power-up
+				if (posPawn.x == powerUpPos.x && posPawn.y == powerUpPos.y)
+				{
+					threeMoves = 3;
+					countDown = 3;
+					powerUpPos.x = -100;
+					powerUpPos.y = -100;
+					spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
+				}
+				if (posPawn.x == powerUpPos2.x && posPawn.y == powerUpPos2.y)
+				{
+					maxWallsPerPlayer[turn] = maxNumber;
+					powerUpPos2.x = -100;
+					powerUpPos2.y = -100;
+					spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
+					countDown2 = 0;
+				}
+				if (posPawn.x == powerUpPos3.x && posPawn.y == powerUpPos3.y)
+				{
+					funDeleteWalls();
+					powerUpPos3.x = -100;
+					powerUpPos3.y = -100;
+					spowerUp3.setPosition(powerUpPos3.x, powerUpPos3.y);
+					countDown3 = 0;
+				}
+
+				waitingforAI = 0;
+				nextTurn(currentTurn);
+			}
+		}
+		
 	}
 }
 void AImoves(int &currentTurn)
@@ -937,6 +955,7 @@ int main()
 
 		if (gameStatus == 2)
 		{
+			waitingforAI = 0;
 			for (int i = 0; i < 3; i++)
 				for (int j = 0; j < 3; j++)
 					powerMatrix[i][j] == 0;
@@ -1001,8 +1020,9 @@ int main()
 				maxWallsPerPlayer[i] = maxNumber;
 			}
 			gameStatus = 3;
-			nextTurn(turn);
 			sBack.setPosition(872, 90);
+			nextTurn(turn);
+			
 		}
 
 		while (window.pollEvent(e) && AIsTime == 0)
@@ -1278,79 +1298,81 @@ int main()
 			///// Game is Started !
 			if (gameStatus == 3)
 			{
-				////// NEED POWER UPS ???
-				if (setMode) 
+				if (waitingforAI == 0)
 				{
-					if (countDown <= 0) 
+					////// NEED POWER UPS ???
+					if (setMode)
 					{
-						randPos = powerUP();
-						while (powerMatrix[randPos.x - 3][randPos.y - 3] != 0)
+						if (countDown <= 0)
+						{
 							randPos = powerUP();
-						powerMatrix[randPos.x - 3][randPos.y - 3] = 1;
-						
-						powerUpPos.x = marginWidth + sizeTotal*randPos.y;
-						powerUpPos.y = widthWall + sizeTotal*randPos.x;
-						spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
-						countDown = 20;
+							while (powerMatrix[randPos.x - 3][randPos.y - 3] != 0)
+								randPos = powerUP();
+							powerMatrix[randPos.x - 3][randPos.y - 3] = 1;
+
+							powerUpPos.x = marginWidth + sizeTotal*randPos.y;
+							powerUpPos.y = widthWall + sizeTotal*randPos.x;
+							spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
+							countDown = 20;
+						}
+						if (countDown2 <= 0)
+						{
+							randPos = powerUP();
+							while (powerMatrix[randPos.x - 3][randPos.y - 3] != 0)
+								randPos = powerUP();
+							powerMatrix[randPos.x - 3][randPos.y - 3] = 1;
+
+							powerUpPos2.x = marginWidth + sizeTotal*randPos.y;
+							powerUpPos2.y = widthWall + sizeTotal*randPos.x;
+							spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
+							countDown2 = 15;
+						}
+						if (countDown3 <= 0)
+						{
+							randPos = powerUP();
+							while (powerMatrix[randPos.x - 3][randPos.y - 3] != 0)
+								randPos = powerUP();
+							powerMatrix[randPos.x - 3][randPos.y - 3] = 1;
+
+							powerUpPos3.x = marginWidth + sizeTotal*randPos.y;
+							powerUpPos3.y = widthWall + sizeTotal*randPos.x;
+							spowerUp3.setPosition(powerUpPos3.x, powerUpPos3.y);
+							countDown3 = 18;
+						}
 					}
-					if (countDown2 <= 0) 
+
+					if (e.type == sf::Event::MouseButtonPressed)
+						if (e.key.code == sf::Mouse::Left)
+							if (sExit1.getGlobalBounds().contains(posMouse.x, posMouse.y))
+							{
+								sExit1.setTexture(tExit2);
+								isExit = true;
+							}
+							else if (sBack.getGlobalBounds().contains(posMouse.x, posMouse.y))
+							{
+								sBack.setTexture(tBack1);
+								goBack = true;
+							}
+					if (e.type == sf::Event::MouseButtonReleased)
+						if (e.key.code == sf::Mouse::Left && isExit)
+							window.close();
+
+					if (e.type == sf::Event::MouseButtonReleased)
+						if (e.key.code == sf::Mouse::Left)
+							if (goBack)
+							{
+								sBack.setTexture(tBack);
+								goBack = false;
+								bool setMode = false;
+								gameStatus = 0;
+								sBack.setPosition(462, 570);
+								turnUI.setPosition(-100, -100);
+							}
+					/////////////// CHECK FOR THE WIN
+					if (pawn[0].x != 8 && pawn[1].x != 0 && pawn[2].y != 8 && pawn[3].y != 0)
 					{
-						randPos = powerUP();
-						while (powerMatrix[randPos.x - 3][randPos.y - 3] != 0)
-							randPos = powerUP();
-						powerMatrix[randPos.x - 3][randPos.y - 3] = 1;
-
-						powerUpPos2.x = marginWidth + sizeTotal*randPos.y;
-						powerUpPos2.y = widthWall + sizeTotal*randPos.x;
-						spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
-						countDown2 = 15;
-					}
-					if (countDown3 <= 0) 
-					{
-						randPos = powerUP();
-						while (powerMatrix[randPos.x - 3][randPos.y - 3] != 0)
-							randPos = powerUP();
-						powerMatrix[randPos.x - 3][randPos.y - 3] = 1;
-
-						powerUpPos3.x = marginWidth + sizeTotal*randPos.y;
-						powerUpPos3.y = widthWall + sizeTotal*randPos.x;
-						spowerUp3.setPosition(powerUpPos3.x, powerUpPos3.y);
-						countDown3 = 18;
-					}
-				}
-
-				if (e.type == sf::Event::MouseButtonPressed)
-					if (e.key.code == sf::Mouse::Left)
-						if (sExit1.getGlobalBounds().contains(posMouse.x, posMouse.y))
-						{
-							sExit1.setTexture(tExit2);
-							isExit = true;
-						}
-						else if (sBack.getGlobalBounds().contains(posMouse.x, posMouse.y))
-						{
-							sBack.setTexture(tBack1);
-							goBack = true;
-						}
-				if (e.type == sf::Event::MouseButtonReleased)
-					if (e.key.code == sf::Mouse::Left && isExit)
-						window.close();
-
-				if (e.type == sf::Event::MouseButtonReleased)
-					if (e.key.code == sf::Mouse::Left)
-						if (goBack)
-						{
-							sBack.setTexture(tBack);
-							goBack = false;
-							bool setMode = false;
-							gameStatus = 0;
-							sBack.setPosition(462, 570);
-							turnUI.setPosition(-100, -100);
-						}
-				/////////////// CHECK FOR THE WIN
-				if (pawn[0].x != 8 && pawn[1].x != 0 && pawn[2].y != 8 && pawn[3].y != 0)
-				{
-					//if (playerType[turn] == 0) 
-					//{
+						//if (playerType[turn] == 0) 
+						//{
 						if (e.type == sf::Event::MouseButtonPressed)
 							if (e.key.code == sf::Mouse::Left)
 								if (sPawn[turn].getGlobalBounds().contains(posMouse.x, posMouse.y))
@@ -1544,7 +1566,7 @@ int main()
 
 										if (setMode)
 										{
-											if (posPawn[turn].x == powerUpPos.x && posPawn[turn].y == powerUpPos.y) 
+											if (posPawn[turn].x == powerUpPos.x && posPawn[turn].y == powerUpPos.y)
 											{
 												randPos.y = (powerUpPos.x - marginWidth) / sizeTotal;
 												randPos.x = (powerUpPos.y - widthWall) / sizeTotal;
@@ -1555,7 +1577,7 @@ int main()
 												powerUpPos.y = -100;
 												spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
 											}
-											if (posPawn[turn].x == powerUpPos2.x && posPawn[turn].y == powerUpPos2.y) 
+											if (posPawn[turn].x == powerUpPos2.x && posPawn[turn].y == powerUpPos2.y)
 											{
 												randPos.y = (powerUpPos2.x - marginWidth) / sizeTotal;
 												randPos.x = (powerUpPos2.y - widthWall) / sizeTotal;
@@ -1566,7 +1588,7 @@ int main()
 												spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
 												countDown2 = 0;
 											}
-											if (posPawn[turn].x == powerUpPos3.x && posPawn[turn].y == powerUpPos3.y) 
+											if (posPawn[turn].x == powerUpPos3.x && posPawn[turn].y == powerUpPos3.y)
 											{
 												randPos.y = (powerUpPos3.x - marginWidth) / sizeTotal;
 												randPos.x = (powerUpPos3.y - widthWall) / sizeTotal;
@@ -1578,37 +1600,6 @@ int main()
 												countDown3 = 0;
 											}
 										}
-										
-										/*
-										if (deleteWalls) 
-										{
-											for (int i = nrOfPlacedWalls - 1; i > nrOfPlacedWalls - nrOfPlayers - 1; i--)
-											{
-												if (i < 0)
-													continue;
-												sf::Vector2f deleteWallPos = sWalls[i].getPosition();
-												posWall.x = (deleteWallPos.x - leftMarginForPlacingWalls) / wallActiveZone;
-												posWall.y = (deleteWallPos.y - topMarginForPlacingWalls) / wallActiveZone;
-												if (checkRotation[i] == 0)
-												{
-													wallMatrix[posWall.y * 2][posWall.x] = 0;
-													wallMatrix[posWall.y * 2 + 2][posWall.x] = 0;
-												}
-												else
-												{
-													wallMatrix[posWall.y * 2 + 1][posWall.x] = 0;
-													wallMatrix[posWall.y * 2 + 1][posWall.x + 1] = 0;
-												}
-												sWalls[i].setPosition(-100, -100);
-											}
-											deleteWalls = false;
-											nrOfPlacedWalls -= nrOfPlayers;
-											if (nrOfPlacedWalls < 0)
-												nrOfPlacedWalls = 0;
-											
-										}
-										*/
-										
 										nextTurn(turn);
 									}
 								}
@@ -1619,14 +1610,53 @@ int main()
 								}
 
 							}
+					}
+					else
+						winner = 1;
 				}
-				else
-					winner = 1;
+				else if (waitingforAI > 0)
+				{
+					if (e.type == sf::Event::MouseButtonPressed)
+						if (e.key.code == sf::Mouse::Left)
+							if (sExit1.getGlobalBounds().contains(posMouse.x, posMouse.y))
+							{
+								sExit1.setTexture(tExit2);
+								isExit = true;
+							}
+							else if (sBack.getGlobalBounds().contains(posMouse.x, posMouse.y))
+							{
+								sBack.setTexture(tBack1);
+								goBack = true;
+							}
+					if (e.type == sf::Event::MouseButtonReleased)
+						if (e.key.code == sf::Mouse::Left && isExit)
+							window.close();
+
+					if (e.type == sf::Event::MouseButtonReleased)
+						if (e.key.code == sf::Mouse::Left)
+							if (goBack)
+							{
+								sBack.setTexture(tBack);
+								goBack = false;
+								bool setMode = false;
+								gameStatus = 0;
+								sBack.setPosition(462, 570);
+								turnUI.setPosition(-100, -100);
+							}
+				}
 			}
 
 		}
 		if (gameStatus == 3)
 		{
+			if (waitingforAI > 1)
+			{
+				waitingforAI -= 1;
+				std::wcout << "ai" << waitingforAI << std::endl;
+			}
+			if (waitingforAI == 1)
+				nextTurn(turn);
+				
 			if (JustOneWall)
 			{
 				sWalls[nrOfPlacedWalls - 1].setPosition(fixedPosWall.x, fixedPosWall.y);
