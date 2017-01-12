@@ -12,6 +12,13 @@ sf::Sprite sButtonWall1;
 sf::Sprite sExit1, sBack;
 sf::Sprite sPlayerWalls[11];
 
+//Get random position
+sf::Vector2i randPos;
+
+int sizeSquare = 61;
+int widthWall = 15, marginWidth = 155;
+int sizeTotal = sizeSquare + widthWall;
+
 int nrOfPlacedWalls;
 bool leaveHelp = false;
 bool musicOn = false;
@@ -99,11 +106,11 @@ void funDeleteWalls()
 	if (nrOfPlacedWalls < 0)
 		nrOfPlacedWalls = 0;
 }
-
+int powerMatrix[3][3];
 sf::Vector2i powerUP() {
 	sf::Vector2i randomUpCoord;
-	randomUpCoord.x = rand() % 9;
-	randomUpCoord.y = rand() % 9;
+	randomUpCoord.x = (rand() % 3) + 3;
+	randomUpCoord.y = (rand() % 3) + 3;
 	std::cout << "PowerUp" << " x= " << randomUpCoord.x << " y= " << randomUpCoord.y << std::endl;
 	return randomUpCoord;
 }
@@ -459,6 +466,23 @@ void nextTurn(int &currentTurn)
 	countDown--;
 	countDown2--;
 	countDown3--;
+	if (countDown == 0) {
+		randPos.y = (powerUpPos.x - marginWidth) / sizeTotal;
+		randPos.x = (powerUpPos.y - widthWall) / sizeTotal;
+		powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
+	}
+	else
+		if (countDown2 == 0) {
+			randPos.y = (powerUpPos2.x - marginWidth) / sizeTotal;
+			randPos.x = (powerUpPos2.y - widthWall) / sizeTotal;
+			powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
+		}
+		else
+			if (countDown3 == 0) {
+				randPos.y = (powerUpPos3.x - marginWidth) / sizeTotal;
+				randPos.x = (powerUpPos3.y - widthWall) / sizeTotal;
+				powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
+			}
 	if (threeMoves > 0 && playerType[currentTurn] == 0)
 		threeMoves -= 1;
 	else
@@ -522,7 +546,22 @@ void AImoves(int &currentTurn)
 	countDown--;
 	countDown2--;
 	countDown3--;
-
+	if (countDown == 0) {
+		randPos.y = (powerUpPos.x - marginWidth) / sizeTotal;
+		randPos.x = (powerUpPos.y - widthWall) / sizeTotal;
+		powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
+	}else
+		if(countDown2 == 0) {
+		randPos.y = (powerUpPos2.x - marginWidth) / sizeTotal;
+		randPos.x = (powerUpPos2.y - widthWall) / sizeTotal;
+		powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
+	}
+	else
+		if (countDown3 == 0) {
+			randPos.y = (powerUpPos3.x - marginWidth) / sizeTotal;
+			randPos.x = (powerUpPos3.y - widthWall) / sizeTotal;
+			powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
+		}
 	sf::Vector2i nextPawn = funAImove(currentTurn);
 	pawn[currentTurn].x = nextPawn.x;
 	pawn[currentTurn].y = nextPawn.y;
@@ -536,25 +575,36 @@ void AImoves(int &currentTurn)
 		{
 			threeMoves = 3;
 			countDown = 3;
+			randPos.y = (powerUpPos.x - marginWidth) / sizeTotal;
+			randPos.x = (powerUpPos.y - widthWall) / sizeTotal;
+			powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
 			powerUpPos.x = -100;
 			powerUpPos.y = -100;
 			spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
 		}
 		if (posPawn.x == powerUpPos2.x && posPawn.y == powerUpPos2.y) 
 		{
+			randPos.y = (powerUpPos2.x - marginWidth) / sizeTotal;
+			randPos.x = (powerUpPos2.y - widthWall) / sizeTotal;
+			powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
 			maxWallsPerPlayer[currentTurn] = maxNumber;
 			powerUpPos2.x = -100;
 			powerUpPos2.y = -100;
 			spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
 			countDown2 = 0;
+			
 		}
 		if (posPawn.x == powerUpPos3.x && posPawn.y == powerUpPos3.y) 
 		{
+			randPos.y = (powerUpPos3.x - marginWidth) / sizeTotal;
+			randPos.x = (powerUpPos3.y - widthWall) / sizeTotal;
+			powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
 			deleteWalls = true;
 			powerUpPos3.x = -100;
 			powerUpPos3.y = -100;
 			spowerUp3.setPosition(powerUpPos3.x, powerUpPos3.y);
 			countDown3 = 0;
+			
 		}
 	}
 	if (threeMoves != 0)
@@ -583,8 +633,7 @@ int main()
 		return 0;
 	MenuMusic.setLoop(true);
 
-	//Get random position
-	sf::Vector2i randPos;
+	
 	////// POWER UPS
 	sf::Texture tpowerUp, tpowerUp2, tpowerUp3;
 	tpowerUp.loadFromFile("images/powerUp.png");
@@ -792,9 +841,7 @@ int main()
 
 	int wallRotation = 0;
 	bool canWallBePlaced = false;
-
-	int sizeSquare = 61, widthWall = 15, marginWidth = 155;
-	int sizeTotal = sizeSquare + widthWall;
+	
 
 	//buttons
 	sf::Texture tButtonWall1, tButtonWall2;
@@ -890,6 +937,9 @@ int main()
 
 		if (gameStatus == 2)
 		{
+			for (int i = 0; i < 3; i++)
+				for (int j = 0; j < 3; j++)
+					powerMatrix[i][j] == 0;
 			MenuMusic.stop();
 			musicOn = false;
 			powerUpPos.x = -100;
@@ -1234,6 +1284,10 @@ int main()
 					if (countDown <= 0) 
 					{
 						randPos = powerUP();
+						while (powerMatrix[randPos.x - 3][randPos.y - 3] != 0)
+							randPos = powerUP();
+						powerMatrix[randPos.x - 3][randPos.y - 3] = 1;
+						
 						powerUpPos.x = marginWidth + sizeTotal*randPos.y;
 						powerUpPos.y = widthWall + sizeTotal*randPos.x;
 						spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
@@ -1242,6 +1296,10 @@ int main()
 					if (countDown2 <= 0) 
 					{
 						randPos = powerUP();
+						while (powerMatrix[randPos.x - 3][randPos.y - 3] != 0)
+							randPos = powerUP();
+						powerMatrix[randPos.x - 3][randPos.y - 3] = 1;
+
 						powerUpPos2.x = marginWidth + sizeTotal*randPos.y;
 						powerUpPos2.y = widthWall + sizeTotal*randPos.x;
 						spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
@@ -1250,8 +1308,10 @@ int main()
 					if (countDown3 <= 0) 
 					{
 						randPos = powerUP();
-						randPos.x = 5;
-						randPos.y = 4;
+						while (powerMatrix[randPos.x - 3][randPos.y - 3] != 0)
+							randPos = powerUP();
+						powerMatrix[randPos.x - 3][randPos.y - 3] = 1;
+
 						powerUpPos3.x = marginWidth + sizeTotal*randPos.y;
 						powerUpPos3.y = widthWall + sizeTotal*randPos.x;
 						spowerUp3.setPosition(powerUpPos3.x, powerUpPos3.y);
@@ -1486,6 +1546,9 @@ int main()
 										{
 											if (posPawn[turn].x == powerUpPos.x && posPawn[turn].y == powerUpPos.y) 
 											{
+												randPos.y = (powerUpPos.x - marginWidth) / sizeTotal;
+												randPos.x = (powerUpPos.y - widthWall) / sizeTotal;
+												powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
 												threeMoves = 3;
 												countDown = 3;
 												powerUpPos.x = -100;
@@ -1494,6 +1557,9 @@ int main()
 											}
 											if (posPawn[turn].x == powerUpPos2.x && posPawn[turn].y == powerUpPos2.y) 
 											{
+												randPos.y = (powerUpPos2.x - marginWidth) / sizeTotal;
+												randPos.x = (powerUpPos2.y - widthWall) / sizeTotal;
+												powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
 												maxWallsPerPlayer[turn] = maxNumber;
 												powerUpPos2.x = -100;
 												powerUpPos2.y = -100;
@@ -1502,6 +1568,9 @@ int main()
 											}
 											if (posPawn[turn].x == powerUpPos3.x && posPawn[turn].y == powerUpPos3.y) 
 											{
+												randPos.y = (powerUpPos3.x - marginWidth) / sizeTotal;
+												randPos.x = (powerUpPos3.y - widthWall) / sizeTotal;
+												powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
 												funDeleteWalls();
 												powerUpPos3.x = -100;
 												powerUpPos3.y = -100;
