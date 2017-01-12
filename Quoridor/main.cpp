@@ -430,25 +430,46 @@ void nextTurn(int &currentTurn)
 	countDown--;
 	countDown2--;
 	countDown3--;
-	currentTurn = (currentTurn + 1) % nrOfPlayers;
-	//sf::Texture tTemp = *sPawn[turn].getTexture();
-	turnUI.setTexture(*sPawn[turn].getTexture());
-	//Check if next turn is AI
-	if (playerType[currentTurn] > 0)
+	if (threeMoves > 0 && playerType[currentTurn] == 0)
+		threeMoves -= 1;
+	else
 	{
+		if (threeMoves > 0 && playerType[currentTurn] > 0)
+		{
+			currentTurn -= 1;
+			threeMoves -= 1;
+		}
+			
+		currentTurn = (currentTurn + 1) % nrOfPlayers;
+		turnUI.setTexture(*sPawn[turn].getTexture());
 		
-		sf::Vector2i nextPawn = funAImove(currentTurn);
-		pawn[currentTurn].x = nextPawn.x;
-		pawn[currentTurn].y = nextPawn.y;
+		//Check if next turn is AI
+		if (playerType[currentTurn] > 0)
+		{
+		
+			sf::Vector2i nextPawn = funAImove(currentTurn);
+			pawn[currentTurn].x = nextPawn.x;
+			pawn[currentTurn].y = nextPawn.y;
 
-		funDrawBoard();
-		Sleep(1000);
+			funDrawBoard();
+			Sleep(1000);
 
-		sf::Vector2i posPawn = sf::Vector2i(155 + 76 * pawn[currentTurn].y, 15 + 76 * pawn[currentTurn].x);
-		sPawn[currentTurn].setPosition(posPawn.x, posPawn.y);
-		nextTurn(currentTurn);
+			sf::Vector2i posPawn = sf::Vector2i(155 + 76 * pawn[currentTurn].y, 15 + 76 * pawn[currentTurn].x);
+			sPawn[currentTurn].setPosition(posPawn.x, posPawn.y);
+			
+			//steped on power-up
+			if (posPawn.x == powerUpPos.x && posPawn.y == powerUpPos.y)
+			{
+				threeMoves = 3;
+				countDown = 3;
+				powerUpPos.x = -100;
+				powerUpPos.y = -100;
+				spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
+			}
+
+			nextTurn(currentTurn);
+		}
 	}
-
 }
 void AImoves(int &currentTurn)
 {
@@ -1173,6 +1194,8 @@ int main()
 				if (setMode) {
 					if (countDown <= 0) {
 						randPos = powerUP();
+						randPos.x = 6;
+						randPos.y = 4;
 						powerUpPos.x = marginWidth + sizeTotal*randPos.y;
 						powerUpPos.y = widthWall + sizeTotal*randPos.x;
 						spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
@@ -1416,23 +1439,27 @@ int main()
 									{
 										posPawn[turn] = sf::Vector2i(marginWidth + sizeTotal*pawn[turn].y, widthWall + sizeTotal*pawn[turn].x);
 										sPawn[turn].setPosition(posPawn[turn].x, posPawn[turn].y);
+
 										if (setMode)
 										{
-											if (posPawn[turn].x == powerUpPos.x && posPawn[turn].y == powerUpPos.y) {
+											if (posPawn[turn].x == powerUpPos.x && posPawn[turn].y == powerUpPos.y) 
+											{
 												threeMoves = 3;
 												countDown = 3;
 												powerUpPos.x = -100;
 												powerUpPos.y = -100;
 												spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
 											}
-											if (posPawn[turn].x == powerUpPos2.x && posPawn[turn].y == powerUpPos2.y) {
+											if (posPawn[turn].x == powerUpPos2.x && posPawn[turn].y == powerUpPos2.y) 
+											{
 												maxWallsPerPlayer[turn] = maxNumber;
 												powerUpPos2.x = -100;
 												powerUpPos2.y = -100;
 												spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
 												countDown2 = 0;
 											}
-											if (posPawn[turn].x == powerUpPos3.x && posPawn[turn].y == powerUpPos3.y) {
+											if (posPawn[turn].x == powerUpPos3.x && posPawn[turn].y == powerUpPos3.y) 
+											{
 												deleteWalls = true;
 												powerUpPos3.x = -100;
 												powerUpPos3.y = -100;
@@ -1440,8 +1467,8 @@ int main()
 												countDown3 = 0;
 											}
 										}
-										if (threeMoves == 0)
-										{
+										//if (threeMoves == 0)
+										//{
 											nextTurn(turn);
 											if (deleteWalls) 
 											{
@@ -1469,12 +1496,12 @@ int main()
 												if (nrOfPlacedWalls < 0)
 													nrOfPlacedWalls = 0;
 											}
-										}
-										else
-										{
-											threeMoves--;
-											countDown--;
-										}
+										//}
+										//else
+										//{
+										//	threeMoves--;
+										//	countDown--;
+										//}
 									}
 								}
 								else
