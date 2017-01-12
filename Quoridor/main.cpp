@@ -71,6 +71,35 @@ bool setMode = false;
 int countDown, countDown2, countDown3;
 int threeMoves = 0;
 
+sf::Vector2i posWall,fixedPosWall;
+bool checkRotation[100];
+int leftMarginForPlacingWalls = 181, topMarginForPlacingWalls = 43, wallActiveZone = 76;
+void funDeleteWalls()
+{
+	for (int i = nrOfPlacedWalls - 1; i > nrOfPlacedWalls - nrOfPlayers - 1; i--)
+	{
+		if (i < 0)
+			continue;
+		sf::Vector2f deleteWallPos = sWalls[i].getPosition();
+		posWall.x = (deleteWallPos.x - leftMarginForPlacingWalls) / wallActiveZone;
+		posWall.y = (deleteWallPos.y - topMarginForPlacingWalls) / wallActiveZone;
+		if (checkRotation[i] == 0)
+		{
+			wallMatrix[posWall.y * 2][posWall.x] = 0;
+			wallMatrix[posWall.y * 2 + 2][posWall.x] = 0;
+		}
+		else
+		{
+			wallMatrix[posWall.y * 2 + 1][posWall.x] = 0;
+			wallMatrix[posWall.y * 2 + 1][posWall.x + 1] = 0;
+		}
+		sWalls[i].setPosition(-100, -100);
+	}
+	nrOfPlacedWalls -= nrOfPlayers;
+	if (nrOfPlacedWalls < 0)
+		nrOfPlacedWalls = 0;
+}
+
 sf::Vector2i powerUP() {
 	sf::Vector2i randomUpCoord;
 	randomUpCoord.x = rand() % 9;
@@ -457,7 +486,7 @@ void nextTurn(int &currentTurn)
 			sf::Vector2i posPawn = sf::Vector2i(155 + 76 * pawn[currentTurn].y, 15 + 76 * pawn[currentTurn].x);
 			sPawn[currentTurn].setPosition(posPawn.x, posPawn.y);
 			
-			//steped on power-up
+			//stepped on power-up
 			if (posPawn.x == powerUpPos.x && posPawn.y == powerUpPos.y)
 			{
 				threeMoves = 3;
@@ -465,6 +494,22 @@ void nextTurn(int &currentTurn)
 				powerUpPos.x = -100;
 				powerUpPos.y = -100;
 				spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
+			}
+			if (posPawn.x == powerUpPos2.x && posPawn.y == powerUpPos2.y)
+			{
+				maxWallsPerPlayer[turn] = maxNumber;
+				powerUpPos2.x = -100;
+				powerUpPos2.y = -100;
+				spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
+				countDown2 = 0;
+			}
+			if (posPawn.x == powerUpPos3.x && posPawn.y == powerUpPos3.y)
+			{
+				funDeleteWalls();
+				powerUpPos3.x = -100;
+				powerUpPos3.y = -100;
+				spowerUp3.setPosition(powerUpPos3.x, powerUpPos3.y);
+				countDown3 = 0;
 			}
 
 			nextTurn(currentTurn);
@@ -569,7 +614,7 @@ int main()
 
 	sf::Texture tPawn[11];
 	sf::Texture tWall;
-	bool checkRotation[100];
+
 	///// Menu
 	sf::Texture tMenuBackground, tButtonClassic, tButtonWild, tButtonQuit, tButtonClassic1, tButtonWild1, tButtonQuit1, tTurnDisplay,tTitle;
 	tMenuBackground.loadFromFile("images/MenuBackgroundTest.png");
@@ -743,9 +788,8 @@ int main()
 	tPlayerWalls.loadFromFile("images/Walls.png");
 
 	int WallsPlaceableLimit;
-	sf::Vector2i posWall;
-	sf::Vector2i fixedPosWall;
-	int leftMarginForPlacingWalls, topMarginForPlacingWalls, wallActiveZone;
+
+
 	int wallRotation = 0;
 	bool canWallBePlaced = false;
 
@@ -787,11 +831,6 @@ int main()
 		sPlayerWalls[i].setTextureRect(sf::IntRect(i * 99, 0, 99, 83));
 		sPlayerWalls[i].setPosition(20, 305);
 	}
-
-	//////// PLACE THE WALL AT A PERFECT POSITION /////////
-	leftMarginForPlacingWalls = 181;
-	topMarginForPlacingWalls = 43;
-	wallActiveZone = 76;
 
 	//wall activate button
 
@@ -853,7 +892,6 @@ int main()
 		{
 			MenuMusic.stop();
 			musicOn = false;
-			deleteWalls = false;
 			powerUpPos.x = -100;
 			powerUpPos.y = -100;
 			spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
@@ -1191,25 +1229,29 @@ int main()
 			if (gameStatus == 3)
 			{
 				////// NEED POWER UPS ???
-				if (setMode) {
-					if (countDown <= 0) {
+				if (setMode) 
+				{
+					if (countDown <= 0) 
+					{
 						randPos = powerUP();
-						randPos.x = 6;
-						randPos.y = 4;
 						powerUpPos.x = marginWidth + sizeTotal*randPos.y;
 						powerUpPos.y = widthWall + sizeTotal*randPos.x;
 						spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
 						countDown = 20;
 					}
-					if (countDown2 <= 0) {
+					if (countDown2 <= 0) 
+					{
 						randPos = powerUP();
 						powerUpPos2.x = marginWidth + sizeTotal*randPos.y;
 						powerUpPos2.y = widthWall + sizeTotal*randPos.x;
 						spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
 						countDown2 = 15;
 					}
-					if (countDown3 <= 0) {
+					if (countDown3 <= 0) 
+					{
 						randPos = powerUP();
+						randPos.x = 5;
+						randPos.y = 4;
 						powerUpPos3.x = marginWidth + sizeTotal*randPos.y;
 						powerUpPos3.y = widthWall + sizeTotal*randPos.x;
 						spowerUp3.setPosition(powerUpPos3.x, powerUpPos3.y);
@@ -1460,48 +1502,45 @@ int main()
 											}
 											if (posPawn[turn].x == powerUpPos3.x && posPawn[turn].y == powerUpPos3.y) 
 											{
-												deleteWalls = true;
+												funDeleteWalls();
 												powerUpPos3.x = -100;
 												powerUpPos3.y = -100;
 												spowerUp3.setPosition(powerUpPos3.x, powerUpPos3.y);
 												countDown3 = 0;
 											}
 										}
-										//if (threeMoves == 0)
-										//{
-											nextTurn(turn);
-											if (deleteWalls) 
+										
+										/*
+										if (deleteWalls) 
+										{
+											for (int i = nrOfPlacedWalls - 1; i > nrOfPlacedWalls - nrOfPlayers - 1; i--)
 											{
-												for (int i = nrOfPlacedWalls - 1; i > nrOfPlacedWalls - nrOfPlayers - 1; i--)
+												if (i < 0)
+													continue;
+												sf::Vector2f deleteWallPos = sWalls[i].getPosition();
+												posWall.x = (deleteWallPos.x - leftMarginForPlacingWalls) / wallActiveZone;
+												posWall.y = (deleteWallPos.y - topMarginForPlacingWalls) / wallActiveZone;
+												if (checkRotation[i] == 0)
 												{
-													if (i < 0)
-														continue;
-													sf::Vector2f deleteWallPos = sWalls[i].getPosition();
-													posWall.x = (deleteWallPos.x - leftMarginForPlacingWalls) / wallActiveZone;
-													posWall.y = (deleteWallPos.y - topMarginForPlacingWalls) / wallActiveZone;
-													if (checkRotation[i] == 0)
-													{
-														wallMatrix[posWall.y * 2][posWall.x] = 0;
-														wallMatrix[posWall.y * 2 + 2][posWall.x] = 0;
-													}
-													else
-													{
-														wallMatrix[posWall.y * 2 + 1][posWall.x] = 0;
-														wallMatrix[posWall.y * 2 + 1][posWall.x + 1] = 0;
-													}
-													sWalls[i].setPosition(-100, -100);
+													wallMatrix[posWall.y * 2][posWall.x] = 0;
+													wallMatrix[posWall.y * 2 + 2][posWall.x] = 0;
 												}
-												deleteWalls = false;
-												nrOfPlacedWalls -= nrOfPlayers;
-												if (nrOfPlacedWalls < 0)
-													nrOfPlacedWalls = 0;
+												else
+												{
+													wallMatrix[posWall.y * 2 + 1][posWall.x] = 0;
+													wallMatrix[posWall.y * 2 + 1][posWall.x + 1] = 0;
+												}
+												sWalls[i].setPosition(-100, -100);
 											}
-										//}
-										//else
-										//{
-										//	threeMoves--;
-										//	countDown--;
-										//}
+											deleteWalls = false;
+											nrOfPlacedWalls -= nrOfPlayers;
+											if (nrOfPlacedWalls < 0)
+												nrOfPlacedWalls = 0;
+											
+										}
+										*/
+										
+										nextTurn(turn);
 									}
 								}
 								else
