@@ -408,7 +408,7 @@ sf::Vector2i funAImove(int turn)
 			v[0] = p[0] + dl[k];
 			v[1] = p[1] + dc[k];
 
-			if (board[v[0]][v[1]] == -1 && !funCheckforWall(sf::Vector2i(p[0], p[1]), sf::Vector2i(v[0], v[1])))
+			if (board[v[0]][v[1]] == -1 && !funCheckforWall(sf::Vector2i(v[0] + dl[k], v[1] + dc[k]), sf::Vector2i(v[0], v[1])) && !funCheckforWall(sf::Vector2i(p[0], p[1]), sf::Vector2i(v[0], v[1])))
 			{
 				v[0] = v[0] + dl[k];
 				v[1] = v[1] + dc[k];
@@ -453,7 +453,7 @@ sf::Vector2i funAImove(int turn)
 					}
 			}
 			//side jump
-			else if (board[p[0] + dl[k]][p[1] + dc[k]] == -1 && funCheckforWall(sf::Vector2i(p[0], p[1]), sf::Vector2i(v[0], v[1])) && !funCheckforWall(sf::Vector2i(p[0], p[1]), sf::Vector2i(p[0] + dl[k], p[1] + dc[k])))
+			else if (board[p[0] + dl[k]][p[1] + dc[k]] == -1 && funCheckforWall(sf::Vector2i(v[0] + dl[k], v[1] + dc[k]), sf::Vector2i(v[0], v[1])) && !funCheckforWall(sf::Vector2i(p[0], p[1]), sf::Vector2i(p[0] + dl[k], p[1] + dc[k])))
 			{
 				std::cout << "im doing a side jump from "<< p[0] <<","<< p[1]<<" above " << p[0] + dl[k] <<","<< p[1] + dc[k] << std::endl;
 				for (int i = -1; i <= 1; i += 2)
