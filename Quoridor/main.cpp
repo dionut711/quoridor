@@ -589,7 +589,7 @@ void nextTurn()
 				powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
 			}
 
-	if (threeMoves > 0 && playerType[turn] > 0)
+	if (threeMoves > 0 && playerType[turn] > 0 && waitingforAI == 1)
 	{
 		threeMoves -= 1;
 		std::cout << "doint another move" <<threeMoves<< std::endl;
