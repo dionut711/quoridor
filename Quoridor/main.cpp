@@ -24,7 +24,8 @@ int widthWall = 15, marginWidth = 155;
 int sizeTotal = sizeSquare + widthWall;
 int nrOfPlacedWalls;
 
-
+bool musicIsPaused = false;
+bool musicState = false;
 bool musicOn = false;
 bool goPrev = false, goUrm = false, helpMode = false, leaveHelp = false;
 bool drawSclassic = false, drawSwild = false, drawShelp = false;
@@ -122,7 +123,7 @@ void funCheckWinCondition()
 				sWin.setTexture(tWinComputer);
 
 			turnUI.setTexture(*sPawn[turn].getTexture());
-			turnUI.setPosition(0, 0);
+			turnUI.setPosition(460, 210);
 			winner = 1;
 		}
 	}
@@ -136,7 +137,7 @@ void funCheckWinCondition()
 				sWin.setTexture(tWinComputer);
 
 			turnUI.setTexture(*sPawn[turn].getTexture());
-			turnUI.setPosition(0, 0);
+			turnUI.setPosition(460, 210);
 			winner = 1;
 		}
 	}
@@ -579,6 +580,16 @@ void nextTurn()
 
 int main()
 {
+	sf::Texture tMusicOn, tMusicOn1, tMusicOff, tMusicOff1;
+	tMusicOn.loadFromFile("images/musicOn.png");
+	tMusicOn1.loadFromFile("images/musicOn1.png");
+	tMusicOff.loadFromFile("images/musicOff.png");
+	tMusicOff1.loadFromFile("images/musicOff1.png");
+
+	sf::Sprite sMusicButton;
+	sMusicButton.setTexture(tMusicOn);
+	sMusicButton.setPosition(800, 50);
+
 	sf::Image icon;
 	icon.loadFromFile("images/QuoridorPawn0.png");
 	window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
@@ -877,7 +888,7 @@ int main()
 		
 		sMenuBackground.setTextureRect(sf::IntRect(pos_x, pos_y, 969, 696));
 
-		if (gameStatus == 0 && musicOn == false)
+		if (gameStatus == 0 && musicOn == false && !musicIsPaused)
 		{
 			MenuMusic.play();
 			musicOn = true;
@@ -1013,6 +1024,18 @@ int main()
 									sHelpButton.setTexture(tHelpButton1);
 									helpMode = true;
 								}
+								else
+									if (sMusicButton.getGlobalBounds().contains(posMouse.x, posMouse.y) && !musicIsPaused)
+									{
+										sMusicButton.setTexture(tMusicOn1);
+										musicState = true;
+									}
+									else
+										if (sMusicButton.getGlobalBounds().contains(posMouse.x, posMouse.y) && musicIsPaused)
+										{
+											sMusicButton.setTexture(tMusicOff1);
+											musicState = true;
+										}
 
 				if (e.type == sf::Event::MouseButtonReleased)
 					if (e.key.code == sf::Mouse::Left)
@@ -1030,6 +1053,22 @@ int main()
 								sHelpButton.setTexture(tHelpButton);
 								helpMode = false;
 							}
+							else
+								if (musicState && !musicIsPaused)
+								{
+									sMusicButton.setTexture(tMusicOff);
+									musicState = false;
+									MenuMusic.pause();
+									musicIsPaused = true;
+								}
+								else
+									if (musicState && musicIsPaused)
+									{
+										sMusicButton.setTexture(tMusicOn);
+										musicState = false;
+										MenuMusic.play();
+										musicIsPaused = false;
+									}
 						
 			}
 			// ROOM
@@ -1631,6 +1670,7 @@ int main()
 				window.draw(sButtonQuit);
 				window.draw(sHelpButton);
 				window.draw(sTitle);
+				window.draw(sMusicButton);
 				if (drawSclassic)
 					window.draw(sStateClassic);
 				if (drawSwild)
