@@ -16,37 +16,28 @@ sf::Sprite sButtonWall1;
 sf::Sprite sExit1, sBack;
 sf::Sprite sPlayerWalls[11];
 
-//Get random position
+
 sf::Vector2i randPos;
 
 int sizeSquare = 61;
 int widthWall = 15, marginWidth = 155;
 int sizeTotal = sizeSquare + widthWall;
-
 int nrOfPlacedWalls;
-bool leaveHelp = false;
-bool musicOn = false;
-bool goPrev = false;
-bool goUrm = false;
-bool helpMode = false;
-int helpStatus = 1;
-int gameStatus = 0;
-//0 - menu
-//1 - game room
-//2 - initializing game
-//3 - classic game
 
-bool drawSclassic = false;
-bool drawSwild = false;
-bool drawShelp = false;
+
+bool musicOn = false;
+bool goPrev = false, goUrm = false, helpMode = false, leaveHelp = false;
+bool drawSclassic = false, drawSwild = false, drawShelp = false;
+int helpStatus = 1, gameStatus = 0;
+
+
+
 
 sf::Vector2i pawn[4];
 sf::Sprite sPawn[4];
 
 ///// power ups
-sf::Vector2i powerUpPos;
-sf::Vector2i powerUpPos2;
-sf::Vector2i powerUpPos3;
+sf::Vector2i powerUpPos, powerUpPos2, powerUpPos3;
 sf::Sprite spowerUp, spowerUp2, spowerUp3;
 bool deleteWalls = false;
 
@@ -334,16 +325,9 @@ sf::Vector2i funReverseLee(int board[9][9], sf::Vector2i pos)
 						
 						sf::Vector2i tempPawn = pawn[turn];
 						pawn[turn] = sf::Vector2i(pos.x + dl[i], pos.y + dc[i]);
-						/*
-						if (funBlocksPlayer(1))
-							pawn[turn] = tempPawn;
-						else
-						{
-						*/
-							mn.x = v[0];
-							mn.y = v[1];
-							foundPath = true;
-						//}
+						mn.x = v[0];
+						mn.y = v[1];
+						foundPath = true;
 					}
 					else
 					{
@@ -497,7 +481,7 @@ sf::Vector2i funAImove(int turn)
 	return -1;
 }
 */
-void nextTurn(int &currentTurn)
+void nextTurn()
 {
 	countDown--;
 	countDown2--;
@@ -520,24 +504,24 @@ void nextTurn(int &currentTurn)
 				powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
 			}
 
-	if (threeMoves > 0 && playerType[currentTurn] == 0)
+	if (threeMoves > 0 && playerType[turn] == 0)
 		threeMoves -= 1;
 	else
 	{
-		if (threeMoves > 0 && playerType[currentTurn] > 0)
+		if (threeMoves > 0 && playerType[turn] > 0)
 		{
-			currentTurn -= 1;
+			turn -= 1;
 			threeMoves -= 1;
 		}
 		
 		if (waitingforAI != 1)
 		{
-			currentTurn = (currentTurn + 1) % nrOfPlayers;
+			turn = (turn + 1) % nrOfPlayers;
 			turnUI.setTexture(*sPawn[turn].getTexture());
 		}
 		
 		
-		if (waitingforAI == 0 && playerType[currentTurn] > 0)
+		if (waitingforAI == 0 && playerType[turn] > 0)
 		{
 			waitingforAI = 500;
 			return;
@@ -546,17 +530,16 @@ void nextTurn(int &currentTurn)
 		{
 			std::wcout << "i should move - ai" << std::endl;
 			//Check if next turn is AI
-			if (playerType[currentTurn] > 0)
+			if (playerType[turn] > 0)
 			{
 
-				sf::Vector2i nextPawn = funAImove(currentTurn);
-				pawn[currentTurn].x = nextPawn.x;
-				pawn[currentTurn].y = nextPawn.y;
+				sf::Vector2i nextPawn = funAImove(turn);
+				pawn[turn].x = nextPawn.x;
+				pawn[turn].y = nextPawn.y;
 
-				//funDrawBoard();
 
-				sf::Vector2i posPawn = sf::Vector2i(155 + 76 * pawn[currentTurn].y, 15 + 76 * pawn[currentTurn].x);
-				sPawn[currentTurn].setPosition(posPawn.x, posPawn.y);
+				sf::Vector2i posPawn = sf::Vector2i(155 + 76 * pawn[turn].y, 15 + 76 * pawn[turn].x);
+				sPawn[turn].setPosition(posPawn.x, posPawn.y);
 
 				//stepped on power-up
 				if (posPawn.x == powerUpPos.x && posPawn.y == powerUpPos.y)
@@ -586,91 +569,14 @@ void nextTurn(int &currentTurn)
 
 				waitingforAI = 0;
 				funCheckWinCondition();
-				if(winner == 0)
-					nextTurn(currentTurn);
+				if (winner == 0)
+					nextTurn();
 			}
 		}
 		
 	}
 }
-void AImoves(int &currentTurn)
-{
-	Sleep(1000);
-	countDown--;
-	countDown2--;
-	countDown3--;
-	if (countDown == 0) {
-		randPos.y = (powerUpPos.x - marginWidth) / sizeTotal;
-		randPos.x = (powerUpPos.y - widthWall) / sizeTotal;
-		powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
-	}else
-		if(countDown2 == 0) {
-		randPos.y = (powerUpPos2.x - marginWidth) / sizeTotal;
-		randPos.x = (powerUpPos2.y - widthWall) / sizeTotal;
-		powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
-	}
-	else
-		if (countDown3 == 0) {
-			randPos.y = (powerUpPos3.x - marginWidth) / sizeTotal;
-			randPos.x = (powerUpPos3.y - widthWall) / sizeTotal;
-			powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
-		}
-	sf::Vector2i nextPawn = funAImove(currentTurn);
-	pawn[currentTurn].x = nextPawn.x;
-	pawn[currentTurn].y = nextPawn.y;
 
-	sf::Vector2i posPawn = sf::Vector2i(155 + 76 * pawn[currentTurn].y, 15 + 76 * pawn[currentTurn].x);
-	sPawn[currentTurn].setPosition(posPawn.x, posPawn.y);
-
-	if (setMode)
-	{
-		if (posPawn.x == powerUpPos.x && posPawn.y == powerUpPos.y) 
-		{
-			threeMoves = 3;
-			countDown = 3;
-			randPos.y = (powerUpPos.x - marginWidth) / sizeTotal;
-			randPos.x = (powerUpPos.y - widthWall) / sizeTotal;
-			powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
-			powerUpPos.x = -100;
-			powerUpPos.y = -100;
-			spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
-		}
-		if (posPawn.x == powerUpPos2.x && posPawn.y == powerUpPos2.y) 
-		{
-			randPos.y = (powerUpPos2.x - marginWidth) / sizeTotal;
-			randPos.x = (powerUpPos2.y - widthWall) / sizeTotal;
-			powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
-			maxWallsPerPlayer[currentTurn] = maxNumber;
-			powerUpPos2.x = -100;
-			powerUpPos2.y = -100;
-			spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
-			countDown2 = 0;
-			
-		}
-		if (posPawn.x == powerUpPos3.x && posPawn.y == powerUpPos3.y) 
-		{
-			randPos.y = (powerUpPos3.x - marginWidth) / sizeTotal;
-			randPos.x = (powerUpPos3.y - widthWall) / sizeTotal;
-			powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
-			deleteWalls = true;
-			powerUpPos3.x = -100;
-			powerUpPos3.y = -100;
-			spowerUp3.setPosition(powerUpPos3.x, powerUpPos3.y);
-			countDown3 = 0;
-			
-		}
-	}
-	if (threeMoves != 0)
-	{
-		threeMoves--;
-		countDown--;
-	}
-	if (threeMoves == 0)
-		currentTurn = (currentTurn + 1) % nrOfPlayers;
-
-	nextTurn(turn);
-	turnUI.setTexture(*sPawn[turn].getTexture());
-}
 int main()
 {
 	sf::Image icon;
@@ -711,9 +617,6 @@ int main()
 		playerSkin[i] = i;
 
 	sf::Texture tBoard;
-
-
-
 	sf::Texture tPawn[11];
 	sf::Texture tWall;
 
@@ -898,21 +801,15 @@ int main()
 
 	//buttons
 	sf::Texture tButtonWall1, tButtonWall2;
-
 	sf::Texture tExit1, tExit2;
-
-	sf::Vector2i nextPawn[4];
-	sf::Vector2i posPawn[4];
+	sf::Vector2i nextPawn[4], posPawn[4];
 
 
 	////////// WINNER ///////////
 	tWinPlayer.loadFromFile("images/PlayerWin.png");
 	tWinComputer.loadFromFile("images/ComputerWin.png");
 
-
-
-	bool isExit = false;
-	bool isMove = false;
+	bool isExit = false, isMove = false;
 	bool isWallPlaceable = false;
 	bool wallOrientation = false;
 	bool JustOneWall = false;
@@ -925,7 +822,8 @@ int main()
 	nrOfPlacedWalls = 0;
 	WallsPlaceableLimit = 40;
 
-	for (int i = 0; i <= 10; i++) {
+	for (int i = 0; i <= 10; i++) 
+	{
 		sPlayerWalls[i].setTexture(tPlayerWalls);
 		sPlayerWalls[i].setTextureRect(sf::IntRect(i * 99, 0, 99, 83));
 		sPlayerWalls[i].setPosition(20, 305);
@@ -990,7 +888,9 @@ int main()
 
 		if (gameStatus == 2)
 		{
+			turn = -1;
 			waitingforAI = 0;
+
 			for (int i = 0; i < 3; i++)
 				for (int j = 0; j < 3; j++)
 					powerMatrix[i][j] == 0;
@@ -1015,11 +915,7 @@ int main()
 			turnUI.setPosition(43, 80);
 			for (int i = 0; i < nrOfPlayers; i++)
 				sPawn[i].setTexture(tPawn[playerSkin[i]]);
-			turn = -1;
-
-			//playerType[1] = 1;
-			//playerType[2] = 1;
-			//playerType[3] = 1;
+			
 			for (int i = 0; i < 17; i++)
 				for (int j = 0; j < 9; j++)
 					wallMatrix[i][j] = 0;
@@ -1056,7 +952,7 @@ int main()
 			}
 			gameStatus = 3;
 			sBack.setPosition(872, 90);
-			nextTurn(turn);
+			nextTurn();
 			
 		}
 
@@ -1064,8 +960,6 @@ int main()
 		{
 			if (e.type == sf::Event::Closed)
 				window.close();
-
-			///// PREPARING THE GAME
 
 			// MENU
 			if (gameStatus == 0) 
@@ -1184,11 +1078,13 @@ int main()
 				if (e.type == sf::Event::MouseButtonPressed)
 					if (e.key.code == sf::Mouse::Left)
 						for (int i = 0; i < nrOfPlayers; i++) {
-							if (sNext[i + 4].getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+							if (sNext[i + 4].getGlobalBounds().contains(posMouse.x, posMouse.y)) 
+							{
 								nextSkin[i] = true;
 								sNext[i + 4].setTexture(tNext1);
 							}
-							if (sPrevious[i + 4].getGlobalBounds().contains(posMouse.x, posMouse.y)) {
+							if (sPrevious[i + 4].getGlobalBounds().contains(posMouse.x, posMouse.y)) 
+							{
 								previousSkin[i] = true;
 								sPrevious[i + 4].setTexture(tPrevious1);
 							}
@@ -1455,7 +1351,7 @@ int main()
 										JustOneWall = false;
 										maxWallsPerPlayer[turn] -= 1;
 										canWallBePlaced = true;
-										nextTurn(turn);
+										nextTurn();
 										checkRotation[nrOfPlacedWalls - 1] = wallRotation;
 										std::cout << "This wall is rotate ? " << checkRotation[nrOfPlacedWalls - 1] << " his number is: " << nrOfPlacedWalls - 1 << std::endl;
 									}
@@ -1637,7 +1533,7 @@ int main()
 
 									funCheckWinCondition();
 									if(winner == 0)
-										nextTurn(turn);
+										nextTurn();
 								//}
 									
 								}
@@ -1649,10 +1545,7 @@ int main()
 
 							}
 					}
-					else
-					{
-						//winner = 2;
-					}
+
 
 				}
 				else if (waitingforAI > 0)
@@ -1696,7 +1589,7 @@ int main()
 				std::wcout << "ai" << waitingforAI << std::endl;
 			}
 			if (waitingforAI == 1)
-				nextTurn(turn);
+				nextTurn();
 				
 			if (JustOneWall)
 			{
