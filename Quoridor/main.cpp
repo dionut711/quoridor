@@ -71,7 +71,7 @@ sf::Sprite turnUI;
 
 //////// Set The Mode : Classic is 0 , Wild is 1
 bool setMode = false;
-int countDown, countDown2, countDown3;
+int countDown=4, countDown2=5, countDown3=6;
 int threeMoves = 0;
 
 sf::Vector2i posWall,fixedPosWall;
@@ -982,7 +982,13 @@ int main()
 
 			for (int i = 0; i < 3; i++)
 				for (int j = 0; j < 3; j++)
-					powerMatrix[i][j] == 0;
+					powerMatrix[i][j] = 0;
+			for (int owo = 0; owo < 3; owo++) {
+				for (int wow = 0; wow < 3; wow++) {
+					std::cout << powerMatrix[owo][wow] << " ";
+				}
+				std::cout << std::endl;
+			}
 			MenuMusic.stop();
 			musicOn = false;
 			powerUpPos.x = -100;
@@ -1057,6 +1063,12 @@ int main()
 				powerUpPos.y = widthWall + sizeTotal*randPos.x;
 				spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
 				countDown = 20;
+				for (int owo = 0; owo < 3; owo++) {
+					for (int wow = 0; wow < 3; wow++) {
+						std::cout << powerMatrix[owo][wow] << " ";
+					}
+					std::cout << std::endl;
+				}
 			}
 			if (countDown2 <= 0)
 			{
@@ -1069,6 +1081,12 @@ int main()
 				powerUpPos2.y = widthWall + sizeTotal*randPos.x;
 				spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
 				countDown2 = 15;
+				for (int owo = 0; owo < 3; owo++) {
+					for (int wow = 0; wow < 3; wow++) {
+						std::cout << powerMatrix[owo][wow] << " ";
+					}
+					std::cout << std::endl;
+				}
 			}
 			if (countDown3 <= 0)
 			{
@@ -1081,6 +1099,12 @@ int main()
 				powerUpPos3.y = widthWall + sizeTotal*randPos.x;
 				spowerUp3.setPosition(powerUpPos3.x, powerUpPos3.y);
 				countDown3 = 18;
+				for (int owo = 0; owo < 3; owo++) {
+					for (int wow = 0; wow < 3; wow++) {
+						std::cout << powerMatrix[owo][wow] << " ";
+					}
+					std::cout << std::endl;
+				}
 			}
 		}
 
@@ -1649,6 +1673,12 @@ int main()
 											powerUpPos3.y = -100;
 											spowerUp3.setPosition(powerUpPos3.x, powerUpPos3.y);
 											countDown3 = 0;
+										}
+										for (int owo = 0; owo < 3; owo++) {
+											for (int wow = 0; wow < 3; wow++) {
+												std::cout << powerMatrix[owo][wow] << " ";
+											}
+											std::cout << std::endl;
 										}
 									}
 
