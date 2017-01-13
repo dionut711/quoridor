@@ -176,6 +176,13 @@ bool isOccupiedByPawn(sf::Vector2i pos)
 }
 bool funCheckforWall(sf::Vector2i posStart, sf::Vector2i posEnd)
 {
+	if ((posStart.x - posEnd.x) != 0 && (posStart.y - posEnd.y) != 0)
+	{
+		std::cout << "called for" << std::endl;
+		std::cout << posStart.x << "," << posStart.y << " and " << posEnd.x << "," << posEnd.y << std::endl;
+		return 0;
+	}
+		
 	if (posStart.x == posEnd.x)
 	{
 		if (posStart.y > posEnd.y)
@@ -311,19 +318,40 @@ sf::Vector2i funReverseLee(int board[9][9], sf::Vector2i pos)
 	{
 		v[0] = pos.x + dl[i];
 		v[1] = pos.y + dc[i];
-		if (board[v[0]][v[1]] == -1)
+		if (board[v[0]][v[1]] == -1 && !funCheckforWall(sf::Vector2i(pos.x, pos.y), sf::Vector2i(v[0], v[1])))
 		{
-			v[0] = v[0] + dl[i];
-			v[1] = v[1] + dc[i];
+			sf::Vector2i tempMin = mn;
+			for (int k = 0; k <= 3; k++)
+			{
+				if ((k + 2) % 4 != i)
+				{
+					v[0] = pos.x + dl[i] + dl[k];
+					v[1] = pos.y + dc[i] + dc[k];
+					if (board[tempMin.x][tempMin.y] > board[v[0]][v[1]] && board[v[0]][v[1]] > 1)
+					{
+						tempMin.x = v[0];
+						tempMin.y = v[1];
+					}
+					else
+					{
+						std::cout << "didnt find " << tempMin.x << "," << tempMin.y << "<" << v[0] << "," << v[1] << std::endl;
+					}
+				}
+			}
+			std::cout << "ill go here: " << tempMin.x << "," << tempMin.y << std::endl;
+			v[0] = tempMin.x;
+			v[1] = tempMin.y;
+			//v[0] = v[0] + dl[i];
+			//v[1] = v[1] + dc[i];
 		}
 		if (v[0] >= 0 && v[0] <= 8 && v[1] >= 0 && v[1] <= 8)//check if within boundaries
 			if (!funCheckforWall(sf::Vector2i(pos.x, pos.y), sf::Vector2i(v[0], v[1])))//wall
 				if (board[mn.x][mn.y] > board[v[0]][v[1]] && board[v[0]][v[1]] > 1)//minimal path
 				{
-					std::cout << v[0] << " " << v[1] << std::endl;
+					
 					if (board[pos.x + dl[i]][pos.y + dc[i]] == 2)
 					{
-						
+
 						sf::Vector2i tempPawn = pawn[turn];
 						pawn[turn] = sf::Vector2i(pos.x + dl[i], pos.y + dc[i]);
 						mn.x = v[0];
@@ -336,10 +364,16 @@ sf::Vector2i funReverseLee(int board[9][9], sf::Vector2i pos)
 						mn.y = v[1];
 						foundPath = true;
 					}
-				}
+		}
+			
 	}
+	
 	if (foundPath)
+	{
+		std::cout << mn.x << " " << mn.y << std::endl;
 		return funReverseLee(board, mn);
+	}
+		
 	else
 		return sf::Vector2i(-1, -1);
 }
@@ -418,7 +452,52 @@ sf::Vector2i funAImove(int turn)
 							return oldPawn;
 					}
 			}
+			//side jump
+			else if (board[p[0] + dl[k]][p[1] + dc[k]] == -1 && board[v[0]][v[1]] == 0 && v[0] >= 0 && v[0] <= 8 && v[1] >= 0 && v[1] <= 8 && funCheckforWall(sf::Vector2i(p[0], p[1]), sf::Vector2i(v[0], v[1])))
+			{
+				for (int i = -1; i <= 1; i += 2)
+				{
+					v[0] = p[0] + i * (dl[k] == 0) + dl[k] * (dl[k] != 0);
+					v[1] = p[1] + i * (dc[k] == 0) + dc[k] * (dc[k] != 0);
 
+					board[v[0]][v[1]] = board[p[0]][p[1]] + 1;
+
+					ultim++;
+					c[ultim][0] = v[0];
+					c[ultim][1] = v[1];
+					if (turn == 0 || turn == 1)
+						if (v[0] == (1 - turn) * 8)
+						{
+							for (int qwe = 0; qwe <= 8; qwe++) {
+								for (int rty = 0; rty <= 8; rty++) {
+									std::cout << board[qwe][rty] << " ";
+								}
+								std::cout << std::endl;
+							}
+							sf::Vector2i tempPawn = funReverseLee(board, sf::Vector2i(v[0], v[1]));
+							if (tempPawn.x >= 0)
+								return funReverseLee(board, sf::Vector2i(v[0], v[1]));
+							else
+								return oldPawn;
+						}
+
+					if (turn == 2 || turn == 3)
+						if (v[1] == (3 - turn) * 8)
+						{
+							for (int qwe = 0; qwe <= 8; qwe++) {
+								for (int rty = 0; rty <= 8; rty++) {
+									std::cout << board[qwe][rty] << " ";
+								}
+								std::cout << std::endl;
+							}
+							sf::Vector2i tempPawn = funReverseLee(board, sf::Vector2i(v[0], v[1]));
+							if (tempPawn.x >= 0)
+								return funReverseLee(board, sf::Vector2i(v[0], v[1]));
+							else
+								return oldPawn;
+						}
+				}
+			}
 		}
 
 	}
@@ -529,7 +608,6 @@ void nextTurn()
 		}
 		else if (waitingforAI == 1)
 		{
-			std::wcout << "i should move - ai" << std::endl;
 			//Check if next turn is AI
 			if (playerType[turn] > 0)
 			{
@@ -1623,10 +1701,7 @@ int main()
 		if (gameStatus == 3)
 		{
 			if (waitingforAI > 1)
-			{
 				waitingforAI -= 1;
-				std::wcout << "ai" << waitingforAI << std::endl;
-			}
 			if (waitingforAI == 1)
 				nextTurn();
 				
