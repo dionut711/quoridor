@@ -592,18 +592,12 @@ void nextTurn()
 	if (threeMoves > 0 && playerType[turn] == 0)
 		threeMoves -= 1;
 	else
-	{
-		if (threeMoves > 0 && playerType[turn] > 0)
-		{
-			turn -= 1;
-			threeMoves -= 1;
-		}
-		
-		if (waitingforAI != 1)
-		{
-			turn = (turn + 1) % nrOfPlayers;
-			turnUI.setTexture(*sPawn[turn].getTexture());
-		}
+	{	if(threeMoves == 0)
+			if (waitingforAI != 1)
+			{
+				turn = (turn + 1) % nrOfPlayers;
+				turnUI.setTexture(*sPawn[turn].getTexture());
+			}
 		
 		
 		if (waitingforAI == 0 && playerType[turn] > 0)
@@ -983,6 +977,7 @@ int main()
 		if (gameStatus == 2)
 		{
 			turn = -1;
+			threeMoves = 0;
 			waitingforAI = 0;
 
 			for (int i = 0; i < 3; i++)
@@ -1088,42 +1083,7 @@ int main()
 				countDown3 = 18;
 			}
 		}
-		if (setMode)
-		{
-			if (posPawn[turn].x == powerUpPos.x && posPawn[turn].y == powerUpPos.y)
-			{
-				randPos.y = (powerUpPos.x - marginWidth) / sizeTotal;
-				randPos.x = (powerUpPos.y - widthWall) / sizeTotal;
-				powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
-				threeMoves = 3;
-				countDown = 3;
-				powerUpPos.x = -100;
-				powerUpPos.y = -100;
-				spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
-			}
-			if (posPawn[turn].x == powerUpPos2.x && posPawn[turn].y == powerUpPos2.y)
-			{
-				randPos.y = (powerUpPos2.x - marginWidth) / sizeTotal;
-				randPos.x = (powerUpPos2.y - widthWall) / sizeTotal;
-				powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
-				maxWallsPerPlayer[turn] = maxNumber;
-				powerUpPos2.x = -100;
-				powerUpPos2.y = -100;
-				spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
-				countDown2 = 0;
-			}
-			if (posPawn[turn].x == powerUpPos3.x && posPawn[turn].y == powerUpPos3.y)
-			{
-				randPos.y = (powerUpPos3.x - marginWidth) / sizeTotal;
-				randPos.x = (powerUpPos3.y - widthWall) / sizeTotal;
-				powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
-				funDeleteWalls();
-				powerUpPos3.x = -100;
-				powerUpPos3.y = -100;
-				spowerUp3.setPosition(powerUpPos3.x, powerUpPos3.y);
-				countDown3 = 0;
-			}
-		}
+
 
 		while (window.pollEvent(e) && AIsTime == 0)
 		{
@@ -1652,11 +1612,49 @@ int main()
 									{*/
 									posPawn[turn] = sf::Vector2i(marginWidth + sizeTotal*pawn[turn].y, widthWall + sizeTotal*pawn[turn].x);
 									sPawn[turn].setPosition(posPawn[turn].x, posPawn[turn].y);
+									if (threeMoves > 0 && playerType[turn] == 0)
+										threeMoves -= 1;
 
-									
+									if (setMode)
+									{
+										if (posPawn[turn].x == powerUpPos.x && posPawn[turn].y == powerUpPos.y)
+										{
+											randPos.y = (powerUpPos.x - marginWidth) / sizeTotal;
+											randPos.x = (powerUpPos.y - widthWall) / sizeTotal;
+											powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
+											threeMoves = 3;
+											countDown = 3;
+											powerUpPos.x = -100;
+											powerUpPos.y = -100;
+											spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
+										}
+										if (posPawn[turn].x == powerUpPos2.x && posPawn[turn].y == powerUpPos2.y)
+										{
+											randPos.y = (powerUpPos2.x - marginWidth) / sizeTotal;
+											randPos.x = (powerUpPos2.y - widthWall) / sizeTotal;
+											powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
+											maxWallsPerPlayer[turn] = maxNumber;
+											powerUpPos2.x = -100;
+											powerUpPos2.y = -100;
+											spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
+											countDown2 = 0;
+										}
+										if (posPawn[turn].x == powerUpPos3.x && posPawn[turn].y == powerUpPos3.y)
+										{
+											randPos.y = (powerUpPos3.x - marginWidth) / sizeTotal;
+											randPos.x = (powerUpPos3.y - widthWall) / sizeTotal;
+											powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
+											funDeleteWalls();
+											powerUpPos3.x = -100;
+											powerUpPos3.y = -100;
+											spowerUp3.setPosition(powerUpPos3.x, powerUpPos3.y);
+											countDown3 = 0;
+										}
+									}
 
 									funCheckWinCondition();
-									if(winner == 0)
+
+									if(winner == 0 && threeMoves == 0)
 										nextTurn();
 								//}
 									
