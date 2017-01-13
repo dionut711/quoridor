@@ -589,70 +589,72 @@ void nextTurn()
 				powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
 			}
 
-	if (threeMoves > 0 && playerType[turn] == 0)
+	if (threeMoves > 0 && playerType[turn] > 0)
+	{
 		threeMoves -= 1;
-	else
-	{	if(threeMoves == 0)
-			if (waitingforAI != 1)
-			{
-				turn = (turn + 1) % nrOfPlayers;
-				turnUI.setTexture(*sPawn[turn].getTexture());
-			}
-		
-		
-		if (waitingforAI == 0 && playerType[turn] > 0)
-		{
-			waitingforAI = 500;
-			return;
-		}
-		else if (waitingforAI == 1)
-		{
-			//Check if next turn is AI
-			if (playerType[turn] > 0)
-			{
-
-				sf::Vector2i nextPawn = funAImove(turn);
-				pawn[turn].x = nextPawn.x;
-				pawn[turn].y = nextPawn.y;
-
-
-				sf::Vector2i posPawn = sf::Vector2i(155 + 76 * pawn[turn].y, 15 + 76 * pawn[turn].x);
-				sPawn[turn].setPosition(posPawn.x, posPawn.y);
-
-				//stepped on power-up
-				if (posPawn.x == powerUpPos.x && posPawn.y == powerUpPos.y)
-				{
-					threeMoves = 3;
-					countDown = 3;
-					powerUpPos.x = -100;
-					powerUpPos.y = -100;
-					spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
-				}
-				if (posPawn.x == powerUpPos2.x && posPawn.y == powerUpPos2.y)
-				{
-					maxWallsPerPlayer[turn] = maxNumber;
-					powerUpPos2.x = -100;
-					powerUpPos2.y = -100;
-					spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
-					countDown2 = 0;
-				}
-				if (posPawn.x == powerUpPos3.x && posPawn.y == powerUpPos3.y)
-				{
-					funDeleteWalls();
-					powerUpPos3.x = -100;
-					powerUpPos3.y = -100;
-					spowerUp3.setPosition(powerUpPos3.x, powerUpPos3.y);
-					countDown3 = 0;
-				}
-
-				waitingforAI = 0;
-				funCheckWinCondition();
-				if (winner == 0)
-					nextTurn();
-			}
-		}
-		
+		std::cout << "doint another move" <<threeMoves<< std::endl;
 	}
+		
+
+	if(threeMoves == 0)
+		if (waitingforAI != 1)
+		{
+			turn = (turn + 1) % nrOfPlayers;
+			turnUI.setTexture(*sPawn[turn].getTexture());
+		}
+		
+		
+	if (waitingforAI == 0 && playerType[turn] > 0)
+	{
+		waitingforAI = 500;
+	}
+	else if (waitingforAI == 1)
+	{
+		//Check if next turn is AI
+		if (playerType[turn] > 0)
+		{
+
+			sf::Vector2i nextPawn = funAImove(turn);
+			pawn[turn].x = nextPawn.x;
+			pawn[turn].y = nextPawn.y;
+
+
+			sf::Vector2i posPawn = sf::Vector2i(155 + 76 * pawn[turn].y, 15 + 76 * pawn[turn].x);
+			sPawn[turn].setPosition(posPawn.x, posPawn.y);
+
+			//stepped on power-up
+			if (posPawn.x == powerUpPos.x && posPawn.y == powerUpPos.y)
+			{
+				threeMoves = 3;
+				countDown = 3;
+				powerUpPos.x = -100;
+				powerUpPos.y = -100;
+				spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
+			}
+			if (posPawn.x == powerUpPos2.x && posPawn.y == powerUpPos2.y)
+			{
+				maxWallsPerPlayer[turn] = maxNumber;
+				powerUpPos2.x = -100;
+				powerUpPos2.y = -100;
+				spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
+				countDown2 = 0;
+			}
+			if (posPawn.x == powerUpPos3.x && posPawn.y == powerUpPos3.y)
+			{
+				funDeleteWalls();
+				powerUpPos3.x = -100;
+				powerUpPos3.y = -100;
+				spowerUp3.setPosition(powerUpPos3.x, powerUpPos3.y);
+				countDown3 = 0;
+			}
+
+			waitingforAI = 0;
+			funCheckWinCondition();
+			if (winner == 0)
+				nextTurn();
+		}
+	}
+		
 }
 
 int main()
@@ -1279,7 +1281,6 @@ int main()
 								playerType[i] += 1;
 								if (playerType[i] > 2)
 									playerType[i] = 2;
-								std::cout << "playerType[" << i << "]= " << playerType[i] << std::endl;
 								next[i] = false;
 								sNext[i].setTexture(tNext);
 							}
@@ -1288,7 +1289,6 @@ int main()
 								playerType[i] -= 1;
 								if (playerType[i] < 0)
 									playerType[i] = 0;
-								std::cout << "playerType[" << i << "]= " << playerType[i] << std::endl;
 								previous[i] = false;
 								sPrevious[i].setTexture(tPrevious);
 							}
@@ -1496,7 +1496,7 @@ int main()
 										canWallBePlaced = true;
 										nextTurn();
 										checkRotation[nrOfPlacedWalls - 1] = wallRotation;
-										std::cout << "This wall is rotate ? " << checkRotation[nrOfPlacedWalls - 1] << " his number is: " << nrOfPlacedWalls - 1 << std::endl;
+										//std::cout << "This wall is rotate ? " << checkRotation[nrOfPlacedWalls - 1] << " his number is: " << nrOfPlacedWalls - 1 << std::endl;
 									}
 									else
 									{
