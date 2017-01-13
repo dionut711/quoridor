@@ -7,6 +7,8 @@
 #include <SFML/Audio.hpp>
 
 int waitingforAI = 0;
+sf::Sprite sWin;
+sf::Texture tWinPlayer, tWinComputer;
 
 sf::RenderWindow window(sf::VideoMode(969, 696), "QUORIDOR",sf::Style::Close | sf::Style::Titlebar);
 sf::Sprite sBoard,sWalls[100], sTurnDisplay;
@@ -115,6 +117,38 @@ sf::Vector2i powerUP() {
 	randomUpCoord.y = (rand() % 3) + 3;
 	std::cout << "PowerUp" << " x= " << randomUpCoord.x << " y= " << randomUpCoord.y << std::endl;
 	return randomUpCoord;
+}
+
+void funCheckWinCondition()
+{
+	if (turn < 2)
+	{
+		if (pawn[turn].x == (1 - turn) * 8)
+		{
+			if (playerType[turn] == 0)
+				sWin.setTexture(tWinPlayer);
+			else
+				sWin.setTexture(tWinComputer);
+
+			turnUI.setTexture(*sPawn[turn].getTexture());
+			turnUI.setPosition(0, 0);
+			winner = 1;
+		}
+	}
+	else if (turn >= 2)
+	{
+		if (pawn[turn].y == (3 - turn) * 8)
+		{
+			if (playerType[turn] == 0)
+				sWin.setTexture(tWinPlayer);
+			else
+				sWin.setTexture(tWinComputer);
+
+			turnUI.setTexture(*sPawn[turn].getTexture());
+			turnUI.setPosition(0, 0);
+			winner = 1;
+		}
+	}
 }
 
 void funDrawBoard()
@@ -519,8 +553,7 @@ void nextTurn(int &currentTurn)
 				pawn[currentTurn].x = nextPawn.x;
 				pawn[currentTurn].y = nextPawn.y;
 
-				funDrawBoard();
-				//Sleep(1000);
+				//funDrawBoard();
 
 				sf::Vector2i posPawn = sf::Vector2i(155 + 76 * pawn[currentTurn].y, 15 + 76 * pawn[currentTurn].x);
 				sPawn[currentTurn].setPosition(posPawn.x, posPawn.y);
@@ -552,7 +585,9 @@ void nextTurn(int &currentTurn)
 				}
 
 				waitingforAI = 0;
-				nextTurn(currentTurn);
+				funCheckWinCondition();
+				if(winner == 0)
+					nextTurn(currentTurn);
 			}
 		}
 		
@@ -871,11 +906,10 @@ int main()
 
 
 	////////// WINNER ///////////
-	sf::Texture tWinPlayer, tWinComputer;
 	tWinPlayer.loadFromFile("images/PlayerWin.png");
 	tWinComputer.loadFromFile("images/ComputerWin.png");
 
-	sf::Sprite sWin;
+
 
 	bool isExit = false;
 	bool isMove = false;
@@ -1369,11 +1403,9 @@ int main()
 								sBack.setPosition(462, 570);
 								turnUI.setPosition(-100, -100);
 							}
-					/////////////// CHECK FOR THE WIN
+
 					if (winner == 0)
 					{
-						//if (playerType[turn] == 0) 
-						//{
 						if (e.type == sf::Event::MouseButtonPressed)
 							if (e.key.code == sf::Mouse::Left)
 								if (sPawn[turn].getGlobalBounds().contains(posMouse.x, posMouse.y))
@@ -1563,114 +1595,50 @@ int main()
 									}
 									else
 									{*/
-										posPawn[turn] = sf::Vector2i(marginWidth + sizeTotal*pawn[turn].y, widthWall + sizeTotal*pawn[turn].x);
-										sPawn[turn].setPosition(posPawn[turn].x, posPawn[turn].y);
+									posPawn[turn] = sf::Vector2i(marginWidth + sizeTotal*pawn[turn].y, widthWall + sizeTotal*pawn[turn].x);
+									sPawn[turn].setPosition(posPawn[turn].x, posPawn[turn].y);
 
-										if (setMode)
+									if (setMode)
+									{
+										if (posPawn[turn].x == powerUpPos.x && posPawn[turn].y == powerUpPos.y)
 										{
-											if (posPawn[turn].x == powerUpPos.x && posPawn[turn].y == powerUpPos.y)
-											{
-												randPos.y = (powerUpPos.x - marginWidth) / sizeTotal;
-												randPos.x = (powerUpPos.y - widthWall) / sizeTotal;
-												powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
-												threeMoves = 3;
-												countDown = 3;
-												powerUpPos.x = -100;
-												powerUpPos.y = -100;
-												spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
-											}
-											if (posPawn[turn].x == powerUpPos2.x && posPawn[turn].y == powerUpPos2.y)
-											{
-												randPos.y = (powerUpPos2.x - marginWidth) / sizeTotal;
-												randPos.x = (powerUpPos2.y - widthWall) / sizeTotal;
-												powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
-												maxWallsPerPlayer[turn] = maxNumber;
-												powerUpPos2.x = -100;
-												powerUpPos2.y = -100;
-												spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
-												countDown2 = 0;
-											}
-											if (posPawn[turn].x == powerUpPos3.x && posPawn[turn].y == powerUpPos3.y)
-											{
-												randPos.y = (powerUpPos3.x - marginWidth) / sizeTotal;
-												randPos.x = (powerUpPos3.y - widthWall) / sizeTotal;
-												powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
-												funDeleteWalls();
-												powerUpPos3.x = -100;
-												powerUpPos3.y = -100;
-												spowerUp3.setPosition(powerUpPos3.x, powerUpPos3.y);
-												countDown3 = 0;
-											}
+											randPos.y = (powerUpPos.x - marginWidth) / sizeTotal;
+											randPos.x = (powerUpPos.y - widthWall) / sizeTotal;
+											powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
+											threeMoves = 3;
+											countDown = 3;
+											powerUpPos.x = -100;
+											powerUpPos.y = -100;
+											spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
 										}
-										//check win condition
-										if (turn < 2)
+										if (posPawn[turn].x == powerUpPos2.x && posPawn[turn].y == powerUpPos2.y)
 										{
-											if (pawn[turn].x == (1 - turn) * 8)
-											{
-												if(playerType[turn] == 0)
-													sWin.setTexture(tWinPlayer);
-												else
-													sWin.setTexture(tWinComputer);
+											randPos.y = (powerUpPos2.x - marginWidth) / sizeTotal;
+											randPos.x = (powerUpPos2.y - widthWall) / sizeTotal;
+											powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
+											maxWallsPerPlayer[turn] = maxNumber;
+											powerUpPos2.x = -100;
+											powerUpPos2.y = -100;
+											spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
+											countDown2 = 0;
+										}
+										if (posPawn[turn].x == powerUpPos3.x && posPawn[turn].y == powerUpPos3.y)
+										{
+											randPos.y = (powerUpPos3.x - marginWidth) / sizeTotal;
+											randPos.x = (powerUpPos3.y - widthWall) / sizeTotal;
+											powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
+											funDeleteWalls();
+											powerUpPos3.x = -100;
+											powerUpPos3.y = -100;
+											spowerUp3.setPosition(powerUpPos3.x, powerUpPos3.y);
+											countDown3 = 0;
+										}
+									}
 
-												turnUI.setTexture(*sPawn[turn].getTexture());
-												turnUI.setPosition(0, 0);
-												winner = 1;
-											}
-										}
-										else if (turn >= 2)
-										{
-											if (pawn[turn].x == (3 - turn) * 8)
-											{
-												if (playerType[turn] == 0)
-													sWin.setTexture(tWinPlayer);
-												else
-													sWin.setTexture(tWinComputer);
-
-												turnUI.setTexture(*sPawn[turn].getTexture());
-												turnUI.setPosition(0, 0);
-												winner = 1;
-											}
-										}
-										/*
-										if (pawn[0].x == 8)
-										{
-											if (playerType[0] == 0)
-												sWin.setTexture(tWinPlayer);
-											else
-												sWin.setTexture(tWinComputer);
-											turnUI.setTexture(*sPawn[0].getTexture());
-											winner = 1;
-										}
-										else if (pawn[1].x == 0)
-										{
-											if (playerType[1] == 0)
-												sWin.setTexture(tWinPlayer);
-											else
-												sWin.setTexture(tWinComputer);
-											turnUI.setTexture(*sPawn[1].getTexture());
-											winner = 1;
-										}
-										else if (pawn[2].y == 8)
-										{
-											if (playerType[2] == 0)
-												sWin.setTexture(tWinPlayer);
-											else
-												sWin.setTexture(tWinComputer);
-											turnUI.setTexture(*sPawn[2].getTexture());
-											winner = 1;
-										}
-										else if (pawn[3].y == 0)
-										{
-											if (playerType[3] == 0)
-												sWin.setTexture(tWinPlayer);
-											else
-												sWin.setTexture(tWinComputer);
-											turnUI.setTexture(*sPawn[3].getTexture());
-											winner = 1;
-										}
-										*/
+									funCheckWinCondition();
+									if(winner == 0)
 										nextTurn(turn);
-									//}
+								//}
 									
 								}
 								else
