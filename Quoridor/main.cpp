@@ -453,49 +453,54 @@ sf::Vector2i funAImove(int turn)
 					}
 			}
 			//side jump
-			else if (board[p[0] + dl[k]][p[1] + dc[k]] == -1 && board[v[0]][v[1]] == 0 && v[0] >= 0 && v[0] <= 8 && v[1] >= 0 && v[1] <= 8 && funCheckforWall(sf::Vector2i(p[0], p[1]), sf::Vector2i(v[0], v[1])))
+			else if (board[p[0] + dl[k]][p[1] + dc[k]] == -1 && funCheckforWall(sf::Vector2i(p[0], p[1]), sf::Vector2i(v[0], v[1])) && !funCheckforWall(sf::Vector2i(p[0], p[1]), sf::Vector2i(p[0] + dl[k], p[1] + dc[k])))
 			{
+				std::cout << "im doing a side jump from "<< p[0] <<","<< p[1]<<" above " << p[0] + dl[k] <<","<< p[1] + dc[k] << std::endl;
 				for (int i = -1; i <= 1; i += 2)
 				{
 					v[0] = p[0] + i * (dl[k] == 0) + dl[k] * (dl[k] != 0);
 					v[1] = p[1] + i * (dc[k] == 0) + dc[k] * (dc[k] != 0);
 
-					board[v[0]][v[1]] = board[p[0]][p[1]] + 1;
+					if(board[v[0]][v[1]] == 0 && v[0] >= 0 && v[0] <= 8 && v[1] >= 0 && v[1] <= 8 && !funCheckforWall(sf::Vector2i(v[0], v[1]), sf::Vector2i(p[0] + dl[k], p[1] + dc[k])))
+					{
+						board[v[0]][v[1]] = board[p[0]][p[1]] + 1;
 
-					ultim++;
-					c[ultim][0] = v[0];
-					c[ultim][1] = v[1];
-					if (turn == 0 || turn == 1)
-						if (v[0] == (1 - turn) * 8)
-						{
-							for (int qwe = 0; qwe <= 8; qwe++) {
-								for (int rty = 0; rty <= 8; rty++) {
-									std::cout << board[qwe][rty] << " ";
+						ultim++;
+						c[ultim][0] = v[0];
+						c[ultim][1] = v[1];
+						if (turn == 0 || turn == 1)
+							if (v[0] == (1 - turn) * 8)
+							{
+								for (int qwe = 0; qwe <= 8; qwe++) {
+									for (int rty = 0; rty <= 8; rty++) {
+										std::cout << board[qwe][rty] << " ";
+									}
+									std::cout << std::endl;
 								}
-								std::cout << std::endl;
+								sf::Vector2i tempPawn = funReverseLee(board, sf::Vector2i(v[0], v[1]));
+								if (tempPawn.x >= 0)
+									return funReverseLee(board, sf::Vector2i(v[0], v[1]));
+								else
+									return oldPawn;
 							}
-							sf::Vector2i tempPawn = funReverseLee(board, sf::Vector2i(v[0], v[1]));
-							if (tempPawn.x >= 0)
-								return funReverseLee(board, sf::Vector2i(v[0], v[1]));
-							else
-								return oldPawn;
-						}
 
-					if (turn == 2 || turn == 3)
-						if (v[1] == (3 - turn) * 8)
-						{
-							for (int qwe = 0; qwe <= 8; qwe++) {
-								for (int rty = 0; rty <= 8; rty++) {
-									std::cout << board[qwe][rty] << " ";
+						if (turn == 2 || turn == 3)
+							if (v[1] == (3 - turn) * 8)
+							{
+								for (int qwe = 0; qwe <= 8; qwe++) {
+									for (int rty = 0; rty <= 8; rty++) {
+										std::cout << board[qwe][rty] << " ";
+									}
+									std::cout << std::endl;
 								}
-								std::cout << std::endl;
+								sf::Vector2i tempPawn = funReverseLee(board, sf::Vector2i(v[0], v[1]));
+								if (tempPawn.x >= 0)
+									return funReverseLee(board, sf::Vector2i(v[0], v[1]));
+								else
+									return oldPawn;
 							}
-							sf::Vector2i tempPawn = funReverseLee(board, sf::Vector2i(v[0], v[1]));
-							if (tempPawn.x >= 0)
-								return funReverseLee(board, sf::Vector2i(v[0], v[1]));
-							else
-								return oldPawn;
-						}
+					}
+					
 				}
 			}
 		}
@@ -1021,7 +1026,7 @@ int main()
 				WallsPlaceableLimit = 40;
 			else
 				WallsPlaceableLimit = 80;
-			pawn[0] = sf::Vector2i(0, 4);//blue
+			pawn[0] = sf::Vector2i(1, 4);//blue
 			pawn[1] = sf::Vector2i(8, 4);//green
 			pawn[2] = sf::Vector2i(4, 0);//yellow
 			pawn[3] = sf::Vector2i(4, 8);//red
@@ -1709,7 +1714,7 @@ int main()
 			{
 				sWalls[nrOfPlacedWalls - 1].setPosition(fixedPosWall.x, fixedPosWall.y);
 			}
-			if (isMove)
+			if (isMove && playerType[turn] == 0)
 				sPawn[turn].setPosition(posMouse.x - sPawn[turn].getTextureRect().width / 2, posMouse.y - sPawn[turn].getTextureRect().height / 2);
 
 			window.clear(sf::Color::White);
