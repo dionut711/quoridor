@@ -1026,7 +1026,7 @@ int main()
 				WallsPlaceableLimit = 40;
 			else
 				WallsPlaceableLimit = 80;
-			pawn[0] = sf::Vector2i(1, 4);//blue
+			pawn[0] = sf::Vector2i(0, 4);//blue
 			pawn[1] = sf::Vector2i(8, 4);//green
 			pawn[2] = sf::Vector2i(4, 0);//yellow
 			pawn[3] = sf::Vector2i(4, 8);//red
@@ -1048,6 +1048,81 @@ int main()
 			sBack.setPosition(872, 90);
 			nextTurn();
 			
+		}
+		if (setMode)
+		{
+			if (countDown <= 0)
+			{
+				randPos = powerUP();
+				while (powerMatrix[randPos.x - 3][randPos.y - 3] != 0)
+					randPos = powerUP();
+				powerMatrix[randPos.x - 3][randPos.y - 3] = 1;
+
+				powerUpPos.x = marginWidth + sizeTotal*randPos.y;
+				powerUpPos.y = widthWall + sizeTotal*randPos.x;
+				spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
+				countDown = 20;
+			}
+			if (countDown2 <= 0)
+			{
+				randPos = powerUP();
+				while (powerMatrix[randPos.x - 3][randPos.y - 3] != 0)
+					randPos = powerUP();
+				powerMatrix[randPos.x - 3][randPos.y - 3] = 1;
+
+				powerUpPos2.x = marginWidth + sizeTotal*randPos.y;
+				powerUpPos2.y = widthWall + sizeTotal*randPos.x;
+				spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
+				countDown2 = 15;
+			}
+			if (countDown3 <= 0)
+			{
+				randPos = powerUP();
+				while (powerMatrix[randPos.x - 3][randPos.y - 3] != 0)
+					randPos = powerUP();
+				powerMatrix[randPos.x - 3][randPos.y - 3] = 1;
+
+				powerUpPos3.x = marginWidth + sizeTotal*randPos.y;
+				powerUpPos3.y = widthWall + sizeTotal*randPos.x;
+				spowerUp3.setPosition(powerUpPos3.x, powerUpPos3.y);
+				countDown3 = 18;
+			}
+		}
+		if (setMode)
+		{
+			if (posPawn[turn].x == powerUpPos.x && posPawn[turn].y == powerUpPos.y)
+			{
+				randPos.y = (powerUpPos.x - marginWidth) / sizeTotal;
+				randPos.x = (powerUpPos.y - widthWall) / sizeTotal;
+				powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
+				threeMoves = 3;
+				countDown = 3;
+				powerUpPos.x = -100;
+				powerUpPos.y = -100;
+				spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
+			}
+			if (posPawn[turn].x == powerUpPos2.x && posPawn[turn].y == powerUpPos2.y)
+			{
+				randPos.y = (powerUpPos2.x - marginWidth) / sizeTotal;
+				randPos.x = (powerUpPos2.y - widthWall) / sizeTotal;
+				powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
+				maxWallsPerPlayer[turn] = maxNumber;
+				powerUpPos2.x = -100;
+				powerUpPos2.y = -100;
+				spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
+				countDown2 = 0;
+			}
+			if (posPawn[turn].x == powerUpPos3.x && posPawn[turn].y == powerUpPos3.y)
+			{
+				randPos.y = (powerUpPos3.x - marginWidth) / sizeTotal;
+				randPos.x = (powerUpPos3.y - widthWall) / sizeTotal;
+				powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
+				funDeleteWalls();
+				powerUpPos3.x = -100;
+				powerUpPos3.y = -100;
+				spowerUp3.setPosition(powerUpPos3.x, powerUpPos3.y);
+				countDown3 = 0;
+			}
 		}
 
 		while (window.pollEvent(e) && AIsTime == 0)
@@ -1354,45 +1429,7 @@ int main()
 				if (waitingforAI == 0)
 				{
 					////// NEED POWER UPS ???
-					if (setMode)
-					{
-						if (countDown <= 0)
-						{
-							randPos = powerUP();
-							while (powerMatrix[randPos.x - 3][randPos.y - 3] != 0)
-								randPos = powerUP();
-							powerMatrix[randPos.x - 3][randPos.y - 3] = 1;
-
-							powerUpPos.x = marginWidth + sizeTotal*randPos.y;
-							powerUpPos.y = widthWall + sizeTotal*randPos.x;
-							spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
-							countDown = 20;
-						}
-						if (countDown2 <= 0)
-						{
-							randPos = powerUP();
-							while (powerMatrix[randPos.x - 3][randPos.y - 3] != 0)
-								randPos = powerUP();
-							powerMatrix[randPos.x - 3][randPos.y - 3] = 1;
-
-							powerUpPos2.x = marginWidth + sizeTotal*randPos.y;
-							powerUpPos2.y = widthWall + sizeTotal*randPos.x;
-							spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
-							countDown2 = 15;
-						}
-						if (countDown3 <= 0)
-						{
-							randPos = powerUP();
-							while (powerMatrix[randPos.x - 3][randPos.y - 3] != 0)
-								randPos = powerUP();
-							powerMatrix[randPos.x - 3][randPos.y - 3] = 1;
-
-							powerUpPos3.x = marginWidth + sizeTotal*randPos.y;
-							powerUpPos3.y = widthWall + sizeTotal*randPos.x;
-							spowerUp3.setPosition(powerUpPos3.x, powerUpPos3.y);
-							countDown3 = 18;
-						}
-					}
+					
 
 					if (e.type == sf::Event::MouseButtonPressed)
 						if (e.key.code == sf::Mouse::Left)
@@ -1616,42 +1653,7 @@ int main()
 									posPawn[turn] = sf::Vector2i(marginWidth + sizeTotal*pawn[turn].y, widthWall + sizeTotal*pawn[turn].x);
 									sPawn[turn].setPosition(posPawn[turn].x, posPawn[turn].y);
 
-									if (setMode)
-									{
-										if (posPawn[turn].x == powerUpPos.x && posPawn[turn].y == powerUpPos.y)
-										{
-											randPos.y = (powerUpPos.x - marginWidth) / sizeTotal;
-											randPos.x = (powerUpPos.y - widthWall) / sizeTotal;
-											powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
-											threeMoves = 3;
-											countDown = 3;
-											powerUpPos.x = -100;
-											powerUpPos.y = -100;
-											spowerUp.setPosition(powerUpPos.x, powerUpPos.y);
-										}
-										if (posPawn[turn].x == powerUpPos2.x && posPawn[turn].y == powerUpPos2.y)
-										{
-											randPos.y = (powerUpPos2.x - marginWidth) / sizeTotal;
-											randPos.x = (powerUpPos2.y - widthWall) / sizeTotal;
-											powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
-											maxWallsPerPlayer[turn] = maxNumber;
-											powerUpPos2.x = -100;
-											powerUpPos2.y = -100;
-											spowerUp2.setPosition(powerUpPos2.x, powerUpPos2.y);
-											countDown2 = 0;
-										}
-										if (posPawn[turn].x == powerUpPos3.x && posPawn[turn].y == powerUpPos3.y)
-										{
-											randPos.y = (powerUpPos3.x - marginWidth) / sizeTotal;
-											randPos.x = (powerUpPos3.y - widthWall) / sizeTotal;
-											powerMatrix[randPos.x - 3][randPos.y - 3] = 0;
-											funDeleteWalls();
-											powerUpPos3.x = -100;
-											powerUpPos3.y = -100;
-											spowerUp3.setPosition(powerUpPos3.x, powerUpPos3.y);
-											countDown3 = 0;
-										}
-									}
+									
 
 									funCheckWinCondition();
 									if(winner == 0)
